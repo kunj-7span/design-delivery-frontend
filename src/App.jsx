@@ -12,6 +12,8 @@ import RegisterPage from "./pages/auth/register-page";
 import AgencyLayout from "./layouts/agency-layout";
 import LoginPage from "./pages/auth/login-page";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
+import DesignerDashboard from "./pages/designer/designer-dashboard";
+import DesignerProjects from "./pages/designer/designer-projects";
 
 function App() {
   const router = createBrowserRouter(
@@ -22,6 +24,8 @@ function App() {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="designer" element={<DesignerDashboard />} />
+        <Route path="designer/projects" element={<DesignerProjects />} />
         {/* <Route path='reset-password' element={<ResetPassword />} /> */}
 
         {/* public routes */}
