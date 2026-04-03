@@ -310,7 +310,7 @@ const DesignerDashboard = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-rose-100 bg-rose-50 hover:bg-rose-100 cursor-pointer p-5 shadow-sm sm:col-span-2 xl:col-span-1">
+              <div className="rounded-xl border border-rose-100 bg-rose-50 hover:bg-rose-100 cursor-pointer p-5 shadow-sm ">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-rose-600 ">
