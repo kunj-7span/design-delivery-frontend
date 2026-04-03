@@ -57,6 +57,16 @@ const RegisterPageForm = () => {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!validTypes.includes(file.type)) {
+        setError("root", {
+          type: "manual",
+          message: "Only JPG, JPEG, and PNG images are allowed.",
+        });
+        e.target.value = "";
+        return;
+      }
+
       if (file.size > 2 * 1024 * 1024) {
         setError("root", {
           type: "manual",
@@ -113,7 +123,7 @@ const RegisterPageForm = () => {
           type="file"
           ref={fileInputRef}
           className="hidden"
-          accept="image/*"
+          accept=".png, .jpg, .jpeg, image/png, image/jpeg"
           onChange={handleFileChange}
         />
         <div
