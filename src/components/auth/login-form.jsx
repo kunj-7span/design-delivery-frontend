@@ -2,13 +2,13 @@ import React from 'react';
 import { Mail, Lock } from 'lucide-react';
 import Button from '../common/button';
 import InputField from '../common/input-field';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../../schema/auth-schema';
 
 const LoginForm = () => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(loginSchema),
         mode: 'onChange'
@@ -21,7 +21,7 @@ const LoginForm = () => {
             await new Promise(resolve => setTimeout(resolve, 1500));
             // Navigate on success
             // navigate('/dashboard');
-        } catch (error) {
+        } catch {
             setError("root", { type: "server", message: "Invalid credentials. Please try again." });
         }
     };

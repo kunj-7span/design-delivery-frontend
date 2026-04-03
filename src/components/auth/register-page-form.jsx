@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Button from '../common/button';
 import InputField from '../common/input-field';
 import { Link } from "react-router-dom";
@@ -10,15 +10,49 @@ import { useWatch } from "react-hook-form";
 
 const RegisterPageForm = () => {
     // const navigate = useNavigate();
-    const { register, handleSubmit, setValue, control, setError, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, reset, setValue, control, setError, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(registerSchema),
         mode: 'onChange',
         defaultValues: {
-            accountType: "agency"
+            accountType: "agency",
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            contactPersonName: ""
         }
     });
 
     const accountType = useWatch({control,name:"accountType"});
+    const [profilePicPreview, setProfilePicPreview] = useState(null);
+    const fileInputRef = useRef(null);
+
+    const switchAccountType = (type) => {
+        if (type !== accountType) {
+            reset({
+                accountType: type,
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+                contactPersonName: ""
+            });
+            setProfilePicPreview(null);
+        }
+    };
+
+    const handleFileClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setProfilePicPreview(url);
+            setValue('profilePicture', file);
+        }
+    };
 
     const onSubmit = async (data) => {
         try {
@@ -37,7 +71,7 @@ const RegisterPageForm = () => {
             <div className="flex justify-between mb-4 w-full bg-gray-100 rounded-xl">
                 <Button
                     type="button"
-                    onClick={() => setValue("accountType", "agency", { shouldValidate: true })}
+                    onClick={() => switchAccountType("agency")}
                     className={`px-4 flex-1 py-2 text-gray-500 text-sm cursor-pointer duration-300 shadow-none transition-colors ${accountType === "agency" ? "bg-primary text-white" : "hover:bg-gray-200"}`}
                 >
                     Agency Admin
@@ -45,7 +79,7 @@ const RegisterPageForm = () => {
 
                 <Button
                     type="button"
-                    onClick={() => setValue("accountType", "client", { shouldValidate: true })}
+                    onClick={() => switchAccountType("client")}
                     className={`px-4 flex-1 py-2 text-gray-500 text-sm cursor-pointer duration-300 transition-colors shadow-none ${accountType === "client" ? "bg-primary text-white" : "hover:bg-gray-200"}`}
                 >
                     Client
@@ -54,8 +88,20 @@ const RegisterPageForm = () => {
 
             {/* Profile picture */}
             <div className="mb-4 flex flex-col items-center gap-2">
-                <div className="w-18 h-18 rounded-full border-2 border-dashed border-primary flex items-center justify-center overflow-hidden cursor-pointer hover:border-hover-primary hover:bg-purple-100 transition relative group bg-purple-50">
-                    {accountType === "agency" ? (
+                <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleFileChange} 
+                />
+                <div 
+                    onClick={handleFileClick}
+                    className="w-18 h-18 rounded-full border-2 border-dashed border-primary flex items-center justify-center overflow-hidden cursor-pointer hover:border-hover-primary hover:bg-purple-100 transition relative group bg-purple-50"
+                >
+                    {profilePicPreview ? (
+                        <img src={profilePicPreview} alt="Profile" className="w-full h-full object-cover" />
+                    ) : accountType === "agency" ? (
                         <Building2 className="text-primary group-hover:opacity-0" size={24} />
                     ) : (
                         <User className="text-primary group-hover:opacity-0" size={24} />
@@ -65,7 +111,7 @@ const RegisterPageForm = () => {
                     </div>
                 </div>
 
-                <button type="button" className="text-xs text-primary hover:text-hover-primary font-medium">
+                <button type="button" onClick={handleFileClick} className="text-xs text-primary hover:text-hover-primary font-medium">
                     Set profile picture
                 </button>
             </div>
