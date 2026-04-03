@@ -10,7 +10,7 @@ import { useWatch } from "react-hook-form";
 
 const RegisterPageForm = () => {
     // const navigate = useNavigate();
-    const { register, handleSubmit, reset, setValue, control, setError, formState: { errors, isSubmitting } } = useForm({
+    const { register, handleSubmit, reset, setValue, control, setError, clearErrors, formState: { errors, isSubmitting } } = useForm({
         resolver: zodResolver(registerSchema),
         mode: 'onChange',
         defaultValues: {
@@ -48,6 +48,13 @@ const RegisterPageForm = () => {
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (file.size > 2 * 1024 * 1024) {
+                setError("root", { type: "manual", message: "Profile picture size cannot exceed 2MB." });
+                e.target.value = ''; // Reset input so same file can be selected again if needed
+                return;
+            }
+
+            clearErrors("root");
             const url = URL.createObjectURL(file);
             setProfilePicPreview(url);
             setValue('profilePicture', file);
