@@ -12,6 +12,9 @@ import RegisterPage from "./pages/auth/register-page";
 import AgencyLayout from "./layouts/agency-layout";
 import LoginPage from "./pages/auth/login-page";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
+import AgencyClients from "./pages/agency/agency-clients";
+import AgencyEmployees from "./pages/agency/agency-employees";
+import AgencySettings from "./pages/agency/agency-settings";
 
 function App() {
   const router = createBrowserRouter(
@@ -34,15 +37,15 @@ function App() {
             <RoleProtectedRoute allowedRoles={["agency", "superadmin"]} />
           }
         >
-          <Route path="agency-dashboard" element={<AgencyLayout />}>
-            <Route index element={<AgencyDashboard />} />
+          <Route path="agency" element={<AgencyLayout />}>
+            <Route path="agency-dashboard" element={<AgencyDashboard />} />
             {/* <Route path='agency-projects' element={<AgencyProjects />}>
               <Route path='create-project' element={<CreateProject />} />
               <Route path='view-project/:project-id' element={<ViewProject />} />
-            </Route>
+            </Route>*/}
             <Route path="agency-clients" element={<AgencyClients />} />
             <Route path="agency-employees" element={<AgencyEmployees />} />
-            <Route path="agency-settings" element={<AgencySettings />} /> */}
+            <Route path="agency-settings" element={<AgencySettings />} /> 
           </Route>
         </Route>
 

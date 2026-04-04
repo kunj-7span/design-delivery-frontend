@@ -12,15 +12,15 @@ import { NavLink } from "react-router-dom";
 
 const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
   const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard, path: "/agency-dashboard" },
-    { name: "Projects", icon: Folders, path: "/projects" },
-    { name: "Client", icon: IdCard, path: "/clients" },
-    { name: "Employees", icon: UsersRound, path: "/employees" },
+    { name: "Dashboard", icon: LayoutDashboard, path: "/agency/agency-dashboard" },
+    { name: "Projects", icon: Folders, path: "/agency/agency-projects" },
+    { name: "Client", icon: IdCard, path: "/agency/agency-clients" },
+    { name: "Employees", icon: UsersRound, path: "/agency/agency-employees" },
   ];
 
   const bottomItems = [
-    { name: "Settings", icon: Settings, path: "/settings" },
-    { name: "Logout", icon: LogOut, path: "/logout" },
+    { name: "Settings", icon: Settings, path: "/agency/agency-settings" },
+    { name: "Logout", icon: LogOut, path: "/agency/agency-logout" },
   ];
 
   return (
@@ -38,12 +38,13 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
       {/* TOP SECTION */}
       <div className="px-3 pt-4">
         {/* LOGO */}
-        <div className="mb-6 ml-1 flex justify-start">
+        <div className="mb-6 flex items-center justify-start gap-3 overflow-hidden">
           <img
-            src={isSidebarOpen ? DDLogoFull : DDlogo}
+            src={DDlogo}
             alt="logo"
-            className={` ${isSidebarOpen ? "max-w-32" : "max-w-9.5"}`}
+            className="w-9.5"
           />
+          <span className="text-xl/5 font-semibold text-gray-700">design<br />delivery</span>
         </div>
 
         {/* MENU ITEMS */}
