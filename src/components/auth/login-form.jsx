@@ -27,12 +27,23 @@ const LoginForm = () => {
         {
           email: data.email,
           password: data.password,
-        }
+        },
       );
 
       const responseData = res.data;
+      const user = responseData.data?.user;
+      const userRole = user?.role;
 
-      const userRole = responseData.data?.user?.role;
+      if (user) {
+        localStorage.setItem(
+          "userData",
+          JSON.stringify({
+            name: user.name,
+            role: user.role,
+            avatar: user.avatar,
+          }),
+        );
+      }
 
       if (userRole === "agency_admin") {
         navigate("/agency-dashboard");
@@ -44,7 +55,10 @@ const LoginForm = () => {
     } catch (err) {
       setError("root", {
         type: "server",
-        message: err.response?.data?.message || err.message || "Invalid credentials. Please try again.",
+        message:
+          err.response?.data?.message ||
+          err.message ||
+          "Invalid credentials. Please try again.",
       });
     }
   };

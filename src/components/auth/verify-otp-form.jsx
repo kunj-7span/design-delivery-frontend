@@ -47,11 +47,9 @@ const VerifyOtpForm = () => {
     if (isNaN(val)) return;
 
     const newOtp = [...otp];
-    // Allow max length 1 per box
     newOtp[index] = val.substring(val.length - 1);
     setOtp(newOtp);
 
-    // Auto-focus next input
     if (val && index < 5 && inputRefs.current[index + 1]) {
       inputRefs.current[index + 1].focus();
     }
@@ -110,8 +108,17 @@ const VerifyOtpForm = () => {
 
       localStorage.removeItem("registerData");
 
-      // Success, route by role
-      if (registerData.role === "agency_admin") {
+      const user = data.data?.user;
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          name: user?.name || registerData.name,
+          role: user?.role || registerData.role,
+          avatar: user?.avatar || "",
+        })
+      );
+      const role = user?.role || registerData.role;
+      if (role === "agency_admin") {
         navigate("/agency-dashboard");
       } else {
         navigate("/client-dashboard");
@@ -127,7 +134,7 @@ const VerifyOtpForm = () => {
     if (timer > 0) return;
     try {
       setError("");
-      setTimer(45); // Reset timer optimistically
+      setTimer(45); 
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/auth/resend-otp`,
         {

@@ -1,7 +1,17 @@
+import { useState } from "react";
 import { PanelRightOpen, PanelRightClose, Bell } from "lucide-react";
 import profile from "../../assets/profile.png";
 
 const ClientNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
+  const [user] = useState(() => {
+    try {
+      const stored = localStorage.getItem("userData");
+      return stored ? JSON.parse(stored) : { name: "", role: "", avatar: "" };
+    } catch {
+      return { name: "", role: "", avatar: "" };
+    }
+  });
+
   return (
     <header className="h-16 bg-white shadow flex items-center justify-between px-4">
       {/* DESKTOP TOGGLE */}
@@ -25,14 +35,15 @@ const ClientNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
 
         <div className="flex items-center">
           <div className="text-end font-semibold">
-            <p className="text-sm">Tom Cook</p>
+            <p className="text-sm">{user.name || "Client"}</p>
             <p className="text-xs text-gray-500">Client</p>
           </div>
           <img
-            src={profile}
+            src={user.avatar || profile}
             width="50px"
             alt="profile"
-            className="cursor-pointer"
+            className="cursor-pointer rounded-full"
+            onError={(e) => { e.target.src = profile; }}
           />
         </div>
       </div>
