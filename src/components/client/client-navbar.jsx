@@ -1,12 +1,8 @@
 import { useState } from "react";
-import {
-  PanelRightOpen,
-  PanelRightClose,
-  Bell,
-} from "lucide-react";
+import { PanelRightOpen, PanelRightClose, Bell } from "lucide-react";
 import profile from "../../assets/profile.png";
 
-const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
+const ClientNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   const [user] = useState(() => {
     try {
       const stored = localStorage.getItem("userData");
@@ -18,7 +14,6 @@ const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
 
   return (
     <header className="h-16 bg-white shadow flex items-center justify-between px-4">
-      
       {/* DESKTOP TOGGLE */}
       <div className="hidden md:block">
         {isSidebarOpen ? (
@@ -40,8 +35,8 @@ const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
 
         <div className="flex items-center">
           <div className="text-end font-semibold">
-            <p className="text-sm">{user.name || "Agency"}</p>
-            <p className="text-xs text-gray-500">Admin</p>
+            <p className="text-sm">{user.name || "Client"}</p>
+            <p className="text-xs text-gray-500">Client</p>
           </div>
           <img
             src={user.avatar || profile}
@@ -56,4 +51,4 @@ const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   );
 };
 
-export default AgencyNavbar;
+export default ClientNavbar;
