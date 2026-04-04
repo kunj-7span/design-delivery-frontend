@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import Button from "../common/button";
 import InputField from "../common/input-field";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Lock, Camera, Building2, Mail, User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -94,22 +95,10 @@ const RegisterPageForm = () => {
           "https://design-delivery-storage.s3.ap-south-1.amazonaws.com/users/avatars/4f16deaf-88e7-4c48-a03c-b3cc77616382-avatar.png",
       };
 
-      const res = await fetch(
+      await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        },
+        payload
       );
-
-      const responseData = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(responseData.message || "Failed to register.");
-      }
 
       try {
         localStorage.setItem(
@@ -130,7 +119,7 @@ const RegisterPageForm = () => {
       setError("root", {
         type: "server",
         message:
-          err.message || "Failed to register. Email might already exist.",
+          err.response?.data?.message || err.message || "Failed to register. Email might already exist.",
       });
     }
   };
