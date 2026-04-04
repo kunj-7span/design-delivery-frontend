@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import Button from "../common/button";
 import InputField from "../common/input-field";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Lock, Camera, Building2, Mail, User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +9,7 @@ import { registerSchema } from "../../schema/auth-schema";
 import { useWatch } from "react-hook-form";
 
 const RegisterPageForm = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -85,14 +85,52 @@ const RegisterPageForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Register submitted:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // Navigate on success
-      // navigate('/dashboard');
-    } catch {
+      const payload = {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+        avatar:
+          "https://design-delivery-storage.s3.ap-south-1.amazonaws.com/users/avatars/4f16deaf-88e7-4c48-a03c-b3cc77616382-avatar.png",
+      };
+
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      const responseData = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(responseData.message || "Failed to register.");
+      }
+
+      try {
+        localStorage.setItem(
+          "registerData",
+          JSON.stringify({
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            role: data.role,
+          })
+        );
+      } catch (e) {
+        console.error("Failed to save to localStorage", e);
+      }
+
+      navigate("/verify-otp");
+    } catch (err) {
       setError("root", {
         type: "server",
-        message: "Failed to register. Email might already exist.",
+        message:
+          err.message || "Failed to register. Email might already exist.",
       });
     }
   };

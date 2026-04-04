@@ -9,6 +9,7 @@ import {
 import ForgotPasswordPage from "./pages/auth/forgot-password-page";
 import ResetPasswordPage from "./pages/auth/reset-password-page";
 import RegisterPage from "./pages/auth/register-page";
+import VerifyOtpPage from "./pages/auth/verify-otp-page";
 import AgencyLayout from "./layouts/agency-layout";
 import LoginPage from "./pages/auth/login-page";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
@@ -24,6 +25,7 @@ function App() {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="verify-otp" element={<VerifyOtpPage />} />
         {/* <Route path='reset-password' element={<ResetPassword />} /> */}
 
         {/* public routes */}
