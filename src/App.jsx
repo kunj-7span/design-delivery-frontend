@@ -1,4 +1,5 @@
 import AgencyDashboard from "./pages/agency/agency-dashboard";
+import CreateProject from "./pages/agency/create-project";
 import LandingPage from "./pages/landing-page";
 import {
   createBrowserRouter,
@@ -40,8 +41,8 @@ function App() {
         >
           <Route path="agency-dashboard" element={<AgencyLayout />}>
             <Route index element={<AgencyDashboard />} />
+            <Route path="create-project" element={<CreateProject />} />
             {/* <Route path='agency-projects' element={<AgencyProjects />}>
-              <Route path='create-project' element={<CreateProject />} />
               <Route path='view-project/:project-id' element={<ViewProject />} />
             </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
