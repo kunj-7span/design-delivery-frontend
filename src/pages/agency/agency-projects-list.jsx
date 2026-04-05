@@ -17,8 +17,9 @@ import {
   PieChart,
   Activity,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
-const MainApp = () => {
+const AgencyProjectsList = () => {
   const [activePage, setActivePage] = useState("Projects"); // Navigation mate
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
@@ -138,77 +139,7 @@ const MainApp = () => {
 
   return (
     <div className="flex h-screen bg-[#F8F9FD] text-[#2D3748] font-sans overflow-hidden">
-      <aside
-        className={`fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 z-50 transform ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0 transition-transform duration-300 flex flex-col`}
-      >
-        <div className="px-4 py-3 ">
-          <img
-            src="src/assets/LOGO.png"
-            className="w-30 sm:w-32 md:w-34 lg:w-36"
-            alt=""
-          />
-        </div>
-
-        <nav className="flex-1 px-4 mt-6 space-y-1">
-          <NavItem
-            icon={<LayoutDashboard size={20} />}
-            label="Dashboard"
-            active={activePage === "Dashboard"}
-            onClick={() => {
-              setActivePage("Dashboard");
-              setSidebarOpen(false);
-            }}
-          />
-          <NavItem
-            icon={<Folder size={20} />}
-            label="Projects"
-            active={activePage === "Projects"}
-            onClick={() => {
-              setActivePage("Projects");
-              setSidebarOpen(false);
-            }}
-          />
-          <NavItem
-            icon={<Users size={20} />}
-            label="Clients"
-            active={activePage === "Clients"}
-            onClick={() => {
-              setActivePage("Clients");
-              setSidebarOpen(false);
-            }}
-          />
-          <NavItem
-            icon={<UserCircle size={20} />}
-            label="Employee"
-            active={activePage === "Employee"}
-            onClick={() => {
-              setActivePage("Employee");
-              setSidebarOpen(false);
-            }}
-          />
-        </nav>
-
-        <div className="p-4 border-t border-gray-200">
-          <NavItem icon={<Settings size={20} />} label="Settings" />
-        </div>
-      </aside>
-
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0">
-          <button className="lg:hidden" onClick={() => setSidebarOpen(true)}>
-            <Menu size={24} />
-          </button>
-          <div className="flex items-center gap-6 ml-auto font-bold text-sm text-gray-600">
-            <Bell size={20} className="cursor-pointer" />
-            <div className="flex items-center gap-3 border-l border-gray-200 pl-6">
-              <span>kishan </span>
-              <div className="w-8 h-8 bg-primary hover:bg-hover-primary rounded-full text-white flex items-center justify-center text-[10px]">
-                k
-              </div>
-            </div>
-          </div>
-        </header>
-
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           <div className="max-w-6xl mx-auto">
             {activePage === "Dashboard" && (
@@ -246,9 +177,12 @@ const MainApp = () => {
               <div className="animate-in fade-in duration-500">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-3xl font-bold">Projects</h2>
-                  <button className="bg-primary hover:bg-hover-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-purple-100">
+                  <Link
+                    to="/agency/create-project"
+                    className="bg-primary hover:bg-hover-primary text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-purple-100"
+                  >
                     <Plus size={20} /> Create New Project
-                  </button>
+                  </Link>
                 </div>
 
                 <div className="flex gap-8 border-b border-gray-200 mb-6">
@@ -449,4 +383,4 @@ const StatCard = ({ icon, label, value, color }) => (
   </div>
 );
 
-export default MainApp;
+export default AgencyProjectsList;
