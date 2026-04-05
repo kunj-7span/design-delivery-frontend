@@ -97,7 +97,12 @@ const RegisterPageForm = () => {
 
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
-        payload
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
 
       try {
@@ -108,7 +113,7 @@ const RegisterPageForm = () => {
             email: data.email,
             password: data.password,
             role: data.role,
-          })
+          }),
         );
       } catch (e) {
         console.error("Failed to save to localStorage", e);
@@ -119,7 +124,9 @@ const RegisterPageForm = () => {
       setError("root", {
         type: "server",
         message:
-          err.response?.data?.message || err.message || "Failed to register. Email might already exist.",
+          err.response?.data?.message ||
+          err.message ||
+          "Failed to register. Email might already exist.",
       });
     }
   };
