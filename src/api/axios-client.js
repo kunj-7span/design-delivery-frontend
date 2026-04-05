@@ -11,7 +11,7 @@ const axiosClient = axios.create({
   },
 });
 
-// Attach token automatically
+// Attach token automatically and serialize data
 axiosClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -20,9 +20,21 @@ axiosClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    // Ensure data is sent as JSON string for POST/PUT/PATCH requests
+    if (
+      config.data &&
+      (config.method === "post" ||
+        config.method === "put" ||
+        config.method === "patch")
+    ) {
+      if (typeof config.data === "object") {
+        config.data = JSON.stringify(config.data);
+      }
+    }
+
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // ⚠️ Handle global errors
@@ -37,7 +49,7 @@ axiosClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosClient;

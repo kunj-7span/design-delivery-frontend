@@ -106,24 +106,24 @@ const VerifyOtpForm = () => {
         throw new Error(data.message || "Failed to verify OTP.");
       }
 
-    localStorage.removeItem("registerData");
-    localStorage.removeItem("registerEmail");
+      localStorage.removeItem("registerData");
+      localStorage.removeItem("registerEmail");
 
-    const user = data.data?.user;
-    const token = data.data?.token; 
+      const user = data.data?.user;
+      const token = data.data?.token;
 
-    if (token) {
-      localStorage.setItem("token", token);
-    }
+      if (token) {
+        localStorage.setItem("token", token);
+      }
 
-    localStorage.setItem(
-      "userData",
-      JSON.stringify({
-        name: user?.name || registerData.name,
-        role: user?.role || registerData.role,
-        avatar: user?.avatar || "",
-      })
-    );
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          name: user?.name || registerData.name,
+          role: user?.role || registerData.role,
+          avatar: user?.avatar || "",
+        }),
+      );
 
       const role = user?.role || registerData.role;
       if (role === "agency_admin") {
@@ -142,7 +142,7 @@ const VerifyOtpForm = () => {
     if (timer > 0) return;
     try {
       setError("");
-      setTimer(45); 
+      setTimer(45);
       const res = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/auth/resend-otp`,
         {
