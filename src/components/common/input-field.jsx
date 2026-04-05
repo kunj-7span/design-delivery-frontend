@@ -11,7 +11,7 @@ const InputField = React.forwardRef(
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
     return (
-      <div className="w-full h-18">
+      <div className="w-full h-20">
         {label && (
           <label
             htmlFor={id}
@@ -55,7 +55,7 @@ const InputField = React.forwardRef(
         {error && (
           <p
             id={`${id}-error`}
-            className="text-red-500 text-xs mt-1"
+            className="text-red-500 text-xs mt-1 text-end"
             role="alert"
           >
             {error.message}
