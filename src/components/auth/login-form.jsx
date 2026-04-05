@@ -30,35 +30,27 @@ const LoginForm = () => {
         },
       );
 
-      const responseData = res.data;
-      const user = responseData.data?.user;
-      const userRole = user?.role;
+      // According to your JSON: res.data.data contains { user, token }
+      const { token, user } = res.data.data;
 
-      if (user) {
-        localStorage.setItem(
-          "userData",
-          JSON.stringify({
-            name: user.name,
-            role: user.role,
-            avatar: user.avatar,
-          }),
-        );
-      }
+      if (token) {
+        localStorage.setItem("token", token);
 
-      if (userRole === "agency_admin") {
-        navigate("/agency-dashboard");
-      } else if (userRole === "client") {
-        navigate("/client-dashboard");
-      } else {
-        navigate("/agency-dashboard");
+        localStorage.setItem("user", JSON.stringify(user));
+
+        const userRole = user?.role;
+        if (userRole === "agency_admin") {
+          navigate("/agency/agency-dashboard");
+        } else if (userRole === "client") {
+          navigate("/client-dashboard");
+        } else {
+          navigate("/agency-dashboard");
+        }
       }
     } catch (err) {
       setError("root", {
         type: "server",
-        message:
-          err.response?.data?.message ||
-          err.message ||
-          "Invalid credentials. Please try again.",
+        message: err.response?.data?.message || "Login failed",
       });
     }
   };
@@ -107,7 +99,7 @@ const LoginForm = () => {
       <Button
         type="submit"
         isLoading={isSubmitting}
-        className="px-4 py-3 bg-primary hover:bg-hover-primary text-white text-sm w-full btn-class"
+        className="px-4 py-3 bg-primary hover:bg-hover-primary shadow-md shadow-indigo-200 text-white text-sm w-full btn-class"
       >
         Login
       </Button>
