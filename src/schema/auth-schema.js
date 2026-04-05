@@ -1,7 +1,6 @@
 import { z } from "zod";
 
-// Strict email: user@domain.tld or user@domain.co.tld (max 2-part extension)
-const strictEmailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
+// const strictEmailRegex = /^[^\s@]+@[a-zA-Z0-9-]+\.(com|co\.in)$/;
 
 const passwordSchema = z
   .string()
@@ -24,8 +23,12 @@ const matchPasswords = (data, ctx) => {
 };
 
 export const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email address").regex(strictEmailRegex, "Invalid email format"),
-  password: z.string().min(1, "Password is required"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .email("Invalid email address")
+    .toLowerCase(),
 });
 
 export const forgotPasswordSchema = z.object({
@@ -47,7 +50,7 @@ export const resetPasswordSchema = z
 export const registerSchema = z
   .object({
     role: z.enum(["agency_admin", "client"]),
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(1, "Name is required"),
     email: z
       .string()
       .min(1, "Email is required")
