@@ -24,6 +24,7 @@ import DesignerProjects from "./pages/designer/designer-projects";
 import MainApp from "./pages/agency/agency-projects-list";
 import ClientLayout from "./layouts/client-layout";
 import ClientDashboard from "./pages/client/client-dashbord";
+import AgencyProjectsList from "./pages/agency/agency-projects-list";
 
 function App() {
   const router = createBrowserRouter(
@@ -54,9 +55,9 @@ function App() {
           <Route path="agency" element={<AgencyLayout />}>
             <Route path="agency-dashboard" element={<AgencyDashboard />} />
             <Route path="create-project" element={<CreateProject />} />
-            {/* <Route path='agency-projects' element={<AgencyProjects />}>
-              <Route path='view-project/:project-id' element={<ViewProject />} />
-            </Route>*/}
+            <Route path="agency-projects" element={<AgencyProjectsList />}>
+              {/* <Route path='view-project/:project-id' element={<ViewProject />} /> */}
+            </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
             <Route path="agency-employees" element={<AgencyEmployees />} />
             <Route path="agency-settings" element={<AgencySettings />} />

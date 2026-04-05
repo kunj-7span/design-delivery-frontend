@@ -127,7 +127,7 @@ const VerifyOtpForm = () => {
 
       const role = user?.role || registerData.role;
       if (role === "agency_admin") {
-        navigate("agency/agency-dashboard");
+        navigate("/agency/agency-dashboard");
       } else {
         navigate("/client-dashboard");
       }
