@@ -242,7 +242,7 @@ const RegisterPageForm = () => {
           <Button
             type="submit"
             isLoading={isSubmitting}
-            className="px-4 py-4 bg-primary hover:bg-hover-primary text-white text-sm w-full btn-class"
+            className="px-4 py-4 bg-primary hover:bg-hover-primary shadow-md shadow-indigo-200 text-white text-sm w-full btn-class"
           >
             {role === "agency_admin"
               ? "Create Agency Account"

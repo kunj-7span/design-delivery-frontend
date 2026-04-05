@@ -106,17 +106,25 @@ const VerifyOtpForm = () => {
         throw new Error(data.message || "Failed to verify OTP.");
       }
 
-      localStorage.removeItem("registerData");
+    localStorage.removeItem("registerData");
+    localStorage.removeItem("registerEmail");
 
-      const user = data.data?.user;
-      localStorage.setItem(
-        "userData",
-        JSON.stringify({
-          name: user?.name || registerData.name,
-          role: user?.role || registerData.role,
-          avatar: user?.avatar || "",
-        })
-      );
+    const user = data.data?.user;
+    const token = data.data?.token; 
+
+    if (token) {
+      localStorage.setItem("token", token);
+    }
+
+    localStorage.setItem(
+      "userData",
+      JSON.stringify({
+        name: user?.name || registerData.name,
+        role: user?.role || registerData.role,
+        avatar: user?.avatar || "",
+      })
+    );
+
       const role = user?.role || registerData.role;
       if (role === "agency_admin") {
         navigate("/agency-dashboard");
@@ -183,7 +191,7 @@ const VerifyOtpForm = () => {
       <Button
         type="submit"
         isLoading={isSubmitting}
-        className="w-full py-4 bg-primary hover:bg-hover-primary text-white text-sm btn-class"
+        className="w-full py-4 bg-primary hover:bg-hover-primary shadow-md shadow-indigo-200 text-white text-sm btn-class"
       >
         Verify Account
       </Button>
@@ -198,7 +206,7 @@ const VerifyOtpForm = () => {
           <button
             type="button"
             onClick={handleResend}
-            className="text-primary hover:text-hover-primary transition-colors cursor-pointer"
+            className="text-primary hover:text-hover-primary shadow-md shadow-indigo-200 transition-colors cursor-pointer"
           >
             Resend OTP
           </button>

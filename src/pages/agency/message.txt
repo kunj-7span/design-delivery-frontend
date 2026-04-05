@@ -1,0 +1,93 @@
+import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { getCookie } from "cookies-next";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API as string;
+const PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_OPEN_API as string;
+const axiosClient: AxiosInstance = axios.create({
+  baseURL: `${BASE_URL}`,
+  timeout: 30000,
+  headers: {
+    "Content-Type": "application/json; charset=utf-8",
+    Accept: "application/json",
+  },
+  paramsSerializer: {
+    indexes: null,
+  },
+});
+
+const publicAxiosClient: AxiosInstance = axios.create({
+  baseURL: `${PUBLIC_BASE_URL}`,
+  timeout: 30000,
+  headers: {
+    "Content-Type": "application/json; charset=utf-8",
+    Accept: "application/json",
+  },
+});
+
+axiosClient.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    // If Authorization header is already set (e.g., from server-side), use it
+    if (!config.headers.Authorization) {
+      let token: string | null = null;
+      
+      // Try to get token from next-auth session (client-side)
+      if (typeof window !== "undefined") {
+        try {
+          // Dynamic import to avoid SSR issues
+          const { getSession } = await import("next-auth/react");
+          const session = await getSession();
+          // Type assertion for accessToken (defined in next-auth.d.ts)
+          if (session && (session as any).accessToken) {
+            token = (session as any).accessToken as string;
+          }
+        } catch (error) {
+          // getSession might fail, continue to try other methods
+        }
+      }
+      
+      // Fallback: try to get from cookie (for backward compatibility)
+      if (!token) {
+        try {
+          token = getCookie("token") as string | null;
+        } catch (error) {
+          // getCookie might fail in server context
+        }
+      }
+      
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config as unknown as InternalAxiosRequestConfig;
+  },
+  (error: AxiosError) => Promise.reject(error)
+);
+
+axiosClient.interceptors.response.use(
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    // Global API error handling
+    if (error?.response?.status === 401) {
+      console.error("Unauthorized — redirect to login");
+      
+      // If we're on the client side, sign out the user
+      if (typeof window !== "undefined") {
+        try {
+          const { signOut } = await import("next-auth/react");
+          await signOut({ redirect: true, callbackUrl: "/login" });
+        } catch (err) {
+          // signOut might fail, just redirect manually
+          window.location.href = "/login";
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default axiosClient;
+export { publicAxiosClient };
+
+export type ApiError = AxiosError;
+
+export type ApiResponse<T = unknown> = AxiosResponse<T>;
