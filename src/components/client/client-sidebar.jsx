@@ -13,7 +13,7 @@ import { NavLink } from "react-router-dom";
 const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/client-dashboard" },
-    { name: "Projects", icon: Folders, path: "/projects" },
+    { name: "Projects", icon: Folders, path: "/Projectess" },
     { name: "Calender", icon: IdCard, path: "/calender" },
   ];
 
