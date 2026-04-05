@@ -14,6 +14,9 @@ import VerifyOtpPage from "./pages/auth/verify-otp-page";
 import AgencyLayout from "./layouts/agency-layout";
 import LoginPage from "./pages/auth/login-page";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
+import DesignerDashboard from "./pages/designer/designer-dashboard";
+import DesignerProjects from "./pages/designer/designer-projects";
+import MainApp from "./pages/agency/agency-projects-list";
 import ClientLayout from "./layouts/client-layout";
 import ClientDashboard from "./pages/client/client-dashbord";
 
@@ -26,6 +29,10 @@ function App() {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="designer" element={<DesignerDashboard />} />
+        <Route path="designer/projects" element={<DesignerProjects />} />
+        <Route path="/projects" element={<MainApp />} />
+
         <Route path="verify-otp" element={<VerifyOtpPage />} />
         {/* <Route path='reset-password' element={<ResetPassword />} /> */}
 
