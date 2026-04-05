@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 
 const InputField = React.forwardRef(
-  ({ label, icon: Icon, error, type = "text", id, ...props }, ref) => {
+  (
+    { label, icon: Icon, error, type = "text", id, labelClassName, ...props },
+    ref,
+  ) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === "password";
     const inputType = isPassword ? (showPassword ? "text" : "password") : type;
@@ -12,7 +15,7 @@ const InputField = React.forwardRef(
         {label && (
           <label
             htmlFor={id}
-            className={`text-sm mb-1 block ${error ? "text-red-500" : "text-gray-400"}`}
+            className={`text-sm tracking-wider mb-2 block ${labelClassName || ""} ${error ? "text-red-500" : "text-gray-400"}`}
           >
             {label}
           </label>
@@ -33,7 +36,7 @@ const InputField = React.forwardRef(
             type={inputType}
             aria-invalid={error ? "true" : "false"}
             aria-describedby={error ? `${id}-error` : undefined}
-            className="w-full focus:outline-none placeholder:text-gray-400 text-sm bg-transparent"
+            className={`w-full focus:outline-none placeholder:text-gray-400 text-sm bg-transparent ${type === "date" ? "text-gray-400" : ""}`}
             {...props}
           />
 
