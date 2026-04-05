@@ -68,7 +68,7 @@ const ResetPasswordForm = () => {
       <Button
         type="submit"
         isLoading={isSubmitting}
-        className="px-4 py-3 bg-primary hover:bg-hover-primary text-white text-sm w-full btn-class mt-3"
+        className="px-4 py-3 bg-primary hover:bg-hover-primary shadow-md shadow-indigo-200 text-white text-sm w-full btn-class mt-3"
       >
         Send New Password
       </Button>
