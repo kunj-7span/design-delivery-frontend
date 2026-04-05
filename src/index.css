@@ -41,3 +41,11 @@ body {
     }
 }
 
+/* Date input placeholder styling */
+input[type="date"]:not(:focus):not(.has-value) {
+    color: #9ca3af;
+}
+
+input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+    color: inherit;
+}
