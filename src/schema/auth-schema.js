@@ -36,7 +36,6 @@ export const forgotPasswordSchema = z.object({
     .string()
     .min(1, "Email is required")
     .email("Invalid email address")
-    .regex(strictEmailRegex, "Invalid email format")
     .toLowerCase(),
 });
 
@@ -55,7 +54,7 @@ export const registerSchema = z
       .string()
       .min(1, "Email is required")
       .email("Invalid email address")
-      .regex(strictEmailRegex, "Invalid email format"),
+      .toLowerCase(),
     password: passwordSchema,
     confirmPassword: z.string(),
   })
