@@ -1,4 +1,5 @@
 import AgencyDashboard from "./pages/agency/agency-dashboard";
+import CreateProject from "./pages/agency/create-project";
 import LandingPage from "./pages/landing-page";
 import {
   createBrowserRouter,
@@ -9,12 +10,16 @@ import {
 import ForgotPasswordPage from "./pages/auth/forgot-password-page";
 import ResetPasswordPage from "./pages/auth/reset-password-page";
 import RegisterPage from "./pages/auth/register-page";
+import VerifyOtpPage from "./pages/auth/verify-otp-page";
 import AgencyLayout from "./layouts/agency-layout";
 import LoginPage from "./pages/auth/login-page";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import DesignerDashboard from "./pages/designer/designer-dashboard";
 import DesignerProjects from "./pages/designer/designer-projects";
 import MainApp from "./pages/agency/agency-projects-list";
+import ClientLayout from "./layouts/client-layout";
+import ClientDashboard from "./pages/client/client-dashbord";
+
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -28,6 +33,7 @@ function App() {
         <Route path="designer/projects" element={<DesignerProjects />} />
         <Route path="/projects" element={<MainApp />} />
 
+        <Route path="verify-otp" element={<VerifyOtpPage />} />
         {/* <Route path='reset-password' element={<ResetPassword />} /> */}
 
         {/* public routes */}
@@ -42,13 +48,31 @@ function App() {
         >
           <Route path="agency-dashboard" element={<AgencyLayout />}>
             <Route index element={<AgencyDashboard />} />
+            <Route path="create-project" element={<CreateProject />} />
             {/* <Route path='agency-projects' element={<AgencyProjects />}>
-              <Route path='create-project' element={<CreateProject />} />
               <Route path='view-project/:project-id' element={<ViewProject />} />
             </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
             <Route path="agency-employees" element={<AgencyEmployees />} />
             <Route path="agency-settings" element={<AgencySettings />} /> */}
+          </Route>
+        </Route>
+
+        {/* client routes */}
+        <Route
+          element={
+            <RoleProtectedRoute allowedRoles={["client", "superadmin"]} />
+          }
+        >
+          <Route path="client-dashboard" element={<ClientLayout />}>
+            <Route index element={<ClientDashboard />} />
+            {/* <Route path='client-projects' element={<ClientProjects />}>
+              <Route path='create-project' element={<CreateProject />} />
+              <Route path='view-project/:project-id' element={<ViewProject />} />
+            </Route>
+            <Route path="client-clients" element={<ClientClients />} />
+            <Route path="client-employees" element={<ClientEmployees />} />
+            <Route path="client-settings" element={<ClientSettings />} /> */}
           </Route>
         </Route>
 
