@@ -1,5 +1,7 @@
 import AgencyDashboard from "./pages/agency/agency-dashboard";
 import LandingPage from "./pages/landing-page";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -49,7 +51,7 @@ function App() {
             </Route>*/}
             <Route path="agency-clients" element={<AgencyClients />} />
             <Route path="agency-employees" element={<AgencyEmployees />} />
-            <Route path="agency-settings" element={<AgencySettings />} /> 
+            <Route path="agency-settings" element={<AgencySettings />} />
           </Route>
         </Route>
 
@@ -104,7 +106,21 @@ function App() {
   );
 
   return (
-    <RouterProvider router={router} />
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        theme="colored"
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      <RouterProvider router={router} />
+    </>
     // <LandingPage/>
     // <Login/>
     // <LoginPage />

@@ -60,7 +60,7 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
                 className={({ isActive }) =>
                   `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
                     isActive
-                      ? "bg-primary text-white font-medium"
+                      ? "bg-primary text-white font-medium shadow-md shadow-indigo-200"
                       : "hover:bg-gray-200 text-gray-700"
                   }`
                 }
