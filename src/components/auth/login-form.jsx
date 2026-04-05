@@ -10,6 +10,7 @@ import { loginSchema } from "../../schema/auth-schema";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  debugger
   const {
     register,
     handleSubmit,
@@ -27,6 +28,11 @@ const LoginForm = () => {
         {
           email: data.email,
           password: data.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
       );
 
