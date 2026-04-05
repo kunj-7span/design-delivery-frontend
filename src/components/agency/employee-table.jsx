@@ -101,11 +101,11 @@ const EmployeeTable = ({ data = [], onDelete }) => {
                 </td>
 
                 {/* Actions */}
-                <td className="px-6 py-4 flex justify-center gap-4 text-gray-500">
+                <td className="px-6 py-4 text-center gap-4 text-gray-500">
                   {onDelete && (
                     <button onClick={() => handleDeleteClick(item)}>
                       <Trash2
-                        size={16}
+                        size={20}
                         className="cursor-pointer hover:text-red-600"
                       />
                     </button>
