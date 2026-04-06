@@ -311,6 +311,9 @@ export default function DesignerProjects() {
           </div>
         </header>
 
+
+        <main className="flex min-h-screen bg-gray p-5">Comming Soon</main>
+{/* 
         <main className="flex-1 bg-gray-50/80 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-6xl">
             <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -341,7 +344,7 @@ export default function DesignerProjects() {
                       `(${selectedStatuses.length})`}
                   </button>
 
-                  {/* Filter  */}
+  
                   {showFilters && (
                     <div className="absolute right-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
                       <div className="border-b border-gray-100 p-4">
@@ -401,7 +404,6 @@ export default function DesignerProjects() {
                 </div>
               </div>
 
-              {/* Desktop */}
               <div className="hidden overflow-x-auto md:block">
                 <table className="w-full min-w-96 text-left text-sm">
                   <thead>
@@ -455,7 +457,6 @@ export default function DesignerProjects() {
                 </table>
               </div>
 
-              {/* Mobile */}
               <div className="space-y-3 p-4 md:hidden">
                 {pageRows.map((row) => (
                   <article
@@ -533,7 +534,7 @@ export default function DesignerProjects() {
               </div>
             </section>
           </div>
-        </main>
+        </main> */}
       </div>
     </div>
   );
