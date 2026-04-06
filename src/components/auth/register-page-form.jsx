@@ -15,7 +15,6 @@ const RegisterPageForm = () => {
     register,
     handleSubmit,
     reset,
-    setValue,
     control,
     setError,
     clearErrors,
@@ -48,6 +47,8 @@ const RegisterPageForm = () => {
         contactPersonName: "",
       });
       setProfilePicPreview(null);
+      localStorage.removeItem("avatarUploadUrl");
+      localStorage.removeItem("avatarFileUrl");
     }
   };
 
@@ -55,7 +56,7 @@ const RegisterPageForm = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -78,21 +79,61 @@ const RegisterPageForm = () => {
       }
 
       clearErrors("root");
-      const url = URL.createObjectURL(file);
-      setProfilePicPreview(url);
-      setValue("profilePicture", file);
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePicPreview(previewUrl);
+
+      try {
+        // Step 1: Get pre-signed upload URL
+        const generateRes = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/upload/generate-url`,
+          {
+            fileName: file.name,
+            contentType: file.type,
+            folder: "users/avatars",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        const { uploadUrl, fileUrl } = generateRes.data.data;
+
+        // Step 2: Upload file directly to S3
+        await axios.put(uploadUrl, file, {
+          headers: {
+            "Content-Type": file.type,
+          },
+        });
+
+        // Step 3: Store URLs in localStorage
+        localStorage.setItem("avatarUploadUrl", uploadUrl);
+        localStorage.setItem("avatarFileUrl", fileUrl);
+      } catch (err) {
+        setError("root", {
+          type: "manual",
+          message:
+            err.response?.data?.message ||
+            "Failed to upload profile picture. Please try again.",
+        });
+        setProfilePicPreview(null);
+        e.target.value = "";
+      }
     }
   };
 
   const onSubmit = async (data) => {
     try {
+      // Read avatar fileUrl from localStorage
+      const avatarUrl = localStorage.getItem("avatarFileUrl") || "";
+
       const payload = {
         name: data.name,
         email: data.email,
         password: data.password,
         role: data.role,
-        avatar:
-          "https://design-delivery-storage.s3.ap-south-1.amazonaws.com/users/avatars/4f16deaf-88e7-4c48-a03c-b3cc77616382-avatar.png",
+        ...(avatarUrl && { avatar: avatarUrl }),
       };
 
       await axios.post(
@@ -105,6 +146,7 @@ const RegisterPageForm = () => {
         },
       );
 
+      // Store registration data in localStorage
       try {
         localStorage.setItem(
           "registerData",
@@ -113,6 +155,7 @@ const RegisterPageForm = () => {
             email: data.email,
             password: data.password,
             role: data.role,
+            ...(avatarUrl && { avatar: avatarUrl }),
           }),
         );
       } catch (e) {
@@ -126,7 +169,7 @@ const RegisterPageForm = () => {
         message:
           err.response?.data?.message ||
           err.message ||
-          "Failed to register. Email might already exist.",
+          "Failed to register. Please try again.",
       });
     }
   };

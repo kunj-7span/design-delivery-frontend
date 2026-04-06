@@ -14,6 +14,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const flatProjectRows = [
   { name: "Logo Redesign", client: "Harsh bhai", total: "48", changes: "2" },
@@ -145,6 +146,13 @@ function ProjectSection({ title, rows, onProjectClick }) {
 const DesignerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
     const onResize = () => {
@@ -218,8 +226,9 @@ const DesignerDashboard = () => {
             Settings
           </a>
           <button
+            onClick={handleLogout}
             type="button"
-            className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-600 hover:bg-gray-200/80"
+            className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-600 hover:bg-red-200/80"
           >
             <LogOut className="h-5 w-5 shrink-0" aria-hidden />
             Logout

@@ -11,7 +11,7 @@ const tabs = [
   { label: "All Projects", workMode: null, status: null },
   { label: "Marketplace", workMode: "marketplace", status: null },
   { label: "Assigned Projects", workMode: "assigned", status: null },
-  { label: "Completed", workMode: null, status: "completed" },
+  { label: "Completed", workMode: null, status: null },
 ];
 
 const statusStyles = {
