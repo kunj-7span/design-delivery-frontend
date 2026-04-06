@@ -47,6 +47,7 @@ const CreateProjectForm = () => {
     setValue,
     setError,
     clearErrors,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(createProjectSchema),
@@ -63,6 +64,19 @@ const CreateProjectForm = () => {
     control,
     name: "requirements",
   });
+
+  const handleWorkModeChange = (mode) => {
+    if (mode === workMode) return;
+    setWorkMode(mode);
+    setClients([]);
+    setEmployees([]);
+    reset({
+      name: "",
+      clientIds: [],
+      employeeIds: [],
+      requirements: [{ title: "", type: "", deadline: "", description: "" }],
+    });
+  };
 
   // Fetch employees on mount
   useEffect(() => {
@@ -170,7 +184,7 @@ const CreateProjectForm = () => {
           <div className="bg-white border border-gray-200 p-1 rounded-2xl flex gap-1 shadow-sm">
             <button
               type="button"
-              onClick={() => setWorkMode("marketplace")}
+              onClick={() => handleWorkModeChange("marketplace")}
               className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
                 workMode === "marketplace"
                   ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
@@ -181,7 +195,7 @@ const CreateProjectForm = () => {
             </button>
             <button
               type="button"
-              onClick={() => setWorkMode("assigned")}
+              onClick={() => handleWorkModeChange("assigned")}
               className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
                 workMode === "assigned"
                   ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
