@@ -16,7 +16,7 @@ const statCards = [
     iconBg: "bg-purple-100",
     iconColor: "text-[#6C63FF]",
     label: "Active Projects",
-    value: "12",
+    value: "0",
     sub: "+2 this week",
     subColor: "text-gray-400",
   },
@@ -25,7 +25,7 @@ const statCards = [
     iconBg: "bg-blue-100",
     iconColor: "text-blue-500",
     label: "Total Assets",
-    value: "148",
+    value: "0",
     sub: "+18 this week",
     subColor: "text-gray-400",
   },
@@ -34,7 +34,7 @@ const statCards = [
     iconBg: "bg-yellow-100",
     iconColor: "text-yellow-500",
     label: "Pending Review",
-    value: "8",
+    value: "0",
     sub: "3 urgent",
     subColor: "text-gray-400",
   },
@@ -43,7 +43,7 @@ const statCards = [
     iconBg: "bg-red-100",
     iconColor: "text-red-400",
     label: "Requires Changes",
-    value: "3",
+    value: "0",
     valueColor: "text-red-500",
     sub: "Action needed",
     subColor: "text-gray-400",
@@ -53,7 +53,7 @@ const statCards = [
     iconBg: "bg-green-100",
     iconColor: "text-green-500",
     label: "Approved",
-    value: "84",
+    value: "0",
     valueColor: "text-green-500",
     sub: "57% of total",
     subColor: "text-gray-400",
@@ -63,70 +63,70 @@ const statCards = [
     iconBg: "bg-red-100",
     iconColor: "text-red-400",
     label: "Overdue",
-    value: "2",
+    value: "0",
     valueColor: "text-red-500",
     sub: "Immediate",
     subColor: "text-gray-400",
   },
 ];
 
-const projects = [
-  {
-    id: "website-redesign",
-    name: "Website Redesign",
-    client: "Acme Corp",
-    assets: "12 Files +9",
-    status: "Inprogress",
-    statusColor: "bg-purple-100 text-purple-600",
-    due: "Oct 24",
-    icon: "🌐",
-    iconBg: "bg-purple-100",
-  },
-  {
-    id: "q4-marketing",
-    name: "Q4 Marketing",
-    client: "Globex",
-    assets: "45 Files",
-    status: "Inprogress",
-    statusColor: "bg-purple-100 text-purple-600",
-    due: "Oct 28",
-    icon: "📊",
-    iconBg: "bg-yellow-100",
-  },
-  {
-    id: "social-campaign",
-    name: "Social Campaign",
-    client: "Soylent",
-    assets: "8 Files",
-    status: "Backlog",
-    statusColor: "bg-gray-100 text-gray-600",
-    due: "Oct 30",
-    icon: "📣",
-    iconBg: "bg-orange-100",
-  },
-  {
-    id: "logo-refresh",
-    name: "Logo Refresh",
-    client: "Umbrella",
-    assets: "3 Files",
-    status: "Completed",
-    statusColor: "bg-green-100 text-green-600",
-    due: "Nov 02",
-    icon: "✅",
-    iconBg: "bg-green-100",
-  },
-  {
-    id: "brand-guidelines",
-    name: "Brand Guidelines",
-    client: "Initech",
-    assets: "22 Files",
-    status: "Inprogress",
-    statusColor: "bg-purple-100 text-purple-600",
-    due: "Nov 08",
-    icon: "📐",
-    iconBg: "bg-blue-100",
-  },
-];
+// const projects = [
+//   {
+//     id: "website-redesign",
+//     name: "Website Redesign",
+//     client: "Acme Corp",
+//     assets: "12 Files +9",
+//     status: "Inprogress",
+//     statusColor: "bg-purple-100 text-purple-600",
+//     due: "Oct 24",
+//     icon: "🌐",
+//     iconBg: "bg-purple-100",
+//   },
+//   {
+//     id: "q4-marketing",
+//     name: "Q4 Marketing",
+//     client: "Globex",
+//     assets: "45 Files",
+//     status: "Inprogress",
+//     statusColor: "bg-purple-100 text-purple-600",
+//     due: "Oct 28",
+//     icon: "📊",
+//     iconBg: "bg-yellow-100",
+//   },
+//   {
+//     id: "social-campaign",
+//     name: "Social Campaign",
+//     client: "Soylent",
+//     assets: "8 Files",
+//     status: "Backlog",
+//     statusColor: "bg-gray-100 text-gray-600",
+//     due: "Oct 30",
+//     icon: "📣",
+//     iconBg: "bg-orange-100",
+//   },
+//   {
+//     id: "logo-refresh",
+//     name: "Logo Refresh",
+//     client: "Umbrella",
+//     assets: "3 Files",
+//     status: "Completed",
+//     statusColor: "bg-green-100 text-green-600",
+//     due: "Nov 02",
+//     icon: "✅",
+//     iconBg: "bg-green-100",
+//   },
+//   {
+//     id: "brand-guidelines",
+//     name: "Brand Guidelines",
+//     client: "Initech",
+//     assets: "22 Files",
+//     status: "Inprogress",
+//     statusColor: "bg-purple-100 text-purple-600",
+//     due: "Nov 08",
+//     icon: "📐",
+//     iconBg: "bg-blue-100",
+//   },
+// ];
 
 const ClientDashboard = () => {
   return (
@@ -164,15 +164,13 @@ const ClientDashboard = () => {
           <h2 className="text-lg font-bold text-gray-900">
             My Active Projects
           </h2>
-          <button
-            // onClick={() => navigate("/app/projects")}
+          {/* <button
             className="text-sm text-primary font-semibold hover:underline flex items-center gap-1"
           >
             View All <ArrowUpRight size={14} />
-          </button>
+          </button> */}
         </div>
 
-        {/* Table header */}
         <div className="grid grid-cols-5 text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3 px-2">
           <span>Project</span>
           <span>Client</span>
@@ -181,11 +179,10 @@ const ClientDashboard = () => {
           <span>Due Date</span>
         </div>
 
-        <div className="space-y-1">
+        {/* <div className="space-y-1">
           {projects.map((project) => (
             <div
               key={project.id}
-              //   onClick={() => navigate(`/app/projects/${project.id}`)}
               className="grid grid-cols-5 items-center py-3 px-2 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors"
             >
               <div className="flex items-center gap-3">
@@ -212,7 +209,7 @@ const ClientDashboard = () => {
               <span className="text-sm text-gray-600">{project.due}</span>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Toast notification */}

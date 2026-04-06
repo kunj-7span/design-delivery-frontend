@@ -99,21 +99,21 @@ const AgencyClients = () => {
   };
 
   // Handle edit - open modal for updating client
-  const handleEdit = (item) => {
-    setEditClient(item);
-    setSelectedClient({
-      name: item.clientName,
-      email: item.email,
-    });
-    setIsModalOpen(true);
-  };
+  // const handleEdit = (item) => {
+  //   setEditClient(item);
+  //   setSelectedClient({
+  //     name: item.clientName,
+  //     email: item.email,
+  //   });
+  //   setIsModalOpen(true);
+  // };
 
   const handleUpdate = async (data) => {
     try {
       await updateClient(editClient.id, data);
       const updatedInvitations = await getClientInvitations();
       setAllInvitations(updatedInvitations);
-      toast.success("Client updated successfully");
+      toast.success("Update invitation successfully");
       setSelectedClient(null);
       setEditClient(null);
       setIsModalOpen(false);
@@ -130,24 +130,28 @@ const AgencyClients = () => {
     { key: "status", label: "Status" },
   ];
 
-  const handleDelete = async (item) => {
-    try {
-      await deleteClientInvitation(item.id);
-      const updatedInvitations = await getClientInvitations();
-      setAllInvitations(updatedInvitations);
-      toast.success("Client invitation deleted successfully");
-    } catch (error) {
-      console.error("Error deleting invitation:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to delete invitation",
-      );
-    }
-  };
+  // const handleDelete = async (item) => {
+  //   try {
+  //     await deleteClientInvitation(item.id);
+  //     const updatedInvitations = await getClientInvitations();
+  //     setAllInvitations(updatedInvitations);
+  //     toast.success("Client invitation deleted successfully");
+  //   } catch (error) {
+  //     console.error("Error deleting invitation:", error);
+  //     toast.error(
+  //       error?.response?.data?.message || "Failed to delete invitation",
+  //     );
+  //   }
+  // };
 
   const handleResendInvitation = async (item) => {
     try {
-      await resendClientInvitation(item.id);
-      toast.success("Invitation resent successfully");
+      if (item.status !== "PENDING") {
+        await resendClientInvitation(item.id);
+        toast.success("Invitation resent successfully");
+      } else {
+        toast.error("Only expired invitations can be resent");
+      }
     } catch (error) {
       console.error("Error resending invitation:", error);
       toast.error(
@@ -279,8 +283,8 @@ const AgencyClients = () => {
                     <Table
                       data={currentData}
                       columns={columns}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
+                      // onEdit={handleEdit}
+                      // onDelete={handleDelete}
                       onSend={handleResendInvitation}
                       renderActions={true}
                     />

@@ -15,19 +15,20 @@ import {
   X,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import profile from "../../assets/user-icon.png";
 
 const flatProjectRows = [
-  { name: "Logo Redesign", client: "Harsh bhai", total: "48", changes: "2" },
-  { name: "Poster Redesign", client: "Dhruv bhai", total: "24", changes: "0" },
+  { name: "Logo Redesign", client: "Harsh bhai", total: "0", changes: "0" },
+  { name: "Poster Redesign", client: "Dhruv bhai", total: "0", changes: "0" },
 ];
 
 const activeProjectRows = [
-  { name: "7Span Logo Redesign", client: "7Span", total: "36", changes: "1" },
+  { name: "7Span Logo Redesign", client: "7Span", total: "0", changes: "0" },
   {
     name: "Accutech Logo Redesign",
     client: "Accutech",
-    total: "52",
-    changes: "4",
+    total: "0",
+    changes: "0",
   },
 ];
 
@@ -273,13 +274,21 @@ const DesignerDashboard = () => {
             >
               <span className="hidden text-sm font-semibold text-gray-800 sm:inline">
                 Kishan
-              </span>
-              <span
+              </span><img
+            src={profile}
+            width="50px"
+            alt="profile"
+            className="cursor-pointer rounded-full"
+            onError={(e) => {
+              e.target.src = profile;
+            }}
+          />
+              {/* <span
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-primary to-purple-700 text-xs font-bold text-white"
                 aria-hidden
               >
                 K
-              </span>
+              </span> */}
             </button>
           </div>
         </header>
@@ -294,7 +303,7 @@ const DesignerDashboard = () => {
                       Active projects
                     </p>
                     <p className="mt-2 text-3xl font-bold tabular-nums text-sky-700">
-                      12
+                      0
                     </p>
                   </div>
                   <div className="rounded-lg bg-sky-100/80 p-2 text-sky-600">
@@ -310,7 +319,7 @@ const DesignerDashboard = () => {
                       Approved
                     </p>
                     <p className="mt-2 text-3xl font-bold tabular-nums text-emerald-700">
-                      3
+                      0
                     </p>
                   </div>
                   <div className="rounded-lg bg-emerald-100/80 p-2 text-emerald-600">
@@ -326,7 +335,7 @@ const DesignerDashboard = () => {
                       Overdue
                     </p>
                     <p className="mt-2 text-3xl font-bold tabular-nums text-rose-700">
-                      2
+                      0
                     </p>
                   </div>
                   <div className="rounded-lg bg-rose-100/80 p-2 text-rose-600">
