@@ -141,3 +141,15 @@ export const createProject = async (payload) => {
   const response = await axiosClient.post("/agency/projects", payload);
   return response.data;
 };
+
+// Get Projects
+export const getProjects = async ({ workMode, status, page = 1, limit = 5 } = {}) => {
+  const params = new URLSearchParams();
+  if (workMode) params.append("workMode", workMode);
+  if (status) params.append("status", status);
+  params.append("page", page);
+  params.append("limit", limit);
+
+  const response = await axiosClient.get(`/agency/projects?${params.toString()}`);
+  return response.data;
+};

@@ -32,7 +32,7 @@ const TagInput = ({
   // Filter options: not already selected, matches search
   const filteredOptions = options.filter((opt) => {
     const alreadySelected = tags.some((t) =>
-      typeof t === "object" ? t.id === opt.id : t === opt.id
+      typeof t === "object" ? t.id === opt.id : t === opt.id,
     );
     const matchesSearch = opt.name
       .toLowerCase()
@@ -161,7 +161,7 @@ const TagInput = ({
       {error && (
         <p
           id={`${id}-error`}
-          className="text-red-500 text-xs mt-1"
+          className="text-red-500 text-xs mt-1 text-end"
           role="alert"
         >
           {error.message}
