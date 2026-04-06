@@ -226,11 +226,9 @@ const RegisterPageForm = () => {
       }
 
       // Navigate to client dashboard if registered via invitation
-      if (invitationToken && role === "client") {
-        navigate("/client-dashboard");
-      } else {
+      
         navigate("/verify-otp");
-      }
+      
     } catch (err) {
       setError("root", {
         type: "server",
