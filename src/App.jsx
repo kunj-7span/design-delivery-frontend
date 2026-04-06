@@ -70,8 +70,7 @@ function App() {
         <Route
           element={
             <RoleProtectedRoute allowedRoles={["client", "superadmin"]} />
-          }
-        >
+          }>
           <Route path="client-dashboard" element={<ClientLayout />}>
             <Route index element={<ClientDashboard />} />
             <Route path="invitations" element={<ClientInvitations />} />
