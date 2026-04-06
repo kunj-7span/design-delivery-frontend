@@ -39,7 +39,7 @@ const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
             <p className="text-xs text-gray-500">Admin</p>
           </div>
           <img
-            src={user.avatar || profile}
+            src={localStorage.getItem("avatarFileUrl") || user.avatar || profile}
             width="50px"
             alt="profile"
             className="cursor-pointer rounded-full"
