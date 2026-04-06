@@ -8,16 +8,17 @@ const requirementSchema = z.object({
 });
 
 export const createProjectSchema = z.object({
-  projectName: z
+  name: z
     .string()
     .min(1, "Project name is required")
     .min(3, "Project name must be at least 3 characters"),
-  clients: z
+  clientIds: z
     .array(z.string())
     .min(1, "At least one client is required"),
-  employees: z
+  employeeIds: z
     .array(z.string())
-    .min(1, "At least one employee is required"),
+    .optional()
+    .default([]),
   requirements: z
     .array(requirementSchema)
     .min(1, "At least one requirement is needed"),

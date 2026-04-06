@@ -83,18 +83,34 @@ function App() {
         </Route>
 
         {/* designer routes */}
-        {/* <Route element={<RoleProtectedRoute allowedRoles={['designer', 'superadmin']} />}>
-          <Route path='designer-dashboard' element={<DesignerLayout />}>
-            <Route index element={<DesignerDashboard />} />
-            <Route path='designer-projects' element={<DesignerProjects />}>
-              <Route path='view-project/:project-id' element={<ViewDesignerProject />} />
-              <Route path='view-project/:project-id/requirement/:requirement-id' element={<ViewAssets />} />
-              <Route path='view-project/:project-id/requirement/:requirement-id/asset-collaboration' element={<ViewAssetsCollaboration />} />
+        <Route
+          element={
+            <RoleProtectedRoute allowedRoles={["designer", "superadmin"]} />
+          }
+        >
+          <Route path="employee-dashboard" element={<DesignerDashboard />} />
+          {/* <Route index element={<DesignerDashboard />} />
+            <Route path="designer-projects" element={<DesignerProjects />}>
+              <Route
+                path="view-project/:project-id"
+                element={<ViewDesignerProject />}
+              />
+              <Route
+                path="view-project/:project-id/requirement/:requirement-id"
+                element={<ViewAssets />}
+              />
+              <Route
+                path="view-project/:project-id/requirement/:requirement-id/asset-collaboration"
+                element={<ViewAssetsCollaboration />}
+              />
             </Route>
             <Route path="designer-settings" element={<DesignerSettings />} />
-            <Route path="designer-notification" element={<DesignerNotification />} />
-          </Route>
-        </Route> */}
+            <Route
+              path="designer-notification"
+              element={<DesignerNotification />}
+            />
+          </Route> */}
+        </Route>
 
         {/* end-client routes */}
         {/* <Route element={<RoleProtectedRoute allowedRoles={['end-client', 'superadmin']} />}>

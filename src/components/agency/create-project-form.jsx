@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProjectSchema } from "../../schema/project-schema";
@@ -8,6 +8,11 @@ import SelectField from "../common/select-field";
 import TextareaField from "../common/textarea-field";
 import Button from "../common/button";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import {
+  getEmployeesForSelect,
+  createProject,
+} from "../../services/agency-services";
 import {
   CircleDot,
   Users,
@@ -29,9 +34,11 @@ const requirementTypes = [
 
 const CreateProjectForm = () => {
   const navigate = useNavigate();
-  const [projectType, setProjectType] = useState("assign");
+
+  const [workMode, setWorkMode] = useState("assigned");
   const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [employeeOptions, setEmployeeOptions] = useState([]);
 
   const {
     register,
@@ -44,9 +51,9 @@ const CreateProjectForm = () => {
   } = useForm({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
-      projectName: "",
-      clients: [],
-      employees: [],
+      name: "",
+      clientIds: [],
+      employeeIds: [],
       requirements: [{ title: "", type: "", deadline: "", description: "" }],
     },
     mode: "onChange",
@@ -57,259 +64,307 @@ const CreateProjectForm = () => {
     name: "requirements",
   });
 
-  // Tag handlers for clients
+  // Fetch employees on mount
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const data = await getEmployeesForSelect();
+        setEmployeeOptions(data);
+      } catch (err) {
+        console.error("Failed to fetch employees:", err);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
+  // Tag handlers for clients (plain string tags — typed by user)
   const handleAddClient = (tag) => {
     if (!clients.includes(tag)) {
       const updated = [...clients, tag];
       setClients(updated);
-      setValue("clients", updated);
-      clearErrors("clients");
+      setValue("clientIds", updated);
+      clearErrors("clientIds");
     }
   };
 
   const handleRemoveClient = (index) => {
     const updated = clients.filter((_, i) => i !== index);
     setClients(updated);
-    setValue("clients", updated);
+    setValue("clientIds", updated);
   };
 
-  // Tag handlers for employees
-  const handleAddEmployee = (tag) => {
-    if (!employees.includes(tag)) {
-      const updated = [...employees, tag];
+  // Tag handlers for employees (object tags — selected from dropdown)
+  const handleAddEmployee = (opt) => {
+    // opt is { id, name }
+    if (!employees.some((e) => e.id === opt.id)) {
+      const updated = [...employees, opt];
       setEmployees(updated);
-      setValue("employees", updated);
-      clearErrors("employees");
+      setValue(
+        "employeeIds",
+        updated.map((e) => e.id)
+      );
+      clearErrors("employeeIds");
     }
   };
 
   const handleRemoveEmployee = (index) => {
     const updated = employees.filter((_, i) => i !== index);
     setEmployees(updated);
-    setValue("employees", updated);
+    setValue(
+      "employeeIds",
+      updated.map((e) => e.id)
+    );
   };
 
   const onSubmit = async (data) => {
     try {
-      console.log("Project Data:", { ...data, projectType });
+      const payload = {
+        name: data.name,
+        workMode,
+        clientIds: data.clientIds,
+      };
+
+      // Only include employeeIds for assigned mode
+      if (workMode === "assigned") {
+        if (!data.employeeIds || data.employeeIds.length === 0) {
+          setError("employeeIds", {
+            type: "manual",
+            message: "At least one employee is required for assigned projects.",
+          });
+          return;
+        }
+        payload.employeeIds = data.employeeIds;
+      }
+
+      await createProject(payload);
+      toast.success("Project created successfully!");
+
+      // Navigate back after a brief delay so the user sees the toast
+      setTimeout(() => {
+        navigate("/agency/agency-projects");
+      }, 1500);
     } catch (err) {
-      setError("root", {
-        type: "server",
-        message: err.response?.data?.message || "Failed to create project.",
-      });
+      const message =
+        err.response?.data?.message || "Failed to create project.";
+      setError("root", { type: "server", message });
+      toast.error(message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
-      {/* HEADER */}
-      <div className="mb-6 md:mb-8">
-        <h1 className="text-heading text-xl md:text-2xl font-bold text-gray-900">
-          Create New Project
-        </h1>
-        <p className="text-small text-gray-500 mt-1">
-          Define the scope, assign your creative team, and set deliverables.
-        </p>
-      </div>
+    <>
 
-      {/* PROJECT TYPE TOGGLE */}
-      <div className="flex justify-start mb-8 md:mb-10">
-        <div className="bg-white border border-gray-200 p-1 rounded-2xl flex gap-1 shadow-sm">
-          <button
-            type="button"
-            onClick={() => setProjectType("flat")}
-            className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
-              projectType === "flat"
-                ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            Flat Project
-          </button>
-          <button
-            type="button"
-            onClick={() => setProjectType("assign")}
-            className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
-              projectType === "assign"
-                ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
-                : "text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            Assign Project
-          </button>
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
+        {/* HEADER */}
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-heading text-xl md:text-2xl font-bold text-gray-900">
+            Create New Project
+          </h1>
+          <p className="text-small text-gray-500 mt-1">
+            Define the scope, assign your creative team, and set deliverables.
+          </p>
         </div>
-      </div>
 
-      {errors.root && (
-        <div className="p-3 bg-red-100 text-red-600 rounded-xl text-sm text-center mb-6">
-          {errors.root.message}
-        </div>
-      )}
-
-      {/* BASIC INFO */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100 mb-5 md:mb-6">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-9 h-9 rounded-md bg-primary/10 flex items-center justify-center">
-            <CircleDot size={18} className="text-primary" />
+        {/* WORK MODE TOGGLE */}
+        <div className="flex justify-start mb-8 md:mb-10">
+          <div className="bg-white border border-gray-200 p-1 rounded-2xl flex gap-1 shadow-sm">
+            <button
+              type="button"
+              onClick={() => setWorkMode("marketplace")}
+              className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
+                workMode === "marketplace"
+                  ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Marketplace
+            </button>
+            <button
+              type="button"
+              onClick={() => setWorkMode("assigned")}
+              className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
+                workMode === "assigned"
+                  ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
+                  : "text-gray-500 hover:text-gray-700"
+              }`}
+            >
+              Assigned
+            </button>
           </div>
-          <h2 className="text-base md:text-lg font-semibold text-gray-900">
-            Basic Information
-          </h2>
         </div>
 
-        <div className="space-y-5">
-          <InputField
-            label="Project Name"
-            id="projectName"
-            type="text"
-            placeholder="e.g. Q4 Brand Refresh - Global Campaign"
-            error={errors.projectName}
-            {...register("projectName")}
-          />
+        {errors.root && (
+          <div className="p-3 bg-red-100 text-red-600 rounded-xl text-sm text-center mb-6">
+            {errors.root.message}
+          </div>
+        )}
 
-          <TagInput
-            label="Clients"
-            id="clients"
-            tags={clients}
-            onAddTag={handleAddClient}
-            onRemoveTag={handleRemoveClient}
-            placeholder="Search and add clients..."
-            error={errors.clients}
-            tagColor="bg-primary"
-          />
-        </div>
-      </div>
-
-      {/* TEAM ASSIGNMENT (only for Assign Project) */}
-      {projectType === "assign" && (
+        {/* BASIC INFO */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100 mb-5 md:mb-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-9 h-9 rounded-md bg-amber-50 flex items-center justify-center">
-              <Users size={18} className="text-amber-600" />
+            <div className="w-9 h-9 rounded-md bg-primary/10 flex items-center justify-center">
+              <CircleDot size={18} className="text-primary" />
             </div>
             <h2 className="text-base md:text-lg font-semibold text-gray-900">
-              Team Assignment
+              Basic Information
             </h2>
           </div>
 
-          <TagInput
-            label="Employees"
-            id="employees"
-            tags={employees}
-            onAddTag={handleAddEmployee}
-            onRemoveTag={handleRemoveEmployee}
-            placeholder="Search and add designers..."
-            error={errors.employees}
-            tagColor="bg-gray-700"
-          />
-        </div>
-      )}
+          <div className="space-y-5">
+            <InputField
+              label="Project Name"
+              id="name"
+              type="text"
+              placeholder="e.g. Q4 Brand Refresh - Global Campaign"
+              error={errors.name}
+              {...register("name")}
+            />
 
-      {/*PROJECT REQUIREMENTS */}
-      <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100 mb-5 md:mb-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-md bg-blue-50 flex items-center justify-center">
-              <ClipboardList size={18} className="text-blue-600" />
-            </div>
-            <h2 className="text-base md:text-lg font-semibold text-gray-900">
-              Project Requirements
-            </h2>
+            <TagInput
+              label="Clients"
+              id="clientIds"
+              tags={clients}
+              onAddTag={handleAddClient}
+              onRemoveTag={handleRemoveClient}
+              placeholder="Type client ID and press Enter..."
+              error={errors.clientIds}
+              tagColor="bg-primary"
+            />
           </div>
-          <button
-            type="button"
-            onClick={() =>
-              append({ title: "", type: "", deadline: "", description: "" })
-            }
-            className="flex items-center gap-1.5 text-primary text-sm font-medium hover:text-hover-primary transition-colors cursor-pointer"
-          >
-            <PlusCircle size={16} />
-            <span className="hidden sm:inline">Add Requirement</span>
-          </button>
         </div>
 
-        <div className="space-y-8">
-          {fields.map((field, index) => (
-            <div
-              key={field.id}
-              className={`${index > 0 ? "pt-6 border-t border-gray-100" : ""}`}
+        {/* TEAM ASSIGNMENT (only for Assigned mode) */}
+        {workMode === "assigned" && (
+          <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100 mb-5 md:mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-9 h-9 rounded-md bg-amber-50 flex items-center justify-center">
+                <Users size={18} className="text-amber-600" />
+              </div>
+              <h2 className="text-base md:text-lg font-semibold text-gray-900">
+                Team Assignment
+              </h2>
+            </div>
+
+            <TagInput
+              label="Employees"
+              id="employeeIds"
+              tags={employees}
+              onAddTag={handleAddEmployee}
+              onRemoveTag={handleRemoveEmployee}
+              placeholder="Search and select employees..."
+              error={errors.employeeIds}
+              tagColor="bg-gray-700"
+              options={employeeOptions}
+            />
+          </div>
+        )}
+
+        {/*PROJECT REQUIREMENTS */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-sm border border-gray-100 mb-5 md:mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-md bg-blue-50 flex items-center justify-center">
+                <ClipboardList size={18} className="text-blue-600" />
+              </div>
+              <h2 className="text-base md:text-lg font-semibold text-gray-900">
+                Project Requirements
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                append({ title: "", type: "", deadline: "", description: "" })
+              }
+              className="flex items-center gap-1.5 text-primary text-sm font-medium hover:text-hover-primary transition-colors cursor-pointer"
             >
-              {/* Remove button for extra requirements */}
-              {fields.length > 1 && (
-                <div className="flex justify-end mb-3">
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="flex items-center gap-1 text-red-400 hover:text-red-600 text-xs font-medium transition-colors cursor-pointer"
-                  >
-                    <Trash2 size={14} />
-                    Remove
-                  </button>
+              <PlusCircle size={16} />
+              <span className="hidden sm:inline">Add Requirement</span>
+            </button>
+          </div>
+
+          <div className="space-y-8">
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className={`${index > 0 ? "pt-6 border-t border-gray-100" : ""}`}
+              >
+                {/* Remove button for extra requirements */}
+                {fields.length > 1 && (
+                  <div className="flex justify-end mb-3">
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="flex items-center gap-1 text-red-400 hover:text-red-600 text-xs font-medium transition-colors cursor-pointer"
+                    >
+                      <Trash2 size={14} />
+                      Remove
+                    </button>
+                  </div>
+                )}
+
+                {/* Title, Type, Deadline */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                  <InputField
+                    label="Requirement Title"
+                    id={`req-title-${index}`}
+                    type="text"
+                    placeholder="Visual Identity Design"
+                    error={errors.requirements?.[index]?.title}
+                    {...register(`requirements.${index}.title`)}
+                  />
+
+                  <SelectField
+                    label="Type"
+                    id={`req-type-${index}`}
+                    options={requirementTypes}
+                    placeholder="Select type"
+                    error={errors.requirements?.[index]?.type}
+                    {...register(`requirements.${index}.type`)}
+                  />
+
+                  <InputField
+                    label="Deadline"
+                    id={`req-deadline-${index}`}
+                    type="date"
+                    placeholder="mm/dd/yy"
+                    error={errors.requirements?.[index]?.deadline}
+                    {...register(`requirements.${index}.deadline`)}
+                  />
                 </div>
-              )}
 
-              {/* Title, Type, Deadline */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                <InputField
-                  label="Requirement Title"
-                  id={`req-title-${index}`}
-                  type="text"
-                  placeholder="Visual Identity Design"
-                  error={errors.requirements?.[index]?.title}
-                  {...register(`requirements.${index}.title`)}
-                />
-
-                <SelectField
-                  label="Type"
-                  id={`req-type-${index}`}
-                  options={requirementTypes}
-                  placeholder="Select type"
-                  error={errors.requirements?.[index]?.type}
-                  {...register(`requirements.${index}.type`)}
-                />
-
-                <InputField
-                  label="Deadline"
-                  id={`req-deadline-${index}`}
-                  type="date"
-                  placeholder="mm/dd/yy"
-                  error={errors.requirements?.[index]?.deadline}
-                  {...register(`requirements.${index}.deadline`)}
+                {/* Description */}
+                <TextareaField
+                  label="Description"
+                  id={`req-desc-${index}`}
+                  rows={4}
+                  placeholder="Enter detailed requirement scope and deliverables..."
+                  error={errors.requirements?.[index]?.description}
+                  {...register(`requirements.${index}.description`)}
                 />
               </div>
-
-              {/* Description */}
-              <TextareaField
-                label="Description"
-                id={`req-desc-${index}`}
-                rows={4}
-                placeholder="Enter detailed requirement scope and deliverables..."
-                error={errors.requirements?.[index]?.description}
-                {...register(`requirements.${index}.description`)}
-              />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2 pb-6">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="px-6 py-3 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
-        >
-          Cancel
-        </button>
-        <Button
-          type="submit"
-          isLoading={isSubmitting}
-          className="px-6 py-3 bg-primary hover:bg-hover-primary text-white text-sm gap-2"
-        >
-          <Rocket size={16} />
-          Create Project
-        </Button>
-      </div>
-    </form>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2 pb-6">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="px-6 py-3 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <Button
+            type="submit"
+            isLoading={isSubmitting}
+            className="px-6 py-3 bg-primary hover:bg-hover-primary text-white text-sm gap-2"
+          >
+            <Rocket size={16} />
+            Create Project
+          </Button>
+        </div>
+      </form>
+    </>
   );
 };
 

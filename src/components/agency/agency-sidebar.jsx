@@ -8,11 +8,17 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 
 const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard, path: "/agency/agency-dashboard" },
+    {
+      name: "Dashboard",
+      icon: LayoutDashboard,
+      path: "/agency/agency-dashboard",
+    },
     { name: "Projects", icon: Folders, path: "/agency/agency-projects" },
     { name: "Client", icon: IdCard, path: "/agency/agency-clients" },
     { name: "Employees", icon: UsersRound, path: "/agency/agency-employees" },
@@ -20,8 +26,12 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
   const bottomItems = [
     { name: "Settings", icon: Settings, path: "/agency/agency-settings" },
-    { name: "Logout", icon: LogOut, path: "/agency/agency-logout" },
   ];
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -38,14 +48,17 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
       {/* TOP SECTION */}
       <div className="px-3 pt-4">
         {/* LOGO */}
-        <div className="mb-6 flex items-center justify-start gap-3 overflow-hidden">
-          <img
-            src={DDlogo}
-            alt="logo"
-            className="w-9.5"
-          />
-          <span className="text-xl/5 font-semibold text-gray-700">design<br />delivery</span>
-        </div>
+        <Link
+          to="/agency/agency-dashboard"
+          className="mb-6 flex items-center justify-start gap-3 overflow-hidden"
+        >
+          <img src={DDlogo} alt="logo" className="w-9.5" />
+          <span className="text-xl/5 font-semibold text-gray-700">
+            design
+            <br />
+            delivery
+          </span>
+        </Link>
 
         {/* MENU ITEMS */}
         <div className="space-y-2">
@@ -120,6 +133,25 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
             </NavLink>
           );
         })}
+
+        {/* LOGOUT */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 text-gray-700 hover:text-red-600 w-full"
+        >
+          <div className="flex justify-center items-center">
+            <LogOut size={22} />
+          </div>
+          <span
+            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              isSidebarOpen
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-2 w-0"
+            }`}
+          >
+            Logout
+          </span>
+        </button>
       </div>
     </aside>
   );
