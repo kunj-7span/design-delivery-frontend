@@ -88,7 +88,7 @@ const ClientCard = ({
           </span>
         </div>
 
-        {/* Delete Button */}
+        {/* Delete Button
         {onDelete && (
           <button
             onClick={handleDeleteClick}
@@ -97,7 +97,7 @@ const ClientCard = ({
             <Trash2 size={16} />
             Delete Client
           </button>
-        )}
+        )} */}
       </div>
 
       {/* Confirm Dialog */}
