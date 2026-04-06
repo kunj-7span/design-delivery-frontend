@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
   getEmployeesForSelect,
+  getClientsForSelect,
   createProject,
 } from "../../services/agency-services";
 import {
@@ -38,6 +39,7 @@ const CreateProjectForm = () => {
   const [workMode, setWorkMode] = useState("assigned");
   const [clients, setClients] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [clientOptions, setClientOptions] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
 
   const {
@@ -78,7 +80,7 @@ const CreateProjectForm = () => {
     });
   };
 
-  // Fetch employees on mount
+  // Fetch employees and clients on mount
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -88,15 +90,28 @@ const CreateProjectForm = () => {
         console.error("Failed to fetch employees:", err);
       }
     };
+    const fetchClients = async () => {
+      try {
+        const data = await getClientsForSelect();
+        setClientOptions(data);
+      } catch (err) {
+        console.error("Failed to fetch clients:", err);
+      }
+    };
     fetchEmployees();
+    fetchClients();
   }, []);
 
-  // Tag handlers for clients (plain string tags — typed by user)
-  const handleAddClient = (tag) => {
-    if (!clients.includes(tag)) {
-      const updated = [...clients, tag];
+  // Tag handlers for clients (object tags — selected from dropdown)
+  const handleAddClient = (opt) => {
+    // opt is { id, name }
+    if (!clients.some((c) => c.id === opt.id)) {
+      const updated = [...clients, opt];
       setClients(updated);
-      setValue("clientIds", updated);
+      setValue(
+        "clientIds",
+        updated.map((c) => c.id)
+      );
       clearErrors("clientIds");
     }
   };
@@ -104,7 +119,10 @@ const CreateProjectForm = () => {
   const handleRemoveClient = (index) => {
     const updated = clients.filter((_, i) => i !== index);
     setClients(updated);
-    setValue("clientIds", updated);
+    setValue(
+      "clientIds",
+      updated.map((c) => c.id)
+    );
   };
 
   // Tag handlers for employees (object tags — selected from dropdown)
@@ -240,9 +258,10 @@ const CreateProjectForm = () => {
               tags={clients}
               onAddTag={handleAddClient}
               onRemoveTag={handleRemoveClient}
-              placeholder="Type client ID and press Enter..."
+              placeholder="Search and select clients..."
               error={errors.clientIds}
               tagColor="bg-primary"
+              options={clientOptions}
             />
           </div>
         </div>
