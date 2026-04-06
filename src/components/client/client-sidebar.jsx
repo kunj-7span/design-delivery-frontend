@@ -7,6 +7,7 @@ import {
   UsersRound,
   Settings,
   LogOut,
+  Link,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 
@@ -19,9 +20,7 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
     { name: "Calender", icon: IdCard, path: "/calender" },
   ];
 
-  const bottomItems = [
-    { name: "Settings", icon: Settings, path: "/settings" },
-  ];
+  const bottomItems = [{ name: "Settings", icon: Settings, path: "/settings" }];
 
   const handleLogout = () => {
     localStorage.clear();
@@ -43,13 +42,13 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
       {/* TOP SECTION */}
       <div className="px-3 pt-4">
         {/* LOGO */}
-        <div className="mb-6 ml-1 flex justify-start">
+        <Link to="/client-dashboard" className="mb-6 ml-1 flex justify-start">
           <img
             src={isSidebarOpen ? DDLogoFull : DDlogo}
             alt="logo"
             className={` ${isSidebarOpen ? "max-w-32" : "max-w-9.5"}`}
           />
-        </div>
+        </Link>
 
         {/* MENU ITEMS */}
         <div className="space-y-2">

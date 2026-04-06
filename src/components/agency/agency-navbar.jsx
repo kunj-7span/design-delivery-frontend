@@ -5,7 +5,7 @@ import profile from "../../assets/profile.png";
 const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   const [user] = useState(() => {
     try {
-      const stored = localStorage.getItem("userData");
+      const stored = localStorage.getItem("user");
       return stored ? JSON.parse(stored) : { name: "", role: "", avatar: "" };
     } catch {
       return { name: "", role: "", avatar: "" };

@@ -8,13 +8,17 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 
 const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard, path: "/agency/agency-dashboard" },
+    {
+      name: "Dashboard",
+      icon: LayoutDashboard,
+      path: "/agency/agency-dashboard",
+    },
     { name: "Projects", icon: Folders, path: "/agency/agency-projects" },
     { name: "Client", icon: IdCard, path: "/agency/agency-clients" },
     { name: "Employees", icon: UsersRound, path: "/agency/agency-employees" },
@@ -44,14 +48,17 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
       {/* TOP SECTION */}
       <div className="px-3 pt-4">
         {/* LOGO */}
-        <div className="mb-6 flex items-center justify-start gap-3 overflow-hidden">
-          <img
-            src={DDlogo}
-            alt="logo"
-            className="w-9.5"
-          />
-          <span className="text-xl/5 font-semibold text-gray-700">design<br />delivery</span>
-        </div>
+        <Link
+          to="/agency/agency-dashboard"
+          className="mb-6 flex items-center justify-start gap-3 overflow-hidden"
+        >
+          <img src={DDlogo} alt="logo" className="w-9.5" />
+          <span className="text-xl/5 font-semibold text-gray-700">
+            design
+            <br />
+            delivery
+          </span>
+        </Link>
 
         {/* MENU ITEMS */}
         <div className="space-y-2">
