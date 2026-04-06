@@ -1,9 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "../common/button";
 import InputField from "../common/input-field";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { Lock, Camera, Building2, Mail, User } from "lucide-react";
+import { Lock, Camera, Building2, Mail, User, X, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../schema/auth-schema";
@@ -11,6 +11,9 @@ import { useWatch } from "react-hook-form";
 
 const RegisterPageForm = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const invitationToken = searchParams.get("token");
   const {
     register,
     handleSubmit,
@@ -23,7 +26,7 @@ const RegisterPageForm = () => {
     resolver: zodResolver(registerSchema),
     mode: "onChange",
     defaultValues: {
-      role: "agency_admin",
+      role: invitationToken ? "client" : "agency_admin",
       name: "",
       email: "",
       password: "",
@@ -35,6 +38,40 @@ const RegisterPageForm = () => {
   const role = useWatch({ control, name: "role" });
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Check for token and validate on component mount
+  useEffect(() => {
+    const initializeForm = async () => {
+      try {
+        if (invitationToken) {
+          // Future API call to validate token
+          // const response = await axios.post(
+          //   `${import.meta.env.VITE_API_BASE_URL}/auth/validate-invitation`,
+          //   { token: invitationToken }
+          // );
+          // If validation passes, the form will be in client mode
+          // If validation fails, we can redirect or show error
+          
+          // For now, just switch to client role
+          reset({
+            role: "client",
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            contactPersonName: "",
+          });
+        }
+      } catch (err) {
+        console.error("Error validating invitation token:", err);
+        // Optionally handle error - redirect to register without token, etc.
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeForm();
+  }, [invitationToken, reset]);
 
   const switchAccountType = (type) => {
     if (type !== role) {
@@ -54,6 +91,17 @@ const RegisterPageForm = () => {
 
   const handleFileClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleRemoveProfilePic = (e) => {
+    e.stopPropagation();
+    setProfilePicPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    localStorage.removeItem("avatarUploadUrl");
+    localStorage.removeItem("avatarFileUrl");
+    clearErrors("root");
   };
 
   const handleFileChange = async (e) => {
@@ -136,6 +184,10 @@ const RegisterPageForm = () => {
         ...(avatarUrl && { avatar: avatarUrl }),
       };
 
+      if (invitationToken) {
+        payload.invitationToken = invitationToken;
+      }
+
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
         payload,
@@ -175,24 +227,33 @@ const RegisterPageForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
-      <div className="flex justify-between mb-4 w-full bg-gray-100 rounded-xl">
-        <Button
-          type="button"
-          onClick={() => switchAccountType("agency_admin")}
-          className={`px-4 flex-1 py-2 text-gray-500 text-sm cursor-pointer duration-300 shadow-none transition-colors ${role === "agency_admin" ? "bg-primary text-white" : "hover:bg-gray-200"}`}
-        >
-          Agency Admin
-        </Button>
+    <>
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-20">
+          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+          <p className="text-gray-600 text-sm">Loading registration form...</p>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full" noValidate>
+          <div className="flex justify-between mb-4 w-full bg-gray-100 rounded-xl">
+            <Button
+              type="button"
+              onClick={() => switchAccountType("agency_admin")}
+              disabled={!!invitationToken}
+              className={`px-4 flex-1 py-2 text-gray-500 text-sm cursor-pointer duration-300 shadow-none transition-colors ${role === "agency_admin" ? "bg-primary text-white" : "hover:bg-gray-200"} ${invitationToken ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              Agency Admin
+            </Button>
 
-        <Button
-          type="button"
-          onClick={() => switchAccountType("client")}
-          className={`px-4 flex-1 py-2 text-gray-500 text-sm cursor-pointer duration-300 transition-colors shadow-none ${role === "client" ? "bg-primary text-white" : "hover:bg-gray-200"}`}
-        >
-          Client
-        </Button>
-      </div>
+            <Button
+              type="button"
+              onClick={() => switchAccountType("client")}
+              disabled={!!invitationToken}
+              className={`px-4 flex-1 py-2 text-gray-500 text-sm cursor-pointer duration-300 transition-colors shadow-none ${role === "client" ? "bg-primary text-white" : "hover:bg-gray-200"} ${invitationToken ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              Client
+            </Button>
+          </div>
 
       {/* Profile picture */}
       <div className="mb-4 flex flex-col items-center gap-2">
@@ -203,27 +264,43 @@ const RegisterPageForm = () => {
           accept=".png, .jpg, .jpeg, image/png, image/jpeg"
           onChange={handleFileChange}
         />
-        <div
-          onClick={handleFileClick}
-          className="w-18 h-18 rounded-full border-2 border-dashed border-primary flex items-center justify-center overflow-hidden cursor-pointer hover:border-hover-primary hover:bg-purple-100 transition relative group bg-purple-50"
-        >
-          {profilePicPreview ? (
-            <img
-              src={profilePicPreview}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          ) : role === "agency_admin" ? (
-            <Building2
-              className="text-primary group-hover:opacity-0"
-              size={24}
-            />
-          ) : (
-            <User className="text-primary group-hover:opacity-0" size={24} />
-          )}
-          <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
-            <Camera className="text-white" size={20} />
+        <div className="relative inline-block">
+          <div
+            onClick={!profilePicPreview ? handleFileClick : undefined}
+            className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${
+              profilePicPreview
+                ? "border-0"
+                : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
+            } transition relative group bg-purple-50`}
+          >
+            {profilePicPreview ? (
+              <img
+                src={profilePicPreview}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : role === "agency_admin" ? (
+              <Building2
+                className="text-primary group-hover:opacity-0"
+                size={24}
+              />
+            ) : (
+              <User className="text-primary group-hover:opacity-0" size={24} />
+            )}
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+              <Camera className="text-white" size={20} />
+            </div>
           </div>
+
+          {profilePicPreview && (
+            <button
+              type="button"
+              onClick={handleRemoveProfilePic}
+              className="cursor-pointer absolute -top-2 -right-4 bg-red-500 hover:bg-red-600 rounded-full p-1 text-white transition shadow-lg"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         <button
@@ -294,7 +371,7 @@ const RegisterPageForm = () => {
             isLoading={isSubmitting}
             className="px-4 py-4 bg-primary hover:bg-hover-primary shadow-md shadow-indigo-200 text-white text-sm w-full btn-class"
           >
-            {role === "agency_admin"
+          {role === "agency_admin"
               ? "Create Agency Account"
               : "Create Client Account"}
           </Button>
@@ -307,7 +384,9 @@ const RegisterPageForm = () => {
           </div>
         </div>
       </div>
-    </form>
+        </form>
+      )}
+    </>
   );
 };
 

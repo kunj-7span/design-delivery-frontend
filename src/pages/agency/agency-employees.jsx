@@ -236,7 +236,7 @@ const AgencyEmployees = () => {
               />
               <input
                 type="text"
-                placeholder="Search by name or email..."
+                placeholder="Search by name or email"
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);

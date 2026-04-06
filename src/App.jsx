@@ -25,11 +25,12 @@ import MainApp from "./pages/agency/agency-projects-list";
 import ClientLayout from "./layouts/client-layout";
 import ClientDashboard from "./pages/client/client-dashbord";
 import AgencyProjectsList from "./pages/agency/agency-projects-list";
+import ErrorPage from "./pages/error-page";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/">
+      <Route path="/" errorElement={<ErrorPage />}>
         <Route index element={<LandingPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
@@ -126,6 +127,9 @@ function App() {
             <Route path="calender" element={<CalenderView />} />
           </Route>
         </Route> */}
+
+        {/* Catch-all route for undefined paths */}
+        <Route path="*" element={<ErrorPage />} />
       </Route>,
     ),
   );

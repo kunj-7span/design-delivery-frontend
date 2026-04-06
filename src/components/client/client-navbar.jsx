@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { PanelRightOpen, PanelRightClose, Bell } from "lucide-react";
-import profile from "../../assets/profile.png";
+import profile from "../../assets/user-icon.png";
 
 const ClientNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   const [user] = useState(() => {

@@ -16,7 +16,7 @@ const matchPasswords = (data, ctx) => {
   if (data.password !== data.confirmPassword) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Passwords don't match",
+      message: "Confirm password must match the password",
       path: ["confirmPassword"],
     });
   }
