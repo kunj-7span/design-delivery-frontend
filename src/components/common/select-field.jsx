@@ -48,7 +48,7 @@ const SelectField = React.forwardRef(
         {error && (
           <p
             id={`${id}-error`}
-            className="text-red-500 text-xs mt-1"
+            className="text-red-500 text-xs mt-1 text-end"
             role="alert"
           >
             {error.message}
