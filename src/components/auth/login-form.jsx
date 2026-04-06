@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import Button from "../common/button";
 import InputField from "../common/input-field";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,11 @@ import { loginSchema } from "../../schema/auth-schema";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [isInvitationFlow, setIsInvitationFlow] = useState(false);
+  const prefillEmail = searchParams.get("email");
+  const invitationToken = searchParams.get("token");
+
   const {
     register,
     handleSubmit,
@@ -18,7 +23,17 @@ const LoginForm = () => {
   } = useForm({
     resolver: zodResolver(loginSchema),
     mode: "onChange",
+    defaultValues: {
+      email: prefillEmail || "",
+      password: "",
+    },
   });
+
+  useEffect(() => {
+    if (invitationToken) {
+      setIsInvitationFlow(true);
+    }
+  }, [invitationToken]);
 
   const onSubmit = async (data) => {
     try {
@@ -47,7 +62,12 @@ const LoginForm = () => {
         if (userRole === "agency_admin") {
           navigate("/agency/agency-dashboard");
         } else if (userRole === "client") {
-          navigate("/client-dashboard");
+          // If coming from invitation, navigate to client dashboard
+          if (isInvitationFlow) {
+            navigate("/client-dashboard");
+          } else {
+            navigate("/client-dashboard");
+          }
         } else {
           navigate("/employee-dashboard");
         }
@@ -77,6 +97,7 @@ const LoginForm = () => {
           placeholder="Enter Email"
           autoComplete="email"
           error={errors.email}
+          disabled={!!prefillEmail}
           {...register("email")}
         />
 

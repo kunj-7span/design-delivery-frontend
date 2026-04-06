@@ -24,6 +24,7 @@ import DesignerProjects from "./pages/designer/designer-projects";
 import MainApp from "./pages/agency/agency-projects-list";
 import ClientLayout from "./layouts/client-layout";
 import ClientDashboard from "./pages/client/client-dashbord";
+import ClientInvitations from "./pages/client/client-invitations";
 import AgencyProjectsList from "./pages/agency/agency-projects-list";
 import ErrorPage from "./pages/error-page";
 
@@ -73,6 +74,7 @@ function App() {
         >
           <Route path="client-dashboard" element={<ClientLayout />}>
             <Route index element={<ClientDashboard />} />
+            <Route path="invitations" element={<ClientInvitations />} />
             {/* <Route path='client-projects' element={<ClientProjects />}>
               <Route path='create-project' element={<CreateProject />} />
               <Route path='view-project/:project-id' element={<ViewProject />} />
