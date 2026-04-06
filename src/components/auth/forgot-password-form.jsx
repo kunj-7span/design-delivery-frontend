@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { forgotPasswordSchema } from '../../schema/auth-schema';
+import axios from 'axios';
 
 const ForgotPasswordForm = () => {
     const { register, handleSubmit, setError, formState: { errors, isSubmitting, isSubmitSuccessful } } = useForm({
@@ -15,10 +16,23 @@ const ForgotPasswordForm = () => {
 
     const onSubmit = async (data) => {
         try {
-            console.log("Forgot password submitted:", data);
-            await new Promise(resolve => setTimeout(resolve, 1500));
-        } catch{
-            setError("root", { type: "server", message: "Failed to send reset link." });
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/forgot-password`,
+                {
+                    email: data.email,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (res.data.success) {
+                console.log("Reset link sent successfully:", res.data.message);
+            }
+        } catch (err) {
+            setError("root", { type: "server", message: err.response?.data?.message || "Failed to send reset link." });
         }
     };
 
@@ -57,14 +71,14 @@ const ForgotPasswordForm = () => {
                 />
             </div>
 
-            <Button 
-                type="submit" 
+            <Button
+                type="submit"
                 isLoading={isSubmitting}
                 className='px-4 py-3 bg-primary hover:bg-hover-primary shadow-md shadow-indigo-200 text-white text-sm w-full btn-class mt-3'
             >
                 Send Reset Link
             </Button>
-            
+
             <div className='text-xs mt-5 text-center font-semibold'>
                 <Link to="/login" className='text-primary inline-flex items-center justify-center hover:text-hover-primary'>
                     <ArrowLeft className='w-4 mr-1' />
