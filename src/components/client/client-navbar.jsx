@@ -43,7 +43,9 @@ const ClientNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
             width="50px"
             alt="profile"
             className="cursor-pointer rounded-full"
-            onError={(e) => { e.target.src = profile; }}
+            onError={(e) => {
+              e.target.src = profile;
+            }}
           />
         </div>
       </div>

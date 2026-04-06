@@ -7,20 +7,25 @@ import {
   UsersRound,
   Settings,
   LogOut,
+  Link,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/client-dashboard" },
     { name: "Projects", icon: Folders, path: "/Projectess" },
     { name: "Calender", icon: IdCard, path: "/calender" },
   ];
 
-  const bottomItems = [
-    { name: "Settings", icon: Settings, path: "/settings" },
-    { name: "Logout", icon: LogOut, path: "/logout" },
-  ];
+  const bottomItems = [{ name: "Settings", icon: Settings, path: "/settings" }];
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -37,13 +42,13 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
       {/* TOP SECTION */}
       <div className="px-3 pt-4">
         {/* LOGO */}
-        <div className="mb-6 ml-1 flex justify-start">
+        <Link to="/client-dashboard" className="mb-6 ml-1 flex justify-start">
           <img
             src={isSidebarOpen ? DDLogoFull : DDlogo}
             alt="logo"
             className={` ${isSidebarOpen ? "max-w-32" : "max-w-9.5"}`}
           />
-        </div>
+        </Link>
 
         {/* MENU ITEMS */}
         <div className="space-y-2">
@@ -118,6 +123,25 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
             </NavLink>
           );
         })}
+
+        {/* LOGOUT */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 text-gray-700 hover:text-red-600 w-full"
+        >
+          <div className="flex justify-center items-center">
+            <LogOut size={22} />
+          </div>
+          <span
+            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              isSidebarOpen
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-2 w-0"
+            }`}
+          >
+            Logout
+          </span>
+        </button>
       </div>
     </aside>
   );

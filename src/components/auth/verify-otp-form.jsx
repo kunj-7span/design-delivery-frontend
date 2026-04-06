@@ -117,7 +117,7 @@ const VerifyOtpForm = () => {
       }
 
       localStorage.setItem(
-        "userData",
+        "user",
         JSON.stringify({
           name: user?.name || registerData.name,
           role: user?.role || registerData.role,

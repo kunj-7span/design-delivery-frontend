@@ -124,3 +124,20 @@ export const deleteEmployee = async (employeeId) => {
   await axiosClient.delete(`/employee-profiles/${employeeId}`);
   return true;
 };
+
+// Employees for select dropdown (id + name)
+export const getEmployeesForSelect = async () => {
+  const response = await axiosClient.get("/employee-profiles");
+  const employees = response.data?.data || [];
+
+  return employees.map((emp) => ({
+    id: emp.id,
+    name: emp.name,
+  }));
+};
+
+// Create Project
+export const createProject = async (payload) => {
+  const response = await axiosClient.post("/agency/projects", payload);
+  return response.data;
+};

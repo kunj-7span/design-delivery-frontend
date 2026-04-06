@@ -10,7 +10,6 @@ import { loginSchema } from "../../schema/auth-schema";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  debugger
   const {
     register,
     handleSubmit,
@@ -50,7 +49,7 @@ const LoginForm = () => {
         } else if (userRole === "client") {
           navigate("/client-dashboard");
         } else {
-          navigate("/agency-dashboard");
+          navigate("/employee-dashboard");
         }
       }
     } catch (err) {
