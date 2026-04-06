@@ -7,6 +7,7 @@ import {
   UsersRound,
   Settings,
   LogOut,
+  Mail,
 } from "lucide-react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 
@@ -15,6 +16,7 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/client-dashboard" },
+    { name: "Invitations", icon: Mail, path: "/client-dashboard/invitations" },
     { name: "Projects", icon: Folders, path: "/Projectess" },
     { name: "Calender", icon: IdCard, path: "/calender" },
   ];

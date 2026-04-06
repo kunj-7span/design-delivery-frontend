@@ -128,7 +128,7 @@ const AgencyProjectsList = () => {
             />
             <input
               type="text"
-              placeholder="Search projects..."
+              placeholder="Search projects"
               className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-lg text-sm outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
