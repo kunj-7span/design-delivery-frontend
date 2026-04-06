@@ -136,6 +136,17 @@ export const getEmployeesForSelect = async () => {
   }));
 };
 
+// Clients for select dropdown (id + name)
+export const getClientsForSelect = async () => {
+  const response = await axiosClient.get("/agency/client-invitations/clients");
+  const clients = response.data?.data || [];
+
+  return clients.map((client) => ({
+    id: client.id,
+    name: client.name,
+  }));
+};
+
 // Create Project
 export const createProject = async (payload) => {
   const response = await axiosClient.post("/agency/projects", payload);
