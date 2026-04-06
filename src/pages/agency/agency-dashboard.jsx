@@ -19,30 +19,34 @@ const AgencyDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState([]);
 
-  const quarterlyData = useMemo(() => {
-    if (!chartData.length) return [];
+  const monthsOnly = useMemo(() => {
+    return chartData.filter((d) => d.name && !d.name.match(/^Q[1-4]$/i));
+  }, [chartData]);
 
-    const quarters = [
+  const quarterlyData = useMemo(() => {
+    if (!monthsOnly.length) return [];
+
+    const quartersDefs = [
       { label: "Q1", months: [0, 1, 2] },
       { label: "Q2", months: [3, 4, 5] },
       { label: "Q3", months: [6, 7, 8] },
       { label: "Q4", months: [9, 10, 11] },
     ];
 
-    return quarters.map((q) => {
+    return quartersDefs.map((q) => {
       const total = q.months.reduce(
-        (sum, index) => sum + (chartData[index]?.clients || 0),
+        (sum, index) => sum + (monthsOnly[index]?.clients || 0),
         0,
       );
 
       return { name: q.label, clients: total };
     });
-  }, [chartData]);
+  }, [monthsOnly]);
 
   const data =
     view === "monthly"
-      ? chartData.length
-        ? chartData
+      ? monthsOnly.length
+        ? monthsOnly
         : [{ name: "No Data", clients: 0 }]
       : quarterlyData;
 
@@ -166,7 +170,7 @@ const AgencyDashboard = () => {
           {/* CHART */}
           <div className="w-full h-55 sm:h-65 md:h-75">
             <ResponsiveContainer>
-              <AreaChart data={data}>
+              <AreaChart data={data} margin={{ left: 15, right: 15, bottom: 5, top: 10 }}>
                 {/* GRADIENT */}
                 <defs>
                   <linearGradient id="colorClients" x1="0" y1="0" x2="0" y2="1">
@@ -188,6 +192,8 @@ const AgencyDashboard = () => {
                   tick={{ fontSize: 12, fill: "#9CA3AF" }}
                   axisLine={false}
                   tickLine={false}
+                  interval={0}
+                  padding={{ left: 15, right: 15 }}
                 />
 
                 {/* TOOLTIP */}
