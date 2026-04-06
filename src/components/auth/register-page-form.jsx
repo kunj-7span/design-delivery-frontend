@@ -13,6 +13,7 @@ const RegisterPageForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [invitationData, setInvitationData] = useState(null);
   const invitationToken = searchParams.get("token");
   const {
     register,
@@ -26,7 +27,7 @@ const RegisterPageForm = () => {
     resolver: zodResolver(registerSchema),
     mode: "onChange",
     defaultValues: {
-      role: invitationToken ? "client" : "agency_admin",
+      role: "client",
       name: "",
       email: "",
       password: "",
@@ -44,34 +45,44 @@ const RegisterPageForm = () => {
     const initializeForm = async () => {
       try {
         if (invitationToken) {
-          // Future API call to validate token
-          // const response = await axios.post(
-          //   `${import.meta.env.VITE_API_BASE_URL}/auth/validate-invitation`,
-          //   { token: invitationToken }
-          // );
-          // If validation passes, the form will be in client mode
-          // If validation fails, we can redirect or show error
-          
-          // For now, just switch to client role
-          reset({
-            role: "client",
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            contactPersonName: "",
-          });
+          // Verify the invitation token
+          const response = await axios.get(
+            `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/verify?token=${invitationToken}`
+          );
+
+          if (response.data.success) {
+            const { user_exists, client_name, email } = response.data.data;
+            setInvitationData(response.data.data);
+
+            if (user_exists) {
+              // User exists, redirect to login with email pre-filled
+              navigate(`/login?email=${encodeURIComponent(email)}&token=${invitationToken}`);
+            } else {
+              // User doesn't exist, pre-fill the form
+              reset({
+                role: "client",
+                name: client_name,
+                email: email,
+                password: "",
+                confirmPassword: "",
+                contactPersonName: "",
+              });
+            }
+          }
         }
       } catch (err) {
         console.error("Error validating invitation token:", err);
-        // Optionally handle error - redirect to register without token, etc.
+        setError("root", {
+          type: "manual",
+          message: "Invalid or expired invitation link. Please try again.",
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     initializeForm();
-  }, [invitationToken, reset]);
+  }, [invitationToken, reset, setError, navigate]);
 
   const switchAccountType = (type) => {
     if (type !== role) {
@@ -214,7 +225,12 @@ const RegisterPageForm = () => {
         console.error("Failed to save to localStorage", e);
       }
 
-      navigate("/verify-otp");
+      // Navigate to client dashboard if registered via invitation
+      if (invitationToken && role === "client") {
+        navigate("/client-dashboard");
+      } else {
+        navigate("/verify-otp");
+      }
     } catch (err) {
       setError("root", {
         type: "server",
