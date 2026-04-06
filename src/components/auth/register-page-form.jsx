@@ -44,16 +44,17 @@ const RegisterPageForm = () => {
   useEffect(() => {
     const initializeForm = async () => {
       try {
+        console.log("first")
         if (invitationToken) {
           // Verify the invitation token
           const response = await axios.get(
             `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/verify?token=${invitationToken}`
           );
-
+          console.log(response)
           if (response.data.success) {
+            console.log(response)
             const { user_exists, client_name, email } = response.data.data;
             setInvitationData(response.data.data);
-
             if (user_exists) {
               // User exists, redirect to login with email pre-filled
               navigate(`/login?email=${encodeURIComponent(email)}&token=${invitationToken}`);
@@ -68,6 +69,8 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
+          }else{
+            console.log(response)
           }
         }
       } catch (err) {
@@ -194,10 +197,7 @@ const RegisterPageForm = () => {
         role: data.role,
         ...(avatarUrl && { avatar: avatarUrl }),
       };
-
-      if (invitationToken) {
-        payload.invitationToken = invitationToken;
-      }
+      console.log("123456",payload)
 
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
