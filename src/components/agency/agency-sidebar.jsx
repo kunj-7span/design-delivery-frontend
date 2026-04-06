@@ -8,9 +8,11 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/agency/agency-dashboard" },
     { name: "Projects", icon: Folders, path: "/agency/agency-projects" },
@@ -20,8 +22,12 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
   const bottomItems = [
     { name: "Settings", icon: Settings, path: "/agency/agency-settings" },
-    { name: "Logout", icon: LogOut, path: "/agency/agency-logout" },
   ];
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -120,6 +126,25 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
             </NavLink>
           );
         })}
+
+        {/* LOGOUT */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 text-gray-700 hover:text-red-600 w-full"
+        >
+          <div className="flex justify-center items-center">
+            <LogOut size={22} />
+          </div>
+          <span
+            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              isSidebarOpen
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 -translate-x-2 w-0"
+            }`}
+          >
+            Logout
+          </span>
+        </button>
       </div>
     </aside>
   );

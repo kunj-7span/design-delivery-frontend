@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  PanelRightOpen,
-  PanelRightClose,
-  Bell,
-} from "lucide-react";
+import { PanelRightOpen, PanelRightClose, Bell } from "lucide-react";
 import profile from "../../assets/profile.png";
 
 const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
@@ -18,7 +14,6 @@ const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
 
   return (
     <header className="h-16 bg-white shadow flex items-center justify-between px-4">
-      
       {/* DESKTOP TOGGLE */}
       <div className="hidden md:block">
         {isSidebarOpen ? (
@@ -48,7 +43,9 @@ const AgencyNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
             width="50px"
             alt="profile"
             className="cursor-pointer rounded-full"
-            onError={(e) => { e.target.src = profile; }}
+            onError={(e) => {
+              e.target.src = profile;
+            }}
           />
         </div>
       </div>
