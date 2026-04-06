@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
 import Pagination from "../../components/agency/pagination";
 import { getProjects } from "../../services/agency-services";
 
@@ -50,7 +50,7 @@ const AgencyProjectsList = () => {
       setTotalPages(response.meta?.totalPages || 1);
     } catch (error) {
       console.error("Error fetching projects:", error);
-      toast.error("Failed to load projects");
+      //toast.error("Failed to load projects");
     } finally {
       setLoading(false);
     }
@@ -81,9 +81,7 @@ const AgencyProjectsList = () => {
   };
 
   const formatStatus = (status) => {
-    return status
-      ?.replace(/_/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
+    return status?.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   };
 
   return (
@@ -107,7 +105,9 @@ const AgencyProjectsList = () => {
             key={tab.label}
             onClick={() => handleTabChange(index)}
             className={`pb-3 text-sm font-semibold transition-all relative whitespace-nowrap cursor-pointer ${
-              activeTab === index ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
+              activeTab === index
+                ? "text-gray-900"
+                : "text-gray-400 hover:text-gray-600"
             }`}
           >
             {tab.label}
@@ -172,7 +172,8 @@ const AgencyProjectsList = () => {
                       <td className="px-6 py-4">
                         <span
                           className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
-                            statusStyles[p.status] || "bg-gray-100 text-gray-500"
+                            statusStyles[p.status] ||
+                            "bg-gray-100 text-gray-500"
                           }`}
                         >
                           {formatStatus(p.status)}
