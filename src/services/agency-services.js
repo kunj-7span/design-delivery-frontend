@@ -33,13 +33,13 @@ export const getClientInvitations = async () => {
 
   return invitations.map((inv) => ({
     id: inv.id,
-    clientName: inv.receiver_email.split('@')[0] || "Unknown", 
+    clientName: inv.receiver_email.split("@")[0] || "Unknown",
     email: inv.receiver_email,
     date: new Date(inv.created_at).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
     }),
-    status: inv.status, 
+    status: inv.status,
     isAccepted: inv.is_accepted,
     expiresAt: inv.expires_at,
   }));
@@ -154,13 +154,20 @@ export const createProject = async (payload) => {
 };
 
 // Get Projects
-export const getProjects = async ({ workMode, status, page = 1, limit = 5 } = {}) => {
+export const getProjects = async ({
+  workMode,
+  status,
+  page = 1,
+  limit = 5,
+} = {}) => {
   const params = new URLSearchParams();
   if (workMode) params.append("workMode", workMode);
   if (status) params.append("status", status);
   params.append("page", page);
   params.append("limit", limit);
 
-  const response = await axiosClient.get(`/agency/projects?${params.toString()}`);
+  const response = await axiosClient.get(
+    `/agency/projects?${params.toString()}`,
+  );
   return response.data;
 };
