@@ -33,7 +33,7 @@ export const getClientInvitations = async () => {
 
   return invitations.map((inv) => ({
     id: inv.id,
-    clientName: inv.receiver_email.split("@")[0] || "Unknown",
+    clientName: inv.client_name || "Unknown",
     email: inv.receiver_email,
     date: new Date(inv.created_at).toLocaleDateString("en-US", {
       year: "numeric",
@@ -140,7 +140,8 @@ export const getEmployeesForSelect = async () => {
 export const getClientsForSelect = async () => {
   const response = await axiosClient.get("/agency/client-invitations/clients");
   const clients = response.data?.data || [];
-
+  console.log("Raw clients response:", response.data);
+  console.log("Fetched clients for select:", clients);
   return clients.map((client) => ({
     id: client.id,
     name: client.name,

@@ -11,7 +11,7 @@ const tabs = [
   { label: "All Projects", workMode: null, status: null },
   { label: "Marketplace", workMode: "marketplace", status: null },
   { label: "Assigned Projects", workMode: "assigned", status: null },
-  { label: "Completed", workMode: null, status: null },
+  { label: "Completed", workMode: null, status: "complete" },
 ];
 
 const statusStyles = {
@@ -104,11 +104,10 @@ const AgencyProjectsList = () => {
           <button
             key={tab.label}
             onClick={() => handleTabChange(index)}
-            className={`pb-3 text-sm font-semibold transition-all relative whitespace-nowrap cursor-pointer ${
-              activeTab === index
-                ? "text-gray-900"
-                : "text-gray-400 hover:text-gray-600"
-            }`}
+            className={`pb-3 text-sm font-semibold transition-all relative whitespace-nowrap cursor-pointer ${activeTab === index
+              ? "text-gray-900"
+              : "text-gray-400 hover:text-gray-600"
+              }`}
           >
             {tab.label}
             {activeTab === index && (
@@ -171,10 +170,9 @@ const AgencyProjectsList = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${
-                            statusStyles[p.status] ||
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase ${statusStyles[p.status] ||
                             "bg-gray-100 text-gray-500"
-                          }`}
+                            }`}
                         >
                           {formatStatus(p.status)}
                         </span>
@@ -197,9 +195,8 @@ const AgencyProjectsList = () => {
                           </span>
                           <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                             <div
-                              className={`h-full rounded-full ${
-                                progressColor[p.status] || "bg-gray-300"
-                              }`}
+                              className={`h-full rounded-full ${progressColor[p.status] || "bg-gray-300"
+                                }`}
                               style={{ width: `${p.progress}%` }}
                             />
                           </div>
@@ -233,9 +230,8 @@ const AgencyProjectsList = () => {
                       </span>
                     </div>
                     <span
-                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                        statusStyles[p.status] || "bg-gray-100 text-gray-500"
-                      }`}
+                      className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${statusStyles[p.status] || "bg-gray-100 text-gray-500"
+                        }`}
                     >
                       {formatStatus(p.status)}
                     </span>
@@ -247,9 +243,8 @@ const AgencyProjectsList = () => {
                     </span>
                     <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${
-                          progressColor[p.status] || "bg-gray-300"
-                        }`}
+                        className={`h-full rounded-full ${progressColor[p.status] || "bg-gray-300"
+                          }`}
                         style={{ width: `${p.progress}%` }}
                       />
                     </div>
