@@ -61,7 +61,7 @@ function ProjectSection({ title, rows, onProjectClick }) {
           <input
             id={searchId}
             type="search"
-            placeholder="Search projects..."
+            placeholder="Search projects"
             className="w-full min-w-0 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 outline-none focus:border-primary focus:ring-1 focus:ring-primary sm:min-w-50 md:w-56"
           />
         </div>
@@ -189,9 +189,8 @@ const DesignerDashboard = () => {
 
       <aside
         id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col border-r border-gray-200 bg-gray-100 transition-transform duration-200 ease-out lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col border-r border-gray-200 bg-gray-100 transition-transform duration-200 ease-out lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="px-4 py-3 ">
           <Link to="/">
@@ -208,14 +207,14 @@ const DesignerDashboard = () => {
             <LayoutGrid className="h-5 w-5 shrink-0" aria-hidden />
             Dashboard
           </Link>
-          <Link
-            to="/designer/projects"
+          {/* <Link
+            // to="/designer/projects"
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200/80"
             onClick={() => setSidebarOpen(false)}
           >
             <FolderOpen className="h-5 w-5 shrink-0" aria-hidden />
             Projects
-          </Link>
+          </Link> */}
         </nav>
 
         <div className="border-t border-gray-200 px-3 py-4">
@@ -275,14 +274,14 @@ const DesignerDashboard = () => {
               <span className="hidden text-sm font-semibold text-gray-800 sm:inline">
                 Kishan
               </span><img
-            src={profile}
-            width="50px"
-            alt="profile"
-            className="cursor-pointer rounded-full"
-            onError={(e) => {
-              e.target.src = profile;
-            }}
-          />
+                src={profile}
+                width="50px"
+                alt="profile"
+                className="cursor-pointer rounded-full"
+                onError={(e) => {
+                  e.target.src = profile;
+                }}
+              />
               {/* <span
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-primary to-purple-700 text-xs font-bold text-white"
                 aria-hidden
@@ -296,7 +295,7 @@ const DesignerDashboard = () => {
         <main className="flex-1 bg-gray-50/80 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-6xl">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-              <div className="rounded-xl border border-sky-100 bg-sky-50 p-5 hover:bg-sky-100 cursor-pointer shadow-sm">
+              <div className="rounded-xl border border-sky-100  p-5  shadow-sm">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-sky-600">
@@ -312,7 +311,7 @@ const DesignerDashboard = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-emerald-100 bg-emerald-50 p-5 shadow-sm hover:bg-emerald-100 cursor-pointer">
+              <div className="rounded-xl border border-emerald-100  p-5 shadow-sm ">
                 <div className="flex items-start justify-between gap-3 ">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-emerald-600">
@@ -328,7 +327,7 @@ const DesignerDashboard = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-rose-100 bg-rose-50 hover:bg-rose-100 cursor-pointer p-5 shadow-sm ">
+              <div className="rounded-xl border border-rose-100  p-5 shadow-sm ">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-rose-600 ">
@@ -346,7 +345,7 @@ const DesignerDashboard = () => {
             </div>
 
             <div className="mt-8 lg:mt-10" id="projects">
-              <ProjectSection title="Flat Projects" rows={flatProjectRows} />
+              <ProjectSection title="Marketplace Projects" rows={flatProjectRows} />
               <ProjectSection
                 title="My Active Projects"
                 rows={activeProjectRows}
