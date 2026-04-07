@@ -16,7 +16,7 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
   const menuItems = [
     { name: "Dashboard", icon: LayoutDashboard, path: "/client-dashboard" },
-    { name: "Invitations", icon: Mail, path: "/client-dashboard/invitations" },
+    { name: "Invitations", icon: Mail, path: "/invitations" },
     { name: "Projects", icon: Folders, path: "/Projectess" },
     { name: "Calender", icon: IdCard, path: "/calender" },
   ];
@@ -65,10 +65,9 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
                 to={item.path}
                 onClick={closeMobile}
                 className={({ isActive }) =>
-                  `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                    isActive
-                      ? "bg-primary text-white font-medium"
-                      : "hover:bg-gray-200 text-gray-700"
+                  `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive
+                    ? "bg-primary text-white font-medium"
+                    : "hover:bg-gray-200 text-gray-700"
                   }`
                 }
               >
@@ -79,11 +78,10 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
                 {/* TEXT */}
                 <span
-                  className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                    isSidebarOpen
+                  className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
                       ? "opacity-100 translate-x-0"
                       : "opacity-0 -translate-x-2 w-0"
-                  }`}
+                    }`}
                 >
                   {item.name}
                 </span>
@@ -104,10 +102,9 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
               to={item.path}
               onClick={closeMobile}
               className={({ isActive }) =>
-                `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                  isActive
-                    ? "bg-primary text-white font-medium"
-                    : "hover:bg-gray-200 text-gray-700"
+                `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive
+                  ? "bg-primary text-white font-medium"
+                  : "hover:bg-gray-200 text-gray-700"
                 }`
               }
             >
@@ -116,11 +113,10 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
               </div>
 
               <span
-                className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                  isSidebarOpen
+                className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
                     ? "opacity-100 translate-x-0"
                     : "opacity-0 -translate-x-2 w-0"
-                }`}
+                  }`}
               >
                 {item.name}
               </span>
@@ -137,11 +133,10 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
             <LogOut size={22} />
           </div>
           <span
-            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
-              isSidebarOpen
+            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
                 ? "opacity-100 translate-x-0"
                 : "opacity-0 -translate-x-2 w-0"
-            }`}
+              }`}
           >
             Logout
           </span>

@@ -71,8 +71,8 @@ function App() {
           element={
             <RoleProtectedRoute allowedRoles={["client", "superadmin"]} />
           }>
-          <Route path="client-dashboard" element={<ClientLayout />}>
-            <Route index element={<ClientDashboard />} />
+          <Route element={<ClientLayout />}>
+            <Route path="client-dashboard" element={<ClientDashboard />} />
             <Route path="invitations" element={<ClientInvitations />} />
             {/* <Route path='client-projects' element={<ClientProjects />}>
               <Route path='create-project' element={<CreateProject />} />
