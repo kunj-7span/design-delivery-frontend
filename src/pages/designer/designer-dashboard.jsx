@@ -176,6 +176,15 @@ const DesignerDashboard = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  const [user] = useState(() => {
+    try {
+      const stored = localStorage.getItem("user");
+      return stored ? JSON.parse(stored) : { name: "", role: "", avatar: "" };
+    } catch {
+      return { name: "", role: "", avatar: "" };
+    }
+  });
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {sidebarOpen && (
@@ -272,7 +281,7 @@ const DesignerDashboard = () => {
               className="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-gray-50 sm:gap-3 sm:pr-3"
             >
               <span className="hidden text-sm font-semibold text-gray-800 sm:inline">
-                Kishan
+                {user.name || "Employee"}
               </span><img
                 src={profile}
                 width="50px"
