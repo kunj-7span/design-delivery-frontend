@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import logo from "../../assets/DDLogoFull.png";
+import profile from "../../assets/user-icon.png";
 import {
   FolderOpen,
   LayoutGrid,
@@ -216,9 +217,8 @@ export default function DesignerProjects() {
 
       <aside
         id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col border-r border-gray-200 bg-gray-100 transition-transform duration-200 ease-out lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col border-r border-gray-200 bg-gray-100 transition-transform duration-200 ease-out lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="px-4 py-3 ">
           <img src={logo} className="w-30 sm:w-32 md:w-34 lg:w-36" alt="" />
@@ -299,21 +299,30 @@ export default function DesignerProjects() {
               className="flex h-9 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
             >
               <span className="hidden text-sm font-semibold text-gray-800 sm:inline">
-                Kishan
+                Designer
               </span>
-              <span
+              <img
+                src={profile}
+                width="50px"
+                alt="profile"
+                className="cursor-pointer rounded-full"
+                onError={(e) => {
+                  e.target.src = profile;
+                }}
+              />
+              {/* <span
                 className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-primary to-purple-700 text-xs font-bold text-white"
                 aria-hidden
               >
                 K
-              </span>
+              </span> */}
             </button>
           </div>
         </header>
 
 
         <main className="flex min-h-screen bg-gray p-5">Comming Soon</main>
-{/* 
+        {/* 
         <main className="flex-1 bg-gray-50/80 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-6xl">
             <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
