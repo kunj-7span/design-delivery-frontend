@@ -61,7 +61,7 @@ const AgencyEmployees = () => {
             emp.id === editEmployee.id ? { ...emp, ...formData } : emp,
           ),
         );
-        toast.success("Employee updated successfully");
+        toast.success("Invitation updated successfully");
         setEditEmployee(null);
       } else {
         // Add new employee via API

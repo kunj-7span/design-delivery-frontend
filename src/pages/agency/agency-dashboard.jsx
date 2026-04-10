@@ -50,7 +50,7 @@ const AgencyDashboard = () => {
         : [{ name: "No Data", clients: 0 }]
       : quarterlyData;
 
-  // 🔥 Custom Tooltip (matches your UI)
+  // Custom Tooltip (matches your UI)
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -70,7 +70,7 @@ const AgencyDashboard = () => {
           getAgencySummary(),
           getClientGrowth(),
         ]);
-
+        
         setSummary(summaryData);
         setChartData(growthData);
       } catch (error) {
@@ -89,7 +89,7 @@ const AgencyDashboard = () => {
         <h2 className="text-heading">Dashboard</h2>
 
         <div className="mt-5 mb-5 flex flex-wrap gap-5">
-          <div className="p-4 md:p-6 shadow-sm bg-white  rounded-xl flex flex-col w-40 ">
+          <div className="p-4 md:p-6 shadow-sm bg-white rounded-xl flex flex-col w-40">
             <Folders
               size={40}
               className="text-purple-700 bg-purple-100 rounded-xl p-2 mb-3"
@@ -102,7 +102,7 @@ const AgencyDashboard = () => {
             </span>
           </div>
 
-          <div className="p-4 md:p-6 shadow-sm bg-white  rounded-xl flex flex-col w-40 ">
+          <div className="p-4 md:p-6 shadow-sm bg-white rounded-xl flex flex-col w-40">
             <IdCard
               size={40}
               className="text-primary bg-indigo-100 rounded-xl p-2 mb-3"
@@ -115,7 +115,7 @@ const AgencyDashboard = () => {
             </span>
           </div>
 
-          <div className="p-4 md:p-6 shadow-sm bg-white  rounded-xl flex flex-col w-40 ">
+          <div className="p-4 md:p-6 shadow-sm bg-white rounded-xl flex flex-col w-40">
             <UsersRound
               size={40}
               className="text-yellow-700 bg-yellow-100 rounded-xl p-2 mb-3"
