@@ -140,8 +140,6 @@ export const getEmployeesForSelect = async () => {
 export const getClientsForSelect = async () => {
   const response = await axiosClient.get("/agency/client-invitations/clients");
   const clients = response.data?.data || [];
-  console.log("Raw clients response:", response.data);
-  console.log("Fetched clients for select:", clients);
   return clients.map((client) => ({
     id: client.id,
     name: client.name,

@@ -40,26 +40,19 @@ const RegisterPageForm = () => {
   const [profilePicPreview, setProfilePicPreview] = useState(null);
   const fileInputRef = useRef(null);
 
-  // Check for token and validate on component mount
   useEffect(() => {
     const initializeForm = async () => {
       try {
-        console.log("first")
         if (invitationToken) {
-          // Verify the invitation token
           const response = await axios.get(
             `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/verify?token=${invitationToken}`
           );
-          console.log(response)
           if (response.data.success) {
-            console.log(response)
             const { user_exists, client_name, email } = response.data.data;
             setInvitationData(response.data.data);
             if (user_exists) {
-              // User exists, redirect to login with email pre-filled
               navigate(`/login?email=${encodeURIComponent(email)}&token=${invitationToken}`);
             } else {
-              // User doesn't exist, pre-fill the form
               reset({
                 role: "client",
                 name: client_name,
@@ -69,8 +62,6 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-          } else {
-            console.log(response)
           }
         }
       } catch (err) {
@@ -197,7 +188,6 @@ const RegisterPageForm = () => {
         role: data.role,
         ...(avatarUrl && { avatar: avatarUrl }),
       };
-      console.log("123456", payload)
 
       await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
@@ -282,8 +272,8 @@ const RegisterPageForm = () => {
               <div
                 onClick={!profilePicPreview ? handleFileClick : undefined}
                 className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${profilePicPreview
-                    ? "border-0"
-                    : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
+                  ? "border-0"
+                  : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
                   } transition relative group bg-purple-50`}
               >
                 {profilePicPreview ? (
