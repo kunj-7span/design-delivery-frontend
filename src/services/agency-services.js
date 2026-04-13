@@ -30,8 +30,8 @@ export const getClientInvitations = async () => {
   const response = await axiosClient.get("/agency/client-invitations");
 
   const invitations = response.data?.data?.invitations || [];
-
-  return invitations.map((inv) => ({
+  const total = response.data?.meta?.total;
+  const invitation = invitations.map((inv) => ({
     id: inv.id,
     clientName: inv.client_name || "Unknown",
     email: inv.receiver_email,
@@ -43,6 +43,7 @@ export const getClientInvitations = async () => {
     isAccepted: inv.is_accepted,
     expiresAt: inv.expires_at,
   }));
+  return {invitation, total}
 };
 
 export const inviteClient = async (formData) => {
