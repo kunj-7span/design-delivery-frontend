@@ -45,7 +45,6 @@ const RegisterPageForm = () => {
   useEffect(() => {
     const initializeForm = async () => {
       try {
-<<<<<<< HEAD
         console.log("first");
         if (invitationToken) {
           // Verify the invitation token
@@ -61,17 +60,6 @@ const RegisterPageForm = () => {
               navigate(
                 `/login?email=${encodeURIComponent(email)}&token=${invitationToken}`,
               );
-=======
-        if (invitationToken) {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/verify?token=${invitationToken}`
-          );
-          if (response.data.success) {
-            const { user_exists, client_name, email } = response.data.data;
-            setInvitationData(response.data.data);
-            if (user_exists) {
-              navigate(`/login?email=${encodeURIComponent(email)}&token=${invitationToken}`);
->>>>>>> main
             } else {
               reset({
                 role: "client",
@@ -82,11 +70,8 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-<<<<<<< HEAD
           } else {
             console.log(response);
-=======
->>>>>>> main
           }
         }
       } catch (err) {
@@ -212,10 +197,6 @@ const RegisterPageForm = () => {
         role: data.role,
         ...(avatarUrl && { avatar: avatarUrl }),
       };
-<<<<<<< HEAD
-      console.log("123456", payload);
-=======
->>>>>>> main
 
       await authServices.registerUser(payload);
 
@@ -274,18 +255,11 @@ const RegisterPageForm = () => {
             <div className="relative inline-block">
               <div
                 onClick={!profilePicPreview ? handleFileClick : undefined}
-<<<<<<< HEAD
                 className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${
                   profilePicPreview
                     ? "border-0"
                     : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
                 } transition relative group bg-purple-50`}
-=======
-                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${profilePicPreview
-                  ? "border-0"
-                  : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
-                  } transition relative group bg-purple-50`}
->>>>>>> main
               >
                 {profilePicPreview ? (
                   <img
