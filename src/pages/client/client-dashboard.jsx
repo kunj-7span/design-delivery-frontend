@@ -70,65 +70,9 @@ const statCards = [
   },
 ];
 
-// const projects = [
-//   {
-//     id: "website-redesign",
-//     name: "Website Redesign",
-//     client: "Acme Corp",
-//     assets: "12 Files +9",
-//     status: "Inprogress",
-//     statusColor: "bg-purple-100 text-purple-600",
-//     due: "Oct 24",
-//     icon: "🌐",
-//     iconBg: "bg-purple-100",
-//   },
-//   {
-//     id: "q4-marketing",
-//     name: "Q4 Marketing",
-//     client: "Globex",
-//     assets: "45 Files",
-//     status: "Inprogress",
-//     statusColor: "bg-purple-100 text-purple-600",
-//     due: "Oct 28",
-//     icon: "📊",
-//     iconBg: "bg-yellow-100",
-//   },
-//   {
-//     id: "social-campaign",
-//     name: "Social Campaign",
-//     client: "Soylent",
-//     assets: "8 Files",
-//     status: "Backlog",
-//     statusColor: "bg-gray-100 text-gray-600",
-//     due: "Oct 30",
-//     icon: "📣",
-//     iconBg: "bg-orange-100",
-//   },
-//   {
-//     id: "logo-refresh",
-//     name: "Logo Refresh",
-//     client: "Umbrella",
-//     assets: "3 Files",
-//     status: "Completed",
-//     statusColor: "bg-green-100 text-green-600",
-//     due: "Nov 02",
-//     icon: "✅",
-//     iconBg: "bg-green-100",
-//   },
-//   {
-//     id: "brand-guidelines",
-//     name: "Brand Guidelines",
-//     client: "Initech",
-//     assets: "22 Files",
-//     status: "Inprogress",
-//     statusColor: "bg-purple-100 text-purple-600",
-//     due: "Nov 08",
-//     icon: "📐",
-//     iconBg: "bg-blue-100",
-//   },
-// ];
 
 const ClientDashboard = () => {
+
   return (
     <div className="p-8">
       {/* Work Summary */}

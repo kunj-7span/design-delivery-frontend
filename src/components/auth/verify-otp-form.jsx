@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../common/button";
+import { useAuthStore } from "../../store/auth-store";
+import { authServices } from "../../services/auth-services";
 
 const VerifyOtpForm = () => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -11,20 +13,22 @@ const VerifyOtpForm = () => {
 
   const navigate = useNavigate();
   const inputRefs = useRef([]);
+  const { setToken, setUser, logout } = useAuthStore();
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem("registerData");
-      if (!stored) {
+      // Try to get from window.location.state first (if passed via navigation)
+      // Otherwise redirect to register
+      const pathEmail = new URLSearchParams(window.location.search).get(
+        "email",
+      );
+      if (!pathEmail) {
         navigate("/register");
         return;
       }
-      const parsed = JSON.parse(stored);
-      if (!parsed || !parsed.email) {
-        navigate("/register");
-        return;
-      }
-      setRegisterData(parsed);
+      // You'll need to pass registerData via state when navigating from register
+      // For now, we'll set a default
+      setRegisterData({ email: pathEmail });
     } catch {
       navigate("/register");
     }
@@ -89,50 +93,31 @@ const VerifyOtpForm = () => {
         otp: otpValue,
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/verify-otp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        },
-      );
+      const res = await authServices.verifyOTP(requestBody);
 
-      const data = await res.json().catch(() => ({}));
+      const user = res.data?.user;
+      const token = res.data?.token;
 
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to verify OTP.");
-      }
-
-      localStorage.removeItem("registerData");
-      localStorage.removeItem("registerEmail");
-
-      const user = data.data?.user;
-      const token = data.data?.token;
-
+      // Store in Zustand instead of localStorage
       if (token) {
-        localStorage.setItem("token", token);
+        setToken(token);
       }
 
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          name: user?.name || registerData.name,
-          role: user?.role || registerData.role,
-          avatar: user?.avatar || "",
-        }),
-      );
+      setUser({
+        name: user?.name || registerData.name,
+        email: user?.email || registerData.email,
+        role: user?.role || registerData.role,
+        avatar: user?.avatar || "",
+      });
 
       const role = user?.role || registerData.role;
       if (role === "agency_admin") {
-        navigate("/agency/agency-dashboard");
+        navigate("/agency/agency-dashboard", { replace: true });
       } else {
-        navigate("/client-dashboard");
+        navigate("client/client-dashboard", { replace: true });
       }
     } catch (err) {
-      setError(err.message || "Verification failed. Please try again.");
+      setError(err?.message || "Verification failed. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -143,21 +128,9 @@ const VerifyOtpForm = () => {
     try {
       setError("");
       setTimer(45);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/resend-otp`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: registerData?.email }),
-        },
-      );
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || "Failed to resend OTP.");
-      }
+      await authServices.resendOTP(registerData?.email);
     } catch (err) {
-      setError(err.message || "Could not resend OTP. Please try again.");
+      setError(err?.message || "Could not resend OTP. Please try again.");
     }
   };
 

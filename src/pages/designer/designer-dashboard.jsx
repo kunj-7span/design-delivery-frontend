@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import profile from "../../assets/user-icon.png";
+import { useAuthStore } from "../../store/auth-store";
 
 const flatProjectRows = [
   { name: "Logo Redesign", client: "Harsh bhai", total: "0", changes: "0" },
@@ -148,9 +149,10 @@ const DesignerDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
+  const { logout } = useAuthStore();
 
   const handleLogout = () => {
-    localStorage.clear();
+    logout(); // Clear auth from Zustand
     navigate("/login");
   };
 
@@ -176,141 +178,22 @@ const DesignerDashboard = () => {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const [user] = useState(() => {
-    try {
-      const stored = localStorage.getItem("user");
-      return stored ? JSON.parse(stored) : { name: "", role: "", avatar: "" };
-    } catch {
-      return { name: "", role: "", avatar: "" };
-    }
-  });
+  // Get user from Zustand store
+  const user = useAuthStore((state) => state.user);
+  const userAvatarURL = useAuthStore((state) => state.user_avatarURL);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {sidebarOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
-          aria-label="Close menu"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <aside
-        id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col border-r border-gray-200 bg-gray-100 transition-transform duration-200 ease-out lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-      >
-        <div className="px-4 py-3 ">
-          <Link to="/">
-            <img src={logo} className="w-30 sm:w-32 md:w-34 lg:w-36" alt="" />
-          </Link>
-        </div>
-
-        <nav className="flex flex-1 flex-col gap-1 px-3 py-4" aria-label="Main">
-          <Link
-            to="/designer"
-            className="flex items-center gap-3 rounded-lg bg-sky-100 px-3 py-2.5 text-sm font-semibold text-sky-700"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <LayoutGrid className="h-5 w-5 shrink-0" aria-hidden />
-            Dashboard
-          </Link>
-          {/* <Link
-            // to="/designer/projects"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200/80"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <FolderOpen className="h-5 w-5 shrink-0" aria-hidden />
-            Projects
-          </Link> */}
-        </nav>
-
-        <div className="border-t border-gray-200 px-3 py-4">
-          <a
-            href="#settings"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200/80"
-          >
-            <Settings className="h-5 w-5 shrink-0" aria-hidden />
-            Settings
-          </a>
-          <button
-            onClick={handleLogout}
-            type="button"
-            className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-600 hover:bg-red-200/80"
-          >
-            <LogOut className="h-5 w-5 shrink-0" aria-hidden />
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      <div className="flex min-h-screen flex-1 flex-col lg:ml-64">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
-              aria-expanded={sidebarOpen}
-              aria-controls="dashboard-sidebar"
-              onClick={() => setSidebarOpen((o) => !o)}
-            >
-              {sidebarOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-              <span className="sr-only">Toggle sidebar</span>
-            </button>
-            <h1 className="truncate text-xl font-bold text-gray-900 sm:text-2xl">
-              Dashboard
-            </h1>
-          </div>
-
-          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-            <button
-              type="button"
-              className="relative rounded-full p-2 text-gray-600 hover:bg-gray-100"
-              aria-label="Notifications"
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 rounded-lg py-1 pl-1 pr-2 hover:bg-gray-50 sm:gap-3 sm:pr-3"
-            >
-              <span className="hidden text-sm font-semibold text-gray-800 sm:inline">
-                {user.name || "Employee"}
-              </span><img
-                src={profile}
-                width="50px"
-                alt="profile"
-                className="cursor-pointer rounded-full"
-                onError={(e) => {
-                  e.target.src = profile;
-                }}
-              />
-              {/* <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-primary to-purple-700 text-xs font-bold text-white"
-                aria-hidden
-              >
-                K
-              </span> */}
-            </button>
-          </div>
-        </header>
-
-        <main className="flex-1 bg-gray-50/80 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-          <div className="mx-auto max-w-6xl">
+    <div className="p-4 md:p-6 min-h-screen">
+        <main>
+          
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-              <div className="rounded-xl border border-sky-100  p-5  shadow-sm">
+              <div className="rounded-xl p-5 shadow-sm bg-white">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-sky-600">
                       Active projects
                     </p>
-                    <p className="mt-2 text-3xl font-bold tabular-nums text-sky-700">
+                    <p className="mt-2 text-3xl font-bold text-sky-700">
                       0
                     </p>
                   </div>
@@ -320,13 +203,13 @@ const DesignerDashboard = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-emerald-100  p-5 shadow-sm ">
+              <div className="rounded-xl p-5 shadow-sm bg-white">
                 <div className="flex items-start justify-between gap-3 ">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-emerald-600">
                       Approved
                     </p>
-                    <p className="mt-2 text-3xl font-bold tabular-nums text-emerald-700">
+                    <p className="mt-2 text-3xl font-bold text-emerald-700">
                       0
                     </p>
                   </div>
@@ -336,13 +219,13 @@ const DesignerDashboard = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-rose-100  p-5 shadow-sm ">
+              <div className="rounded-xl p-5 shadow-sm bg-white">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-wide text-rose-600 ">
                       Overdue
                     </p>
-                    <p className="mt-2 text-3xl font-bold tabular-nums text-rose-700">
+                    <p className="mt-2 text-3xl font-bold text-rose-700">
                       0
                     </p>
                   </div>
@@ -353,15 +236,9 @@ const DesignerDashboard = () => {
               </div>
             </div>
 
-            <div className="mt-8 lg:mt-10" id="projects">
-              <ProjectSection title="Marketplace Projects" rows={flatProjectRows} />
-              <ProjectSection
-                title="My Active Projects"
-                rows={activeProjectRows}
-              />
-            </div>
+            
 
-            <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
+            <section className="mt-5 rounded-lg border border-gray-200 bg-white shadow-sm">
               <h2 className="border-b border-gray-100 px-4 py-4 text-lg font-bold text-gray-900 sm:px-6">
                 Recent Feedback
               </h2>
@@ -385,9 +262,8 @@ const DesignerDashboard = () => {
                 ))}
               </ul>
             </section>
-          </div>
+          
         </main>
-      </div>
     </div>
   );
 };
