@@ -50,7 +50,7 @@ const Table = ({
       {/* DESKTOP TABLE */}
       <div className="hidden sm:block w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
         <table className="w-full min-w-175 text-left table-auto">
-          <thead className="bg-gray-100 text-gray-500 text-xs uppercase">
+          <thead className="bg-gray-50 text-gray-500 text-xs uppercase border border-gray-200">
             <tr>
               {columns.map((column) => (
                 <th key={column.key} className="px-6 py-3 whitespace-nowrap">

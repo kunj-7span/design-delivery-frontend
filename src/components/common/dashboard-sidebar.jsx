@@ -7,26 +7,25 @@ import {
   UsersRound,
   Settings,
   LogOut,
-  Mail,
 } from "lucide-react";
-import { NavLink, useNavigate, Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { useAuthStore } from "../../store/auth-store";
 
-const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
-  const navigate = useNavigate();
-
-  const menuItems = [
-    { name: "Dashboard", icon: LayoutDashboard, path: "/client-dashboard" },
-    { name: "Invitations", icon: Mail, path: "/invitations" },
-    { name: "Projects", icon: Folders, path: "/Projectess" },
-    { name: "Calender", icon: IdCard, path: "/calender" },
+const DashboardSidebar = ({
+  isMobileOpen,
+  isSidebarOpen,
+  closeMobile,
+  onLogoutClick,
+}) => {
+  const { user, agency_menuItems, client_menuItems, employee_menuItems } =
+    useAuthStore();
+  const bottomItems = [
+    { name: "Settings", icon: Settings, path: "/agency/agency-settings" },
   ];
-
-  const bottomItems = [{ name: "Settings", icon: Settings, path: "/settings" }];
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+  let menuItems = [];
+  if (user.role === "agency_admin") menuItems = agency_menuItems;
+  else if (user.role === "client") menuItems = client_menuItems;
+  else menuItems = employee_menuItems;
 
   return (
     <aside
@@ -44,7 +43,7 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
       <div className="px-3 pt-4">
         {/* LOGO */}
         <Link
-          to="/client-dashboard"
+          to="/agency/agency-dashboard"
           className="mb-6 flex items-center justify-start gap-3 overflow-hidden"
         >
           <img src={DDlogo} alt="logo" className="w-9.5" />
@@ -54,6 +53,7 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
             delivery
           </span>
         </Link>
+
         {/* MENU ITEMS */}
         <div className="space-y-2">
           {menuItems.map((item, index) => {
@@ -65,9 +65,10 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
                 to={item.path}
                 onClick={closeMobile}
                 className={({ isActive }) =>
-                  `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive
-                    ? "bg-primary text-white font-medium"
-                    : "hover:bg-gray-200 text-gray-700"
+                  `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                    isActive
+                      ? "bg-primary text-white font-medium shadow-md shadow-indigo-200"
+                      : "hover:bg-gray-200 text-gray-700"
                   }`
                 }
               >
@@ -78,10 +79,11 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
                 {/* TEXT */}
                 <span
-                  className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
+                  className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                    isSidebarOpen
                       ? "opacity-100 translate-x-0"
                       : "opacity-0 -translate-x-2 w-0"
-                    }`}
+                  }`}
                 >
                   {item.name}
                 </span>
@@ -102,9 +104,10 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
               to={item.path}
               onClick={closeMobile}
               className={({ isActive }) =>
-                `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive
-                  ? "bg-primary text-white font-medium"
-                  : "hover:bg-gray-200 text-gray-700"
+                `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
+                  isActive
+                    ? "bg-primary text-white font-medium"
+                    : "hover:bg-gray-200 text-gray-700"
                 }`
               }
             >
@@ -113,10 +116,11 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
               </div>
 
               <span
-                className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
+                className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
+                  isSidebarOpen
                     ? "opacity-100 translate-x-0"
                     : "opacity-0 -translate-x-2 w-0"
-                  }`}
+                }`}
               >
                 {item.name}
               </span>
@@ -126,17 +130,18 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
 
         {/* LOGOUT */}
         <button
-          onClick={handleLogout}
+          onClick={onLogoutClick}
           className="flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-50 text-gray-700 hover:text-red-600 w-full"
         >
           <div className="flex justify-center items-center">
             <LogOut size={22} />
           </div>
           <span
-            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
+            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
+              isSidebarOpen
                 ? "opacity-100 translate-x-0"
                 : "opacity-0 -translate-x-2 w-0"
-              }`}
+            }`}
           >
             Logout
           </span>
@@ -146,4 +151,4 @@ const AgencySidebar = ({ isMobileOpen, isSidebarOpen, closeMobile }) => {
   );
 };
 
-export default AgencySidebar;
+export default DashboardSidebar;

@@ -6,7 +6,7 @@ const ErrorPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-b from-purple-50 to-white flex items-center justify-center px-4">
       <div className="my-container flex flex-col items-center justify-center text-center py-20">
         {/* Error Icon */}
         <div className="mb-6">
