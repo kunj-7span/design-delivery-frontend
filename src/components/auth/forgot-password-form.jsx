@@ -27,10 +27,6 @@ const ForgotPasswordForm = () => {
                     },
                 }
             );
-
-            if (res.data.success) {
-                console.log("Reset link sent successfully:", res.data.message);
-            }
         } catch (err) {
             setError("root", { type: "server", message: err.response?.data?.message || "Failed to send reset link." });
         }
