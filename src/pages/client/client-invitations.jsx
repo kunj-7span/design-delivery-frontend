@@ -9,8 +9,6 @@ const ClientInvitations = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [acceptingId, setAcceptingId] = useState(null);
 
-    console.log("invitation page");
-
     useEffect(() => {
         fetchPendingInvitations();
     }, []);
@@ -31,17 +29,13 @@ const ClientInvitations = () => {
                 }
             );
 
-            console.log("API RESPONSE:", response.data);
-
             if (response.data.success) {
                 const data = response.data.data;
 
                 if (Array.isArray(data)) {
                     setInvitations(data);
-                    console.log(data);
                 } else if (Array.isArray(data?.invitations)) {
                     setInvitations(data.invitations);
-                    console.log(data.invitations);
                 } else {
                     setInvitations([]);
                 }
@@ -60,7 +54,6 @@ const ClientInvitations = () => {
     const handleAcceptInvitation = async (invitationId) => {
         try {
             setAcceptingId(invitationId);
-            console.log(invitationId);
 
             const token = localStorage.getItem("token");
 

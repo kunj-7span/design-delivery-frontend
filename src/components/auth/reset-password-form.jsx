@@ -83,9 +83,7 @@ const ResetPasswordForm = () => {
       );
 
       if (res.data.success) {
-        console.log("Password reset successfully:", res.data.message);
         setIsSuccess(true);
-        // Navigate to login after 2 seconds
         setTimeout(() => {
           navigate("/login");
         }, 2000);
@@ -98,8 +96,6 @@ const ResetPasswordForm = () => {
     }
   };
 
-
-  // Show loading state while verifying token
   if (tokenVerifying) {
     return (
       <div className="w-full text-center">
