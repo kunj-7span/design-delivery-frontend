@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useAuthStore } from "../store/auth-store";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -14,7 +15,8 @@ const axiosClient = axios.create({
 // Attach token automatically and serialize data
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    // Get token from Zustand store
+    const token = useAuthStore.getState().token;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -44,7 +46,8 @@ axiosClient.interceptors.response.use(
     if (error?.response?.status === 401) {
       console.error("Unauthorized - redirecting");
 
-      localStorage.removeItem("token");
+      // Clear auth from Zustand
+      useAuthStore.getState().logout();
       window.location.href = "/login";
     }
 

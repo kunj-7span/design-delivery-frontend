@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import Button from "../common/button";
 import InputField from "../common/input-field";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { Lock, Camera, Building2, Mail, User, X, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../schema/auth-schema";
 import { useWatch } from "react-hook-form";
+import { useAuthStore } from "../../store/auth-store";
+import { authServices } from "../../services/auth-services";
 
 const RegisterPageForm = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const RegisterPageForm = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [invitationData, setInvitationData] = useState(null);
   const invitationToken = searchParams.get("token");
+  const { setAvatar, user, token } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -43,15 +45,21 @@ const RegisterPageForm = () => {
   useEffect(() => {
     const initializeForm = async () => {
       try {
+        console.log("first");
         if (invitationToken) {
-          const response = await axios.get(
-            `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/verify?token=${invitationToken}`
-          );
-          if (response.data.success) {
-            const { user_exists, client_name, email } = response.data.data;
-            setInvitationData(response.data.data);
+          // Verify the invitation token
+          const response =
+            await authServices.verifyInvitationToken(invitationToken);
+          console.log(response);
+          if (response.success) {
+            console.log(response);
+            const { user_exists, client_name, email } = response.data;
+            setInvitationData(response.data);
             if (user_exists) {
-              navigate(`/login?email=${encodeURIComponent(email)}&token=${invitationToken}`);
+              // User exists, redirect to login with email pre-filled
+              navigate(
+                `/login?email=${encodeURIComponent(email)}&token=${invitationToken}`,
+              );
             } else {
               reset({
                 role: "client",
@@ -62,6 +70,8 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
+          } else {
+            console.log(response);
           }
         }
       } catch (err) {
@@ -78,6 +88,20 @@ const RegisterPageForm = () => {
     initializeForm();
   }, [invitationToken, reset, setError, navigate]);
 
+  useEffect(() => {
+    if (token) {
+      if (user.role === "agency_admin") {
+        navigate("/agency/agency-dashboard");
+      } else if (user.role === "client") {
+        navigate("/client/client-dashboard");
+      } else {
+        navigate("/employee/employee-dashboard");
+      }
+    } else {
+      navigate("/login");
+    }
+  }, []);
+
   const switchAccountType = (type) => {
     if (type !== role) {
       reset({
@@ -89,8 +113,7 @@ const RegisterPageForm = () => {
         contactPersonName: "",
       });
       setProfilePicPreview(null);
-      localStorage.removeItem("avatarUploadUrl");
-      localStorage.removeItem("avatarFileUrl");
+      setAvatar(null); // Clear avatar from store
     }
   };
 
@@ -104,8 +127,7 @@ const RegisterPageForm = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    localStorage.removeItem("avatarUploadUrl");
-    localStorage.removeItem("avatarFileUrl");
+    setAvatar(null); // Clear avatar from store
     clearErrors("root");
   };
 
@@ -137,37 +159,24 @@ const RegisterPageForm = () => {
 
       try {
         // Step 1: Get pre-signed upload URL
-        const generateRes = await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/upload/generate-url`,
-          {
-            fileName: file.name,
-            contentType: file.type,
-            folder: "users/avatars",
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
+        const generateRes = await authServices.generateUploadUrl(
+          file.name,
+          file.type,
+          "users/avatars",
         );
 
-        const { uploadUrl, fileUrl } = generateRes.data.data;
+        const { uploadUrl, fileUrl } = generateRes.data;
 
         // Step 2: Upload file directly to S3
-        await axios.put(uploadUrl, file, {
-          headers: {
-            "Content-Type": file.type,
-          },
-        });
+        await authServices.uploadFileToS3(uploadUrl, file, file.type);
 
-        // Step 3: Store URLs in localStorage
-        localStorage.setItem("avatarUploadUrl", uploadUrl);
-        localStorage.setItem("avatarFileUrl", fileUrl);
+        // Step 3: Store avatar URL in Zustand
+        setAvatar(fileUrl);
       } catch (err) {
         setError("root", {
           type: "manual",
           message:
-            err.response?.data?.message ||
+            err?.message ||
             "Failed to upload profile picture. Please try again.",
         });
         setProfilePicPreview(null);
@@ -178,8 +187,8 @@ const RegisterPageForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Read avatar fileUrl from localStorage
-      const avatarUrl = localStorage.getItem("avatarFileUrl") || "";
+      // Get avatar from Zustand store
+      const avatarUrl = useAuthStore.getState().user_avatarURL || "";
 
       const payload = {
         name: data.name,
@@ -189,43 +198,18 @@ const RegisterPageForm = () => {
         ...(avatarUrl && { avatar: avatarUrl }),
       };
 
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/register`,
-        payload,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      await authServices.registerUser(payload);
 
-      // Store registration data in localStorage
-      try {
-        localStorage.setItem(
-          "registerData",
-          JSON.stringify({
-            name: data.name,
-            email: data.email,
-            password: data.password,
-            role: data.role,
-            ...(avatarUrl && { avatar: avatarUrl }),
-          }),
-        );
-      } catch (e) {
-        console.error("Failed to save to localStorage", e);
-      }
+      // Navigation to verify-otp (registerData will be passed via component state)
+      // The verify-otp page will get the data from route state
 
       // Navigate to client dashboard if registered via invitation
 
       navigate("/verify-otp");
-
     } catch (err) {
       setError("root", {
         type: "server",
-        message:
-          err.response?.data?.message ||
-          err.message ||
-          "Failed to register. Please try again.",
+        message: err?.message || "Failed to register. Please try again.",
       });
     }
   };
@@ -271,10 +255,11 @@ const RegisterPageForm = () => {
             <div className="relative inline-block">
               <div
                 onClick={!profilePicPreview ? handleFileClick : undefined}
-                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${profilePicPreview
-                  ? "border-0"
-                  : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
-                  } transition relative group bg-purple-50`}
+                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${
+                  profilePicPreview
+                    ? "border-0"
+                    : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
+                } transition relative group bg-purple-50`}
               >
                 {profilePicPreview ? (
                   <img
@@ -288,7 +273,10 @@ const RegisterPageForm = () => {
                     size={24}
                   />
                 ) : (
-                  <User className="text-primary group-hover:opacity-0" size={24} />
+                  <User
+                    className="text-primary group-hover:opacity-0"
+                    size={24}
+                  />
                 )}
                 <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
                   <Camera className="text-white" size={20} />
@@ -327,7 +315,9 @@ const RegisterPageForm = () => {
               id="name"
               type="text"
               icon={role === "agency_admin" ? Building2 : User}
-              placeholder={role === "agency_admin" ? "Agency name" : "Client name"}
+              placeholder={
+                role === "agency_admin" ? "Agency name" : "Client name"
+              }
               autoComplete="organization"
               error={errors.name}
               {...register("name")}
@@ -381,7 +371,10 @@ const RegisterPageForm = () => {
 
               <div className="text-xs mt-5 text-center font-semibold flex items-center justify-center gap-1">
                 <span>Already have an account?</span>
-                <Link to="/login" className="text-primary hover:text-hover-primary">
+                <Link
+                  to="/login"
+                  className="text-primary hover:text-hover-primary"
+                >
                   Log in
                 </Link>
               </div>

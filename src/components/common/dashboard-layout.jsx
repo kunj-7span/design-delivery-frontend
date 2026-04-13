@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import ClientNavbar from "../components/client/client-navbar";
-import ClientSidebar from "../components/client/client-sidebar";
+import DashboardSidebar from "./dashboard-sidebar";
+import DashboardNavbar from "./dashboard-navbar";
+import LogoutDialog from "./logout-dialog";
 
-const ClientLayout = () => {
+const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // desktop
   const [isMobileOpen, setIsMobileOpen] = useState(false); // mobile
+  const [isLogoutOpen, setIsLogoutOpen] = useState(false); // logout dialog
 
   return (
     <div className="container mx-auto flex h-screen relative">
@@ -17,14 +19,15 @@ const ClientLayout = () => {
         />
       )}
 
-      <ClientSidebar
+      <DashboardSidebar
         isMobileOpen={isMobileOpen}
         isSidebarOpen={isSidebarOpen}
         closeMobile={() => setIsMobileOpen(false)}
+        onLogoutClick={() => setIsLogoutOpen(true)}
       />
 
       <div className="flex flex-col flex-1">
-        <ClientNavbar
+        <DashboardNavbar
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
           toggleMobile={() => setIsMobileOpen(true)}
@@ -34,8 +37,14 @@ const ClientLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Logout Dialog */}
+      <LogoutDialog
+        isOpen={isLogoutOpen}
+        onClose={() => setIsLogoutOpen(false)}
+      />
     </div>
   );
 };
 
-export default ClientLayout;
+export default DashboardLayout;
