@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, CloudSnow } from "lucide-react";
 import Button from "../common/button";
 import InputField from "../common/input-field";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../../schema/auth-schema";
+import { useAuthStore } from "../../store/auth-store";
+import { authServices } from "../../services/auth-services";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const LoginForm = () => {
   const [isInvitationFlow, setIsInvitationFlow] = useState(false);
   const prefillEmail = searchParams.get("email");
   const invitationToken = searchParams.get("token");
+  const { token, user, setToken, setUser, setAvatar } = useAuthStore();
 
   const {
     register,
@@ -35,47 +37,55 @@ const LoginForm = () => {
     }
   }, [invitationToken]);
 
+  useEffect(() => {
+    if (token) {
+      if (user.role === "agency_admin") {
+        navigate("/agency/agency-dashboard");
+      } else if (user.role === "client") {
+        navigate("/client/client-dashboard");
+      } else {
+        navigate("/employee/employee-dashboard");
+      }
+    } else {
+      navigate("/login");
+    }
+  }, []);
+
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/login`,
-        {
-          email: data.email,
-          password: data.password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const res = await authServices.loginUser(data.email, data.password);
 
-      // According to your JSON: res.data.data contains { user, token }
-      const { token, user } = res.data.data;
+      // According to your JSON: res.data contains { user, token }
+      const { token, user } = res.data;
 
       if (token) {
-        localStorage.setItem("token", token);
-
-        localStorage.setItem("user", JSON.stringify(user));
+        // Store auth data in Zustand
+        setToken(token);
+        setUser(user);
+        console.log(user);
+        console.log(token);
+        if (user?.avatar) {
+          setAvatar(user.avatar);
+        }
 
         const userRole = user?.role;
         if (userRole === "agency_admin") {
-          navigate("/agency/agency-dashboard");
+          navigate("/agency/agency-dashboard", { replace: true });
         } else if (userRole === "client") {
           // If coming from invitation, navigate to client dashboard
           if (isInvitationFlow) {
-            navigate("/client-dashboard");
+            navigate("/client/client-dashboard", { replace: true });
           } else {
-            navigate("/client-dashboard");
+            navigate("/client/client-dashboard", { replace: true });
           }
         } else {
-          navigate("/employee-dashboard");
+          navigate("/employee/employee-dashboard", { replace: true });
         }
       }
     } catch (err) {
       setError("root", {
         type: "server",
-        message: err.response?.data?.message || "Login failed",
+        message: err?.message || "Login failed",
       });
     }
   };

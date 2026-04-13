@@ -13,7 +13,6 @@ import ForgotPasswordPage from "./pages/auth/forgot-password-page";
 import ResetPasswordPage from "./pages/auth/reset-password-page";
 import RegisterPage from "./pages/auth/register-page";
 import VerifyOtpPage from "./pages/auth/verify-otp-page";
-import AgencyLayout from "./layouts/agency-layout";
 import LoginPage from "./pages/auth/login-page";
 import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import AgencyClients from "./pages/agency/agency-clients";
@@ -22,11 +21,11 @@ import AgencySettings from "./pages/agency/agency-settings";
 import DesignerDashboard from "./pages/designer/designer-dashboard";
 import DesignerProjects from "./pages/designer/designer-projects";
 import MainApp from "./pages/agency/agency-projects-list";
-import ClientLayout from "./layouts/client-layout";
-import ClientDashboard from "./pages/client/client-dashbord";
+import ClientDashboard from "./pages/client/client-dashboard";
 import ClientInvitations from "./pages/client/client-invitations";
 import AgencyProjectsList from "./pages/agency/agency-projects-list";
 import ErrorPage from "./pages/error-page";
+import DashboardLayout from "./components/common/dashboard-layout";
 
 function App() {
   const router = createBrowserRouter(
@@ -51,10 +50,10 @@ function App() {
         {/* agency routes */}
         <Route
           element={
-            <RoleProtectedRoute allowedRoles={["agency", "superadmin"]} />
+            <RoleProtectedRoute allowedRoles={["agency_admin"]} />
           }
         >
-          <Route path="agency" element={<AgencyLayout />}>
+          <Route path="agency" element={<DashboardLayout />}>
             <Route path="agency-dashboard" element={<AgencyDashboard />} />
             <Route path="create-project" element={<CreateProject />} />
             <Route path="agency-projects" element={<AgencyProjectsList />}>
@@ -69,9 +68,9 @@ function App() {
         {/* client routes */}
         <Route
           element={
-            <RoleProtectedRoute allowedRoles={["client", "superadmin"]} />
+            <RoleProtectedRoute allowedRoles={["client"]} />
           }>
-          <Route element={<ClientLayout />}>
+          <Route path="client" element={<DashboardLayout />}>
             <Route path="client-dashboard" element={<ClientDashboard />} />
             <Route path="invitations" element={<ClientInvitations />} />
             {/* <Route path='client-projects' element={<ClientProjects />}>
@@ -87,9 +86,10 @@ function App() {
         {/* designer routes */}
         <Route
           element={
-            <RoleProtectedRoute allowedRoles={["designer", "superadmin"]} />
+            <RoleProtectedRoute allowedRoles={["employee"]} />
           }
         >
+          <Route path="employee" element={<DashboardLayout />}>
           <Route path="employee-dashboard" element={<DesignerDashboard />} />
           {/* <Route index element={<DesignerDashboard />} />
             <Route path="designer-projects" element={<DesignerProjects />}>
@@ -112,6 +112,7 @@ function App() {
               element={<DesignerNotification />}
             />
           </Route> */}
+          </Route>
         </Route>
 
         {/* end-client routes */}

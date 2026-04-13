@@ -6,7 +6,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema } from "../../schema/auth-schema";
-import axios from "axios";
+import { authServices } from "../../services/auth-services";
 
 const ResetPasswordForm = () => {
   const navigate = useNavigate();
@@ -41,22 +41,15 @@ const ResetPasswordForm = () => {
       }
 
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/auth/forgot-password-verify-token`,
-          {
-            params: { token },
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const res = await authServices.verifyResetToken(token);
 
-        if (res.data.success) {
+        if (res.success) {
           setTokenVerified(true);
         }
       } catch (err) {
         setTokenError(
-          err.response?.data?.message || "Invalid or expired reset token. Please request a new reset link."
+          err?.message ||
+            "Invalid or expired reset token. Please request a new reset link.",
         );
       } finally {
         setTokenVerifying(false);
@@ -68,22 +61,14 @@ const ResetPasswordForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/forgot-password-reset`,
-        {
-          token,
-          newPassword: data.password,
-          confirmPassword: data.confirmPassword,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const res = await authServices.resetPassword(
+        token,
+        data.password,
+        data.confirmPassword,
       );
 
-      if (res.data.success) {
-        console.log("Password reset successfully:", res.data.message);
+      if (res.success) {
+        console.log("Password reset successfully:", res.message);
         setIsSuccess(true);
         // Navigate to login after 2 seconds
         setTimeout(() => {
@@ -93,11 +78,11 @@ const ResetPasswordForm = () => {
     } catch (err) {
       setError("root", {
         type: "server",
-        message: err.response?.data?.message || "Failed to reset password. Link might be expired.",
+        message:
+          err?.message || "Failed to reset password. Link might be expired.",
       });
     }
   };
-
 
   // Show loading state while verifying token
   if (tokenVerifying) {
@@ -143,11 +128,21 @@ const ResetPasswordForm = () => {
         <div className="p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm mb-5">
           <div className="flex items-center justify-center gap-2">
             <div className="w-5 h-5 text-green-600">
-              <svg className="w-full h-full" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className="w-full h-full"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
-            <span className="font-semibold">Your password has been reset successfully!</span>
+            <span className="font-semibold">
+              Your password has been reset successfully!
+            </span>
           </div>
         </div>
         <div className="text-xs text-gray-500 mt-3">

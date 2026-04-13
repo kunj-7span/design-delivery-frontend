@@ -85,7 +85,7 @@ const AgencyDashboard = () => {
 
   return (
     <>
-      <div className="p-4 md:p-6 min-h-screen">
+      <div className="p-4 md:p-6 min-h-screen"> 
         <h2 className="text-heading">Dashboard</h2>
 
         <div className="mt-5 mb-5 flex flex-wrap gap-5">
