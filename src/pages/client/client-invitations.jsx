@@ -11,6 +11,7 @@ const ClientInvitations = () => {
   const [acceptingId, setAcceptingId] = useState(null);
   const { token } = useAuthStore();
 
+<<<<<<< HEAD
   useEffect(() => {
     fetchPendingInvitations();
   }, []);
@@ -18,6 +19,11 @@ const ClientInvitations = () => {
   const fetchPendingInvitations = async () => {
     try {
       setIsLoading(true);
+=======
+    useEffect(() => {
+        fetchPendingInvitations();
+    }, []);
+>>>>>>> main
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/pending`,
@@ -35,6 +41,7 @@ const ClientInvitations = () => {
         const data = response.data.data;
         const invitations = Array.isArray(data) ? data : data?.invitations;
 
+<<<<<<< HEAD
         if (Array.isArray(invitations)) {
           if (invitations.length > 0) {
             setInvitations(invitations);
@@ -53,6 +60,78 @@ const ClientInvitations = () => {
       setInvitations([]);
     } finally {
       setIsLoading(false);
+=======
+            if (response.data.success) {
+                const data = response.data.data;
+
+                if (Array.isArray(data)) {
+                    setInvitations(data);
+                } else if (Array.isArray(data?.invitations)) {
+                    setInvitations(data.invitations);
+                } else {
+                    setInvitations([]);
+                }
+            } else {
+                setInvitations([]);
+            }
+        } catch (error) {
+            console.error("Error fetching invitations:", error);
+            toast.error("Failed to load invitations. Please try again.");
+            setInvitations([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleAcceptInvitation = async (invitationId) => {
+        try {
+            setAcceptingId(invitationId);
+
+            const token = localStorage.getItem("token");
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/accept`,
+                JSON.stringify({ invitation_id: invitationId }),
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
+            if (response.data.success) {
+                toast.success("Invitation accepted successfully!");
+
+                setInvitations((prev) =>
+                    prev.filter((inv) => inv.id !== invitationId)
+                );
+            }
+        } catch (error) {
+            console.error("Error accepting invitation:", error);
+            console.error("Error response:", error.response);
+
+            toast.error(
+                error.response?.data?.message ||
+                "Failed to accept invitation. Please try again."
+            );
+        } finally {
+            setAcceptingId(null);
+        }
+    };
+
+    const safeInvitations = Array.isArray(invitations) ? invitations : [];
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20">
+                <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+                <p className="text-gray-600 text-sm">
+                    Loading invitations...
+                </p>
+            </div>
+        );
+>>>>>>> main
     }
   };
 

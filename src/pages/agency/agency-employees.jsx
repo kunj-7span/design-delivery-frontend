@@ -64,11 +64,10 @@ const AgencyEmployees = () => {
         toast.success("Invitation updated successfully");
         setEditEmployee(null);
       } else {
-        // Add new employee via API
+
         const newEmployee = await addEmployee(formData);
         setEmployees([...employees, newEmployee]);
         toast.success("Employee added successfully");
-        console.log("employee added")
       }
       reset();
       setCurrentPage(1);
@@ -78,7 +77,6 @@ const AgencyEmployees = () => {
     }
   };
 
-  // Fetch employees on component mount
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
@@ -97,7 +95,6 @@ const AgencyEmployees = () => {
   }, []);
 
   const handleUpdate = (data) => {
-    console.log("Updated Employee:", data);
     setEmployees(
       employees.map((emp) =>
         emp.id === selectedEmployee.id ? { ...emp, ...data } : emp,
@@ -160,7 +157,6 @@ const AgencyEmployees = () => {
       <div className="p-4 md:p-6 min-h-screen w-full max-w-full overflow-x-hidden">
         <h2 className="text-heading">Employee Management</h2>
 
-        {/* Add Employee Form Card */}
         <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
           <div className="flex items-center gap-3">
             <UserPlus

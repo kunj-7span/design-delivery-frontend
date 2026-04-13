@@ -19,6 +19,7 @@ const ForgotPasswordForm = () => {
     mode: "onChange",
   });
 
+<<<<<<< HEAD
   const onSubmit = async (data) => {
     try {
       const res = await authServices.forgotPassword(data.email);
@@ -31,6 +32,38 @@ const ForgotPasswordForm = () => {
         type: "server",
         message: err?.message || "Failed to send reset link.",
       });
+=======
+    const onSubmit = async (data) => {
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_BASE_URL}/auth/forgot-password`,
+                {
+                    email: data.email,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+        } catch (err) {
+            setError("root", { type: "server", message: err.response?.data?.message || "Failed to send reset link." });
+        }
+    };
+
+    if (isSubmitSuccessful) {
+        return (
+            <div className="w-full text-center">
+                <div className="p-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm mb-5">
+                    If an account exists with that email, we have sent a reset link!
+                </div>
+                <Link to="/login" className='text-primary hover:text-hover-primary inline-flex items-center justify-center text-sm font-semibold'>
+                    <ArrowLeft className='w-4 mr-1' />
+                    Back to login
+                </Link>
+            </div>
+        );
+>>>>>>> main
     }
   };
 
