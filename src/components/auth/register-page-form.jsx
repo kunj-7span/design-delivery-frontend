@@ -67,7 +67,7 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-          }
+          } 
         }
       } catch (err) {
         console.error("Error validating invitation token:", err);
@@ -198,7 +198,16 @@ const RegisterPageForm = () => {
 
       // Navigate to client dashboard if registered via invitation
 
-      navigate("/verify-otp");
+      navigate(`/verify-otp?email=${encodeURIComponent(data.email)}`, {
+        state: {
+          registerData: {
+            email: data.email,
+            name: data.name,
+            role: data.role,
+            password: data.password,
+          },
+        },
+      });
     } catch (err) {
       setError("root", {
         type: "server",
