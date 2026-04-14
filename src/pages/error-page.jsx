@@ -1,4 +1,4 @@
-import { AlertCircle, ArrowLeft, Home } from "lucide-react";
+import { AlertCircle, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/button";
 
@@ -6,51 +6,36 @@ const ErrorPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-purple-50 to-white flex items-center justify-center px-4">
-      <div className="my-container flex flex-col items-center justify-center text-center py-20">
-        {/* Error Icon */}
-        <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full">
-            <AlertCircle size={40} className="text-red-500" />
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-b from-white via-purple-50/40 to-white flex items-center justify-center px-4 py-14">
+      <div className="pointer-events-none absolute -top-20 -left-16 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+
+      <div className="my-container text-center">
+
+        <div className="-mt-6 mb-5 flex justify-center">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-white/80 border border-primary/20 shadow-md shadow-primary/10 backdrop-blur">
+            <AlertCircle size={28} className="text-primary" />
           </div>
         </div>
 
-        {/* Error Code */}
-        {/* <h1 className="text-6xl md:text-7xl font-extrabold text-gray-900 mb-4">
-          404
-        </h1> */}
-
-        {/* Error Title */}
         <h2 className="text-2xl md:text-4xl font-bold text-gray-800 mb-3">
-          404 - Page Not Found
+          Page not found
         </h2>
+        <p className="text-gray-500 leading-relaxed max-w-xl mx-auto mb-8">
+          The page you are trying to open does not exist or may have been moved.
+        </p>
 
-        {/* Error Description */}
-        {/* <p className="text-gray-500 leading-relaxed text-sm md:text-base max-w-md mb-8">
-          Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
-        </p> */}
-
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex justify-center">
           <Button
             onClick={() => navigate(-1)}
-            className="flex items-center justify-center gap-2 px-6 py-3 border border-gray-200 bg-white hover:border-primary hover:bg-purple-50 text-gray-800 transition-colors"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-hover-primary text-white shadow-lg shadow-primary/20"
           >
             <ArrowLeft size={16} />
             <span>Go Back</span>
           </Button>
-{/* 
-          <Button
-            onClick={() => navigate("/")}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-primary hover:bg-hover-primary text-white transition-colors"
-          >
-            <Home size={16} />
-            <span>Go to Home</span>
-          </Button> */}
         </div>
 
-        {/* Decorative Elements */}
-        <div className="mt-16">
+        <div className="mt-8">
           <div className="inline-flex gap-3">
             <div className="w-2 h-2 rounded-full bg-primary/30 animate-pulse"></div>
             <div className="w-2 h-2 rounded-full bg-primary/50 animate-pulse delay-100"></div>
