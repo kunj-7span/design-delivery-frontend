@@ -45,14 +45,11 @@ const RegisterPageForm = () => {
   useEffect(() => {
     const initializeForm = async () => {
       try {
-        console.log("first");
         if (invitationToken) {
           // Verify the invitation token
           const response =
             await authServices.verifyInvitationToken(invitationToken);
-          console.log(response);
           if (response.success) {
-            console.log(response);
             const { user_exists, client_name, email } = response.data;
             setInvitationData(response.data);
             if (user_exists) {
@@ -70,8 +67,6 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-          } else {
-            console.log(response);
           }
         }
       } catch (err) {

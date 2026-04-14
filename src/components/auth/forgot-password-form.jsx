@@ -23,9 +23,6 @@ const ForgotPasswordForm = () => {
     try {
       const res = await authServices.forgotPassword(data.email);
 
-      if (res.success) {
-        console.log("Reset link sent successfully:", res.message);
-      }
     } catch (err) {
       setError("root", {
         type: "server",
