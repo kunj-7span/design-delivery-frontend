@@ -26,24 +26,28 @@ export const getClientGrowth = async () => {
 };
 
 // Client API Calls
-export const getClientInvitations = async () => {
-  const response = await axiosClient.get("/agency/client-invitations");
+export const getClientInvitations = async ({ page = 1, limit = 10 }) => {
+  const response = await axiosClient.get("/agency/client-invitations", {
+    params: { page, limit },
+  });
 
   const invitations = response.data?.data?.invitations || [];
-  const total = response.data?.meta?.total;
-  const invitation = invitations.map((inv) => ({
-    id: inv.id,
-    clientName: inv.client_name || "Unknown",
-    email: inv.receiver_email,
-    date: new Date(inv.created_at).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    }),
-    status: inv.status,
-    isAccepted: inv.is_accepted,
-    expiresAt: inv.expires_at,
-  }));
-  return {invitation, total}
+
+  return {
+    data: invitations.map((inv) => ({
+      id: inv.id,
+      clientName: inv.client_name || "Unknown",
+      email: inv.receiver_email,
+      date: new Date(inv.created_at).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+      }),
+      status: inv.status,
+      isAccepted: inv.is_accepted,
+      expiresAt: inv.expires_at,
+    })),
+    meta: response.data?.meta || {}, // 👈 IMPORTANT
+  };
 };
 
 export const inviteClient = async (formData) => {
@@ -84,21 +88,26 @@ export const deleteClientInvitation = async (clientId) => {
 };
 
 // Employee API Calls
-export const getEmployees = async () => {
-  const response = await axiosClient.get("/employee-profiles");
+export const getEmployees = async ({ page = 1, limit = 10 } = {}) => {
+  const response = await axiosClient.get("/employee-profiles", {
+    params: { page, limit },
+  });
 
   const employees = response.data?.data || [];
 
-  return employees.map((emp) => ({
-    id: emp.id,
-    name: emp.name,
-    email: emp.email,
-    date: new Date(emp.createdAt).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    }),
-    activeProjects: emp.activeProjectsCount || 0,
-  }));
+  return {
+    data: employees.map((emp) => ({
+      id: emp.id,
+      name: emp.name,
+      email: emp.email,
+      date: new Date(emp.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+      }),
+      activeProjects: emp.activeProjectsCount || 0,
+    })),
+    meta: response.data?.meta || {}, // 👈 IMPORTANT
+  };
 };
 
 export const addEmployee = async (formData) => {
