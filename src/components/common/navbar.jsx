@@ -56,7 +56,9 @@ const Navbar = () => {
                     <div className="">
                         <div className="flex flex-col gap-2 items-center mt-10">
                             <Link to="/login" className="px-4 py-2 w-full text-sm border text-gray-500">Login</Link>
-                            <Button className="px-4 py-2 bg-primary hover:bg-hover-primary text-white text-sm w-full">Get Started</Button>
+                            <Button
+                                onClick={handleClick}
+                                className="px-4 py-2 bg-primary hover:bg-hover-primary text-white text-sm w-full">Get Started</Button>
                         </div>
                     </div>
                 </div>

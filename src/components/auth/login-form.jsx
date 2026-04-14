@@ -46,8 +46,6 @@ const LoginForm = () => {
       } else {
         navigate("/employee/employee-dashboard");
       }
-    } else {
-      navigate("/login");
     }
   }, []);
 

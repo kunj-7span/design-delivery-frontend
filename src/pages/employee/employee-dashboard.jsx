@@ -145,7 +145,7 @@ function ProjectSection({ title, rows, onProjectClick }) {
   );
 }
 
-const DesignerDashboard = () => {
+const EmployeeDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
@@ -184,88 +184,88 @@ const DesignerDashboard = () => {
 
   return (
     <div className="p-4 md:p-6 min-h-screen">
-        <main>
-          
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
-              <div className="rounded-xl p-5 shadow-sm bg-white">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-sky-600">
-                      Active projects
-                    </p>
-                    <p className="mt-2 text-3xl font-bold text-sky-700">
-                      0
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-sky-100/80 p-2 text-sky-600">
-                    <Folder className="h-5 w-5" aria-hidden />
-                  </div>
-                </div>
-              </div>
+      <main>
 
-              <div className="rounded-xl p-5 shadow-sm bg-white">
-                <div className="flex items-start justify-between gap-3 ">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-emerald-600">
-                      Approved
-                    </p>
-                    <p className="mt-2 text-3xl font-bold text-emerald-700">
-                      0
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-emerald-100/80 p-2 text-emerald-600">
-                    <Check className="h-5 w-5" aria-hidden />
-                  </div>
-                </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3">
+          <div className="rounded-xl p-5 shadow-sm bg-white">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-sky-600">
+                  Active projects
+                </p>
+                <p className="mt-2 text-3xl font-bold text-sky-700">
+                  0
+                </p>
               </div>
-
-              <div className="rounded-xl p-5 shadow-sm bg-white">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wide text-rose-600 ">
-                      Overdue
-                    </p>
-                    <p className="mt-2 text-3xl font-bold text-rose-700">
-                      0
-                    </p>
-                  </div>
-                  <div className="rounded-lg bg-rose-100/80 p-2 text-rose-600">
-                    <Clock className="h-5 w-5" aria-hidden />
-                  </div>
-                </div>
+              <div className="rounded-lg bg-sky-100/80 p-2 text-sky-600">
+                <Folder className="h-5 w-5" aria-hidden />
               </div>
             </div>
+          </div>
 
-            
+          <div className="rounded-xl p-5 shadow-sm bg-white">
+            <div className="flex items-start justify-between gap-3 ">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-emerald-600">
+                  Approved
+                </p>
+                <p className="mt-2 text-3xl font-bold text-emerald-700">
+                  0
+                </p>
+              </div>
+              <div className="rounded-lg bg-emerald-100/80 p-2 text-emerald-600">
+                <Check className="h-5 w-5" aria-hidden />
+              </div>
+            </div>
+          </div>
 
-            <section className="mt-5 rounded-lg border border-gray-200 bg-white shadow-sm">
-              <h2 className="border-b border-gray-100 px-4 py-4 text-lg font-bold text-gray-900 sm:px-6">
-                Recent Feedback
-              </h2>
-              <ul className="divide-y divide-gray-100">
-                {feedbackItems.map((item) => (
-                  <li
-                    key={`${item.company}-${item.time}`}
-                    className="px-4 py-4 sm:px-6"
-                  >
-                    <p className="text-sm leading-relaxed text-gray-800">
-                      <span className="font-semibold">{item.company}</span>{" "}
-                      commented{" "}
-                      <q className="italic text-gray-700">
-                        &ldquo;{item.quote}&rdquo;
-                      </q>{" "}
-                      on project{" "}
-                      <span className="font-semibold">{item.project}</span>.
-                    </p>
-                    <p className="mt-2 text-xs text-gray-500">{item.time}</p>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          
-        </main>
+          <div className="rounded-xl p-5 shadow-sm bg-white">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-rose-600 ">
+                  Overdue
+                </p>
+                <p className="mt-2 text-3xl font-bold text-rose-700">
+                  0
+                </p>
+              </div>
+              <div className="rounded-lg bg-rose-100/80 p-2 text-rose-600">
+                <Clock className="h-5 w-5" aria-hidden />
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <section className="mt-5 rounded-lg border border-gray-200 bg-white shadow-sm">
+          <h2 className="border-b border-gray-100 px-4 py-4 text-lg font-bold text-gray-900 sm:px-6">
+            Recent Feedback
+          </h2>
+          <ul className="divide-y divide-gray-100">
+            {feedbackItems.map((item) => (
+              <li
+                key={`${item.company}-${item.time}`}
+                className="px-4 py-4 sm:px-6"
+              >
+                <p className="text-sm leading-relaxed text-gray-800">
+                  <span className="font-semibold">{item.company}</span>{" "}
+                  commented{" "}
+                  <q className="italic text-gray-700">
+                    &ldquo;{item.quote}&rdquo;
+                  </q>{" "}
+                  on project{" "}
+                  <span className="font-semibold">{item.project}</span>.
+                </p>
+                <p className="mt-2 text-xs text-gray-500">{item.time}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+      </main>
     </div>
   );
 };
 
-export default DesignerDashboard;
+export default EmployeeDashboard;

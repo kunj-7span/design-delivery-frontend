@@ -27,6 +27,7 @@ const AgencyClients = () => {
   const [editClient, setEditClient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [totalInvitations, setTotalInvitations] = useState(0); // New state for total invitations 
 
   const {
     register,
@@ -43,7 +44,8 @@ const AgencyClients = () => {
       try {
         setLoading(true);
         const data = await getClientInvitations();
-        setAllInvitations(data);
+        setAllInvitations(data.invitation);
+        setTotalInvitations(data.total)
       } catch (error) {
         console.error("Error fetching invitations:", error);
         toast.error("Failed to load client invitations");
@@ -193,7 +195,7 @@ const AgencyClients = () => {
         submitText="Update Client"
         defaultValues={selectedClient}
         onSubmit={handleUpdate}
-        schema={inviteClientSchema} // 👈 HERE
+        schema={inviteClientSchema} 
         fields={[
           {
             name: "name",
@@ -266,9 +268,12 @@ const AgencyClients = () => {
           </form>
         </div>
 
-        <div className="mt-5">
-          <h2 className="mb-3 text-subheading font-semibold text-gray-800">
-            Pending Invitations
+        <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
+          <h2 className="flex items-center mb-3 text-subheading font-semibold text-gray-800">
+            <span>Pending Invitations</span>
+            <span className="p-2 bg-gray-200 text-xs rounded-xl ml-3">
+                {totalInvitations} Total
+              </span>
           </h2>
 
           {loading ? (

@@ -7,9 +7,8 @@ const TextareaField = React.forwardRef(
         {label && (
           <label
             htmlFor={id}
-            className={`text-sm tracking-wider mb-2 block ${
-              error ? "text-red-500" : "text-gray-400"
-            }`}
+            className={`text-sm tracking-wider font-semibold mb-2 block ${error ? "text-red-500" : "text-gray-500"
+              }`}
           >
             {label}
           </label>
@@ -18,9 +17,8 @@ const TextareaField = React.forwardRef(
           id={id}
           ref={ref}
           rows={rows}
-          className={`w-full p-2 sm:p-3 rounded-xl border transition-colors bg-white focus:outline-none text-sm resize-none placeholder:text-gray-400 ${
-            error ? "border-red-500" : "border-gray-300 focus:border-primary"
-          }`}
+          className={`w-full p-2 sm:p-3 rounded-xl border transition-colors bg-white focus:outline-none text-sm resize-none placeholder:text-gray-400 ${error ? "border-red-500" : "border-gray-300 focus:border-primary"
+            }`}
           {...props}
         />
         {error && (

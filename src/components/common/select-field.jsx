@@ -11,19 +11,17 @@ const SelectField = React.forwardRef(
         {label && (
           <label
             htmlFor={id}
-            className={`text-sm tracking-wider mb-2 block ${
-              error ? "text-red-500" : "text-gray-400"
-            }`}
+            className={`text-sm tracking-wider font-semibold mb-2 block ${error ? "text-red-500" : "text-gray-500"
+              }`}
           >
             {label}
           </label>
         )}
         <div
-          className={`relative flex items-center rounded-xl border transition-colors bg-white ${
-            error
+          className={`relative flex items-center rounded-xl border transition-colors bg-white ${error
               ? "border-red-500"
               : "border-gray-300 focus-within:border-primary"
-          }`}
+            }`}
         >
           <select
             id={id}
