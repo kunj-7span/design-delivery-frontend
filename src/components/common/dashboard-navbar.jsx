@@ -7,8 +7,6 @@ const DashboardNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   const user = useAuthStore((state) => state.user);
   const userAvatarURL = useAuthStore((state) => state.user_avatarURL);
 
-
-
   return (
     <header className="h-16 bg-white shadow flex items-center justify-between px-4">
       {/* DESKTOP TOGGLE */}

@@ -1,5 +1,6 @@
 import React from "react";
 import { MoveLeft , MoveRight  } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Pagination = ({ currentPage, totalPages=13, onPageChange }) => {
   const generatePages = () => {
@@ -39,9 +40,10 @@ const Pagination = ({ currentPage, totalPages=13, onPageChange }) => {
             ...
           </span>
         ) : (
-          <button
+          <Link
             key={index}
             onClick={() => onPageChange(page)}
+            prefetch="intent"
             className={`px-3.5 py-1.5 rounded-lg font-medium cursor-pointer ${
               currentPage === page
                 ? "bg-primary text-white shadow-md shadow-indigo-200"
@@ -49,7 +51,7 @@ const Pagination = ({ currentPage, totalPages=13, onPageChange }) => {
             }`}
           >
             {page}
-          </button>
+          </Link>
         )
       )}
 
