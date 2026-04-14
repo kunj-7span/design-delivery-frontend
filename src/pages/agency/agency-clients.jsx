@@ -3,7 +3,6 @@ import { UserPlus, SendHorizontal, SquarePen } from "lucide-react";
 import { toast } from "react-toastify";
 import Pagination from "../../components/agency/pagination";
 import Table from "../../components/common/table";
-import ClientCard from "../../components/common/client-card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { inviteClientSchema } from "../../schema/agency-scema.js";
@@ -28,6 +27,7 @@ const AgencyClients = () => {
   const [editClient, setEditClient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const [totalInvitations, setTotalInvitations] = useState(0); // New state for total invitations
 
   const {
     register,
@@ -187,7 +187,7 @@ const AgencyClients = () => {
         submitText="Update Client"
         defaultValues={selectedClient}
         onSubmit={handleUpdate}
-        schema={inviteClientSchema} // 👈 HERE
+        schema={inviteClientSchema}
         fields={[
           {
             name: "name",
@@ -260,9 +260,12 @@ const AgencyClients = () => {
           </form>
         </div>
 
-        <div className="mt-5">
-          <h2 className="mb-3 text-subheading font-semibold text-gray-800">
-            Client Invitations
+        <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
+          <h2 className="flex items-center mb-3 text-subheading font-semibold text-gray-800">
+            <span>Pending Invitations</span>
+            <span className="p-2 bg-gray-200 text-xs rounded-xl ml-3">
+              {totalInvitations} Total
+            </span>
           </h2>
 
           {loading ? (
