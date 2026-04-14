@@ -97,8 +97,6 @@ const RegisterPageForm = () => {
       } else {
         navigate("/employee/employee-dashboard");
       }
-    } else {
-      navigate("/login");
     }
   }, []);
 
@@ -255,11 +253,10 @@ const RegisterPageForm = () => {
             <div className="relative inline-block">
               <div
                 onClick={!profilePicPreview ? handleFileClick : undefined}
-                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${
-                  profilePicPreview
-                    ? "border-0"
-                    : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
-                } transition relative group bg-purple-50`}
+                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${profilePicPreview
+                  ? "border-0"
+                  : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
+                  } transition relative group bg-purple-50`}
               >
                 {profilePicPreview ? (
                   <img
