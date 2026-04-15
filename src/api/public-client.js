@@ -12,23 +12,9 @@ const publicClient = axios.create({
   },
 });
 
-// Serialize data for POST/PUT/PATCH requests
+// Request interceptor placeholder for future request-level hooks
 publicClient.interceptors.request.use(
-  (config) => {
-    // Ensure data is sent as JSON string for POST/PUT/PATCH requests
-    if (
-      config.data &&
-      (config.method === "post" ||
-        config.method === "put" ||
-        config.method === "patch")
-    ) {
-      if (typeof config.data === "object") {
-        config.data = JSON.stringify(config.data);
-      }
-    }
-
-    return config;
-  },
+  (config) => config,
   (error) => Promise.reject(error),
 );
 

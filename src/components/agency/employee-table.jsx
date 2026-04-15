@@ -59,7 +59,7 @@ const EmployeeTable = ({ data = [], onDelete }) => {
       {/* DESKTOP TABLE */}
       <div className="hidden sm:block w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
         <table className="w-full text-left table-auto">
-          <thead className="bg-gray-100 text-gray-500 text-xs uppercase">
+          <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
             <tr>
               <th className="px-6 py-3 whitespace-nowrap">Employee</th>
               <th className="px-6 py-3 whitespace-nowrap">Email</th>
@@ -77,7 +77,7 @@ const EmployeeTable = ({ data = [], onDelete }) => {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${getAvatarColor(
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold shrink-0 ${getAvatarColor(
                         item.name,
                       )}`}
                     >
@@ -127,7 +127,7 @@ const EmployeeTable = ({ data = [], onDelete }) => {
             {/* Employee Info with Avatar */}
             <div className="flex items-start gap-3">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${getAvatarColor(
+                className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold shrink-0 ${getAvatarColor(
                   item.name,
                 )}`}
               >

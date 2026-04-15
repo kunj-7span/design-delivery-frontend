@@ -74,19 +74,17 @@ const TagInput = ({
       {label && (
         <label
           htmlFor={id}
-          className={`text-sm tracking-wider mb-2 block ${
-            error ? "text-red-500" : "text-gray-400"
-          }`}
+          className={`text-sm tracking-wider font-semibold mb-2 block ${error ? "text-red-500" : "text-gray-500"
+            }`}
         >
           {label}
         </label>
       )}
       <div
-        className={`flex items-center flex-wrap gap-2 p-2 sm:p-3 rounded-xl border transition-colors bg-white cursor-text ${
-          error
+        className={`flex items-center flex-wrap gap-2 p-2 sm:p-3 rounded-xl border transition-colors bg-white cursor-text ${error
             ? "border-red-500"
             : "border-gray-300 focus-within:border-primary"
-        }`}
+          }`}
         onClick={() => {
           document.getElementById(id)?.focus();
           if (isObjectMode) setIsOpen(true);

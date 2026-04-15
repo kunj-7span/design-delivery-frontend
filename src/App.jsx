@@ -18,14 +18,17 @@ import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import AgencyClients from "./pages/agency/agency-clients";
 import AgencyEmployees from "./pages/agency/agency-employees";
 import AgencySettings from "./pages/agency/agency-settings";
-import DesignerDashboard from "./pages/designer/designer-dashboard";
-import DesignerProjects from "./pages/designer/designer-projects";
+import AgencyProjectDetail from "./pages/agency/agency-project-detail";
+import DesignerDashboard from "./pages/employee/employee-dashboard";
 import MainApp from "./pages/agency/agency-projects-list";
 import ClientDashboard from "./pages/client/client-dashboard";
 import ClientInvitations from "./pages/client/client-invitations";
 import AgencyProjectsList from "./pages/agency/agency-projects-list";
 import ErrorPage from "./pages/error-page";
+import UnauthorizedPage from "./pages/unauthorized-page";
 import DashboardLayout from "./components/common/dashboard-layout";
+import EmployeeProjects from "./pages/employee/employee-projects";
+import EmployeeDashboard from "./pages/employee/employee-dashboard";
 
 function App() {
   const router = createBrowserRouter(
@@ -36,8 +39,9 @@ function App() {
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="unauthorized" element={<UnauthorizedPage />} />
         <Route path="designer" element={<DesignerDashboard />} />
-        <Route path="designer/projects" element={<DesignerProjects />} />
+        <Route path="employee/projects" element={<EmployeeProjects />} />
         <Route path="/projects" element={<MainApp />} />
 
         <Route path="verify-otp" element={<VerifyOtpPage />} />
@@ -48,16 +52,13 @@ function App() {
         </Route> */}
 
         {/* agency routes */}
-        <Route
-          element={
-            <RoleProtectedRoute allowedRoles={["agency_admin"]} />
-          }
-        >
+        <Route element={<RoleProtectedRoute allowedRoles={["agency_admin"]} />}>
           <Route path="agency" element={<DashboardLayout />}>
             <Route path="agency-dashboard" element={<AgencyDashboard />} />
             <Route path="create-project" element={<CreateProject />} />
-            <Route path="agency-projects" element={<AgencyProjectsList />}>
-              {/* <Route path='view-project/:project-id' element={<ViewProject />} /> */}
+            <Route path="agency-projects">
+              <Route index element={<AgencyProjectsList />} />
+              <Route path="view-project-detail/:projectId" element={<AgencyProjectDetail />} />
             </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
             <Route path="agency-employees" element={<AgencyEmployees />} />
@@ -66,10 +67,7 @@ function App() {
         </Route>
 
         {/* client routes */}
-        <Route
-          element={
-            <RoleProtectedRoute allowedRoles={["client"]} />
-          }>
+        <Route element={<RoleProtectedRoute allowedRoles={["client"]} />}>
           <Route path="client" element={<DashboardLayout />}>
             <Route path="client-dashboard" element={<ClientDashboard />} />
             <Route path="invitations" element={<ClientInvitations />} />
@@ -83,35 +81,29 @@ function App() {
           </Route>
         </Route>
 
-        {/* designer routes */}
-        <Route
-          element={
-            <RoleProtectedRoute allowedRoles={["employee"]} />
-          }
-        >
+        {/* employee routes */}
+        <Route element={<RoleProtectedRoute allowedRoles={["employee"]} />}>
           <Route path="employee" element={<DashboardLayout />}>
-          <Route path="employee-dashboard" element={<DesignerDashboard />} />
-          {/* <Route index element={<DesignerDashboard />} />
-            <Route path="designer-projects" element={<DesignerProjects />}>
+            <Route path="employee-dashboard" element={<EmployeeDashboard />} />
+            <Route path="employee-projects" element={<EmployeeProjects />}>
               <Route
                 path="view-project/:project-id"
-                element={<ViewDesignerProject />}
+                // element={<ViewDesignerProject />}
               />
               <Route
                 path="view-project/:project-id/requirement/:requirement-id"
-                element={<ViewAssets />}
+                // element={<ViewAssets />}
               />
               <Route
                 path="view-project/:project-id/requirement/:requirement-id/asset-collaboration"
-                element={<ViewAssetsCollaboration />}
+                // element={<ViewAssetsCollaboration />}
               />
             </Route>
-            <Route path="designer-settings" element={<DesignerSettings />} />
+            {/* <Route path="employee-settings" element={<DesignerSettings />} />
             <Route
-              path="designer-notification"
+              path="employee-notification"
               element={<DesignerNotification />}
-            />
-          </Route> */}
+            /> */}
           </Route>
         </Route>
 

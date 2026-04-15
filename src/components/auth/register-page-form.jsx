@@ -45,14 +45,11 @@ const RegisterPageForm = () => {
   useEffect(() => {
     const initializeForm = async () => {
       try {
-        console.log("first");
         if (invitationToken) {
           // Verify the invitation token
           const response =
             await authServices.verifyInvitationToken(invitationToken);
-          console.log(response);
           if (response.success) {
-            console.log(response);
             const { user_exists, client_name, email } = response.data;
             setInvitationData(response.data);
             if (user_exists) {
@@ -70,9 +67,7 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-          } else {
-            console.log(response);
-          }
+          } 
         }
       } catch (err) {
         console.error("Error validating invitation token:", err);
@@ -97,8 +92,6 @@ const RegisterPageForm = () => {
       } else {
         navigate("/employee/employee-dashboard");
       }
-    } else {
-      navigate("/login");
     }
   }, []);
 
@@ -205,7 +198,17 @@ const RegisterPageForm = () => {
 
       // Navigate to client dashboard if registered via invitation
 
-      navigate("/verify-otp");
+      navigate(`/verify-otp?email=${encodeURIComponent(data.email)}`, {
+        state: {
+          registerData: {
+            email: data.email,
+            name: data.name,
+            role: data.role,
+            password: data.password,
+            ...(avatarUrl && { avatar: avatarUrl }),
+          },
+        },
+      });
     } catch (err) {
       setError("root", {
         type: "server",
@@ -255,11 +258,10 @@ const RegisterPageForm = () => {
             <div className="relative inline-block">
               <div
                 onClick={!profilePicPreview ? handleFileClick : undefined}
-                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${
-                  profilePicPreview
-                    ? "border-0"
-                    : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
-                } transition relative group bg-purple-50`}
+                className={`w-18 h-18 rounded-full border-2 flex items-center justify-center overflow-hidden ${profilePicPreview
+                  ? "border-0"
+                  : "border-dashed border-primary hover:border-hover-primary hover:bg-purple-100 cursor-pointer"
+                  } transition relative group bg-purple-50`}
               >
                 {profilePicPreview ? (
                   <img
