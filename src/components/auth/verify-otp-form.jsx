@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../common/button";
 import { useAuthStore } from "../../store/auth-store";
 import { authServices } from "../../services/auth-services";
@@ -12,27 +12,34 @@ const VerifyOtpForm = () => {
   const [registerData, setRegisterData] = useState(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const inputRefs = useRef([]);
-  const { setToken, setUser, logout } = useAuthStore();
+  const { setToken, setUser, setAvatar } = useAuthStore();
 
   useEffect(() => {
     try {
-      // Try to get from window.location.state first (if passed via navigation)
-      // Otherwise redirect to register
+      const stateRegisterData = location.state?.registerData;
       const pathEmail = new URLSearchParams(window.location.search).get(
         "email",
       );
-      if (!pathEmail) {
+      const resolvedEmail = stateRegisterData?.email || pathEmail;
+
+      if (!resolvedEmail) {
         navigate("/register");
         return;
       }
-      // You'll need to pass registerData via state when navigating from register
-      // For now, we'll set a default
-      setRegisterData({ email: pathEmail });
+
+      setRegisterData({
+        email: resolvedEmail,
+        name: stateRegisterData?.name || "",
+        role: stateRegisterData?.role || "",
+        password: stateRegisterData?.password || "",
+        avatar: stateRegisterData?.avatar || "",
+      });
     } catch {
       navigate("/register");
     }
-  }, [navigate]);
+  }, [location.state, navigate]);
 
   useEffect(() => {
     let interval = null;
@@ -88,15 +95,8 @@ const VerifyOtpForm = () => {
         return;
       }
 
-      const requestBody = {
-        ...registerData,
-        otp: otpValue,
-      };
-
-      const res = await authServices.verifyOTP(requestBody);
-
-      const user = res.data?.user;
-      const token = res.data?.token;
+      const res = await authServices.verifyOTP({ ...registerData, otp: otpValue });
+      const { user, token } = res.data;
 
       // Store in Zustand instead of localStorage
       if (token) {
@@ -107,14 +107,19 @@ const VerifyOtpForm = () => {
         name: user?.name || registerData.name,
         email: user?.email || registerData.email,
         role: user?.role || registerData.role,
-        avatar: user?.avatar || "",
       });
+
+      // Store avatar URL in Zustand for navbar display
+      const avatarUrl = user?.avatar || registerData.avatar || "";
+      if (avatarUrl) {
+        setAvatar(avatarUrl);
+      }
 
       const role = user?.role || registerData.role;
       if (role === "agency_admin") {
         navigate("/agency/agency-dashboard", { replace: true });
       } else {
-        navigate("client/client-dashboard", { replace: true });
+        navigate("/client/client-dashboard", { replace: true });
       }
     } catch (err) {
       setError(err?.message || "Verification failed. Please try again.");
@@ -127,8 +132,12 @@ const VerifyOtpForm = () => {
     if (timer > 0) return;
     try {
       setError("");
+      if (!registerData?.email) {
+        setError("Missing email. Please register again.");
+        return;
+      }
       setTimer(45);
-      await authServices.resendOTP(registerData?.email);
+      await authServices.resendOTP(registerData.email);
     } catch (err) {
       setError(err?.message || "Could not resend OTP. Please try again.");
     }

@@ -90,9 +90,7 @@ export const authServices = {
   // Resend OTP
   async resendOTP(email) {
     try {
-      const res = await publicClient.post("/auth/resend-otp", {
-        email,
-      });
+      const res = await publicClient.post("/auth/resend-otp", { email });
       return res.data;
     } catch (error) {
       throw error.response?.data || error;

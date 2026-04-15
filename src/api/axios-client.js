@@ -12,7 +12,7 @@ const axiosClient = axios.create({
   },
 });
 
-// Attach token automatically and serialize data
+// Attach token automatically
 axiosClient.interceptors.request.use(
   (config) => {
     // Get token from Zustand store
@@ -20,18 +20,6 @@ axiosClient.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    // Ensure data is sent as JSON string for POST/PUT/PATCH requests
-    if (
-      config.data &&
-      (config.method === "post" ||
-        config.method === "put" ||
-        config.method === "patch")
-    ) {
-      if (typeof config.data === "object") {
-        config.data = JSON.stringify(config.data);
-      }
     }
 
     return config;
