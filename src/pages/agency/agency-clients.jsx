@@ -5,7 +5,7 @@ import Pagination from "../../components/agency/pagination";
 import Table from "../../components/common/table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { inviteClientSchema } from "../../schema/agency-scema.js";
+import { inviteClientSchema } from "../../schema/agency-schema.js";
 import InputField from "../../components/common/input-field.jsx";
 import Button from "../../components/common/button.jsx";
 import FormModal from "../../components/common/popup-modal.jsx";
