@@ -28,7 +28,7 @@ const AgencyClients = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
   const [totalInvitations, setTotalInvitations] = useState(0); // New state for total invitations
-
+  const [fetch, setFetch] = useState(false);
   const {
     register,
     handleSubmit,
@@ -52,6 +52,7 @@ const AgencyClients = () => {
         setInvitations(response.data);
         const totalItems = Math.ceil(response.meta.total / ITEMS_PER_PAGE);
         setTotalPages(totalItems);
+        setTotalInvitations(response.meta.total)
       } catch (error) {
         console.error(error);
       } finally {
@@ -60,7 +61,7 @@ const AgencyClients = () => {
     };
 
     fetchInvitations();
-  }, [currentPage]);
+  }, [currentPage, fetch]);
 
   // Handle inviting new client from main form
   const onSubmit = async (formData) => {
@@ -68,6 +69,7 @@ const AgencyClients = () => {
       await inviteClient(formData);
       toast.success("Invitation sent successfully");
       reset();
+      setFetch(!fetch)
       setCurrentPage(1); // Reset to page 1 to see new invitation
     } catch (error) {
       console.error("Error:", error);
@@ -97,6 +99,7 @@ const AgencyClients = () => {
       });
       setInvitations(response.data);
       setTotalPages(response.meta.totalPages);
+      setTotalInvitations(response.meta.total)
       toast.success("Update invitation successfully");
       setSelectedClient(null);
       setEditClient(null);
@@ -124,6 +127,7 @@ const AgencyClients = () => {
       });
       setInvitations(response.data);
       setTotalPages(response.meta.totalPages);
+      setTotalInvitations(response.meta.total)
       toast.success("Client invitation deleted successfully");
     } catch (error) {
       console.error("Error deleting invitation:", error);
@@ -146,23 +150,6 @@ const AgencyClients = () => {
       toast.error(
         error?.response?.data?.message || "Failed to resend invitation",
       );
-    }
-  };
-
-  const handleDeleteClient = async (clientId) => {
-    try {
-      await deleteClientInvitation(clientId);
-      // Refetch current page after delete
-      const response = await getClientInvitations({
-        page: currentPage,
-        limit: ITEMS_PER_PAGE,
-      });
-      setInvitations(response.data);
-      setTotalPages(response.meta.totalPages);
-      toast.success("Client deleted successfully");
-    } catch (error) {
-      console.error("Error deleting client:", error);
-      toast.error(error?.response?.data?.message || "Failed to delete client");
     }
   };
 
@@ -251,6 +238,7 @@ const AgencyClients = () => {
             <div className="w-full mb-1">
               <Button
                 type="submit"
+                isLoading={loading}
                 className="w-full md:w-auto bg-primary text-white px-4 py-2 cursor-pointer hover:bg-hover-primary shadow-md shadow-indigo-200 mb-1"
               >
                 <SendHorizontal size={18} className="mr-3" />
@@ -263,7 +251,7 @@ const AgencyClients = () => {
         <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
           <h2 className="flex items-center mb-3 text-subheading font-semibold text-gray-800">
             <span>Pending Invitations</span>
-            <span className="p-2 bg-gray-200 text-xs rounded-xl ml-3">
+            <span className="px-3 py-1 bg-gray-200 text-xs rounded-xl ml-3">
               {totalInvitations} Total
             </span>
           </h2>

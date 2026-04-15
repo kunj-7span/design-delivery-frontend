@@ -206,9 +206,12 @@ const AgencyProjectsList = () => {
                         {formatDate(p.createdAt)}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <button className="bg-primary hover:bg-hover-primary cursor-pointer text-white text-[10px] font-bold py-2 px-4 rounded-xl uppercase shadow-md shadow-indigo-100 transition-colors">
+                        <Link
+                          to={`/agency/agency-projects/view-project-detail/${p.id}`}
+                          className="bg-primary hover:bg-hover-primary cursor-pointer text-white text-[10px] font-bold py-2 px-4 rounded-xl uppercase shadow-md shadow-indigo-100 transition-colors"
+                        >
                           View Details
-                        </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}
@@ -257,9 +260,12 @@ const AgencyProjectsList = () => {
                     <span>{formatDate(p.createdAt)}</span>
                   </div>
 
-                  <button className="w-full bg-primary hover:bg-hover-primary text-white text-xs font-bold py-2 rounded-xl uppercase shadow-md shadow-indigo-100 transition-colors cursor-pointer">
+                  <Link
+                    to={`/agency/agency-projects/view-project/${p.id}`}
+                    className="block w-full bg-primary hover:bg-hover-primary text-center text-white text-xs font-bold py-2 rounded-xl uppercase shadow-md shadow-indigo-100 transition-colors cursor-pointer"
+                  >
                     View Details
-                  </button>
+                  </Link>
                 </div>
               ))}
             </div>
