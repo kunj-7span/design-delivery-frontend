@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { UserPlus, SquarePen, Search } from "lucide-react";
+import { useState, useEffect } from "react";
+import { UserPlus } from "lucide-react";
 import { toast } from "react-toastify";
 import Pagination from "../../components/agency/pagination";
 import EmployeeTable from "../../components/agency/employee-table.jsx";
@@ -8,7 +8,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { addEmployeeSchema } from "../../schema/agency-scema.js";
 import InputField from "../../components/common/input-field.jsx";
 import Button from "../../components/common/button.jsx";
-import FormModal from "../../components/common/popup-modal.jsx";
 import {
   getEmployees,
   addEmployee,
@@ -22,10 +21,8 @@ const AgencyEmployees = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [editEmployee, setEditEmployee] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [totalEmp, setTotalEmp] = useState(0)
+  const [fetch, setFetch] = useState(false);
   const {
     register,
     handleSubmit,
@@ -56,56 +53,18 @@ const AgencyEmployees = () => {
     };
 
     fetchEmployees();
-  }, [currentPage]);
+  }, [currentPage,fetch]);
 
   const onSubmit = async (formData) => {
     try {
-      if (editEmployee) {
-        // Update employee
         await addEmployee(formData);
-        // Refetch current page after update
-        const response = await getEmployees({
-          page: currentPage,
-          limit: ITEMS_PER_PAGE,
-        });
-        setEmployees(response.data);
-        setTotalPages(response.meta.totalPages);
-        setTotalEmp(response.meta.totalEmployees)
-        toast.success("Employee updated successfully");
-        setEditEmployee(null);
-      } else {
-        await addEmployee(formData);
-        // Reset to page 1 to see new employee
         setCurrentPage(1);
+        setFetch(!fetch)
         toast.success("Employee added successfully");
-      }
-      reset();
+        reset();
     } catch (error) {
       console.error("Error adding employee:", error);
       toast.error(error?.response?.data?.message || "Failed to add employee");
-    }
-  };
-
-  const handleUpdate = async (data) => {
-    try {
-      await addEmployee(data);
-      // Refetch current page after update
-      const response = await getEmployees({
-        page: currentPage,
-        limit: ITEMS_PER_PAGE,
-      });
-      setEmployees(response.data);
-      setTotalPages(response.meta.totalPages);
-      setTotalEmp(response.meta.totalEmployees)
-      toast.success("Employee updated successfully");
-      setSelectedEmployee(null);
-      setEditEmployee(null);
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error("Error updating employee:", error);
-      toast.error(
-        error?.response?.data?.message || "Failed to update employee",
-      );
     }
   };
 
@@ -131,40 +90,6 @@ const AgencyEmployees = () => {
 
   return (
     <>
-      <FormModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedEmployee(null);
-          setEditEmployee(null);
-        }}
-        title={
-          <div className="flex gap-3 items-center mb-3">
-            <SquarePen
-              size={40}
-              className="text-primary p-2 bg-indigo-100 rounded-full"
-            />
-            <span>Edit Employee</span>
-          </div>
-        }
-        submitText="Update Employee"
-        defaultValues={selectedEmployee}
-        onSubmit={handleUpdate}
-        schema={addEmployeeSchema}
-        fields={[
-          {
-            name: "name",
-            label: "Employee Name",
-            placeholder: "Enter employee name",
-          },
-          {
-            name: "email",
-            label: "Email Address",
-            placeholder: "Enter email address",
-            type: "email",
-          },
-        ]}
-      />
 
       <div className="p-4 md:p-6 min-h-screen w-full max-w-full overflow-x-hidden">
         <h2 className="text-heading">Employee Management</h2>
@@ -231,7 +156,7 @@ const AgencyEmployees = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <h2 className="flex items-center gap-3 text-subheading font-semibold text-gray-800">
               <span>Employees</span> 
-              <span className="text-sm bg-gray-200 px-3 py-1 rounded-full">{totalEmp} Total</span>
+              <span className="text-xs bg-gray-200 px-3 py-1 rounded-full">{totalEmp} Total</span>
             </h2>
           </div>
 

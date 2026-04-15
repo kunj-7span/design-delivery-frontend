@@ -18,6 +18,7 @@ import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 import AgencyClients from "./pages/agency/agency-clients";
 import AgencyEmployees from "./pages/agency/agency-employees";
 import AgencySettings from "./pages/agency/agency-settings";
+import AgencyProjectDetail from "./pages/agency/agency-project-detail";
 import DesignerDashboard from "./pages/employee/employee-dashboard";
 import MainApp from "./pages/agency/agency-projects-list";
 import ClientDashboard from "./pages/client/client-dashboard";
@@ -51,16 +52,13 @@ function App() {
         </Route> */}
 
         {/* agency routes */}
-        <Route
-          element={
-            <RoleProtectedRoute allowedRoles={["agency_admin"]} />
-          }
-        >
+        <Route element={<RoleProtectedRoute allowedRoles={["agency_admin"]} />}>
           <Route path="agency" element={<DashboardLayout />}>
             <Route path="agency-dashboard" element={<AgencyDashboard />} />
             <Route path="create-project" element={<CreateProject />} />
-            <Route path="agency-projects" element={<AgencyProjectsList />}>
-              {/* <Route path='view-project/:project-id' element={<ViewProject />} /> */}
+            <Route path="agency-projects">
+              <Route index element={<AgencyProjectsList />} />
+              <Route path="view-project-detail/:projectId" element={<AgencyProjectDetail />} />
             </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
             <Route path="agency-employees" element={<AgencyEmployees />} />
@@ -69,10 +67,7 @@ function App() {
         </Route>
 
         {/* client routes */}
-        <Route
-          element={
-            <RoleProtectedRoute allowedRoles={["client"]} />
-          }>
+        <Route element={<RoleProtectedRoute allowedRoles={["client"]} />}>
           <Route path="client" element={<DashboardLayout />}>
             <Route path="client-dashboard" element={<ClientDashboard />} />
             <Route path="invitations" element={<ClientInvitations />} />
@@ -87,25 +82,21 @@ function App() {
         </Route>
 
         {/* employee routes */}
-        <Route
-          element={
-            <RoleProtectedRoute allowedRoles={["employee"]} />
-          }
-        >
+        <Route element={<RoleProtectedRoute allowedRoles={["employee"]} />}>
           <Route path="employee" element={<DashboardLayout />}>
             <Route path="employee-dashboard" element={<EmployeeDashboard />} />
             <Route path="employee-projects" element={<EmployeeProjects />}>
               <Route
                 path="view-project/:project-id"
-              // element={<ViewDesignerProject />}
+                // element={<ViewDesignerProject />}
               />
               <Route
                 path="view-project/:project-id/requirement/:requirement-id"
-              // element={<ViewAssets />}
+                // element={<ViewAssets />}
               />
               <Route
                 path="view-project/:project-id/requirement/:requirement-id/asset-collaboration"
-              // element={<ViewAssetsCollaboration />}
+                // element={<ViewAssetsCollaboration />}
               />
             </Route>
             {/* <Route path="employee-settings" element={<DesignerSettings />} />
@@ -132,8 +123,8 @@ function App() {
         </Route> */}
 
         {/* Catch-all route for undefined paths */}
-        < Route path="*" element={< ErrorPage />} />
-      </Route >,
+        <Route path="*" element={<ErrorPage />} />
+      </Route>,
     ),
   );
 
