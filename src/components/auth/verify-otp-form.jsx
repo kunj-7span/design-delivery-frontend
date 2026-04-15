@@ -14,7 +14,7 @@ const VerifyOtpForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const inputRefs = useRef([]);
-  const { setToken, setUser } = useAuthStore();
+  const { setToken, setUser, setAvatar } = useAuthStore();
 
   useEffect(() => {
     try {
@@ -34,6 +34,7 @@ const VerifyOtpForm = () => {
         name: stateRegisterData?.name || "",
         role: stateRegisterData?.role || "",
         password: stateRegisterData?.password || "",
+        avatar: stateRegisterData?.avatar || "",
       });
     } catch {
       navigate("/register");
@@ -106,8 +107,13 @@ const VerifyOtpForm = () => {
         name: user?.name || registerData.name,
         email: user?.email || registerData.email,
         role: user?.role || registerData.role,
-        avatar: user?.avatar || "",
       });
+
+      // Store avatar URL in Zustand for navbar display
+      const avatarUrl = user?.avatar || registerData.avatar || "";
+      if (avatarUrl) {
+        setAvatar(avatarUrl);
+      }
 
       const role = user?.role || registerData.role;
       if (role === "agency_admin") {

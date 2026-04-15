@@ -205,6 +205,7 @@ const RegisterPageForm = () => {
             name: data.name,
             role: data.role,
             password: data.password,
+            ...(avatarUrl && { avatar: avatarUrl }),
           },
         },
       });
