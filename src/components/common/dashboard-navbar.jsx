@@ -7,10 +7,8 @@ const DashboardNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   const user = useAuthStore((state) => state.user);
   const userAvatarURL = useAuthStore((state) => state.user_avatarURL);
 
-
-
   return (
-    <header className="h-16 bg-white shadow flex items-center justify-between px-4">
+    <header className="min-h-16 bg-white shadow-md border-b border-gray-200 flex items-center justify-between px-4">
       {/* DESKTOP TOGGLE */}
       <div className="hidden md:block">
         {isSidebarOpen ? (
@@ -37,14 +35,14 @@ const DashboardNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
           </div>
           <div className="w-11 h-11 rounded-full overflow-hidden border border-gray-400">
             <img
-            src={userAvatarURL || user.avatar || profile}
-            
-            alt="profile"
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.target.src = profile;
-            }}
-          />
+              src={userAvatarURL || user.avatar || profile}
+
+              alt="profile"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.src = profile;
+              }}
+            />
           </div>
         </div>
       </div>

@@ -27,8 +27,6 @@ const ClientInvitations = () => {
         },
       );
 
-      console.log("API RESPONSE:", response.data);
-
       if (response.data.success) {
         const data = response.data.data;
 
@@ -77,7 +75,7 @@ const ClientInvitations = () => {
 
       toast.error(
         error.response?.data?.message ||
-          "Failed to accept invitation. Please try again.",
+        "Failed to accept invitation. Please try again.",
       );
     } finally {
       setAcceptingId(null);

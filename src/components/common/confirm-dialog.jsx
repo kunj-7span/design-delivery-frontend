@@ -13,7 +13,6 @@ const ConfirmDialog = ({
   confirmButtonText = "Delete",
   cancelButtonText = "Cancel",
   confirmButtonColor = "bg-red-600 hover:bg-red-700",
-  showCloseButton = true,
 }) => {
   if (!isOpen) return null;
 
@@ -37,13 +36,13 @@ const ConfirmDialog = ({
         <div className="flex gap-3 justify-center">
           <button
             onClick={onCancel}
-            className="px-8 py-2 text-gray-700 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition"
+            className="px-8 py-2 text-gray-700 border border-gray-300 rounded-lg font-medium hover:bg-gray-50 transition cursor-pointer"
           >
             {cancelButtonText}
           </button>
           <button
             onClick={onConfirm}
-            className={`${confirmButtonColor} text-white px-8 py-2 rounded-lg font-medium shadow-md transition`}
+            className={`${confirmButtonColor} text-white px-8 py-2 rounded-lg font-medium shadow-md transition cursor-pointer`}
           >
             {confirmButtonText}
           </button>

@@ -9,7 +9,12 @@ const Table = ({
   onDelete,
   onSend,
   renderActions = true,
+  renderActionsCell,
+  actionsHeaderLabel = "Actions",
   statusStyles = {},
+  rowClassName,
+  tableClassName = "w-full min-w-175 text-left table-auto",
+  containerClassName = "hidden sm:block w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm",
 }) => {
   const [deleteConfirm, setDeleteConfirm] = useState({
     isOpen: false,
@@ -24,11 +29,34 @@ const Table = ({
   };
 
   const getStatusStyle = (status) => {
-  if (!status) return "bg-gray-100 text-gray-600"; // Fallback
-  return (
-    defaultStatusStyles[status.toLowerCase()] || "bg-gray-100 text-gray-600"
-  );
-};
+    if (!status) return "bg-gray-100 text-gray-600";
+    return (
+      defaultStatusStyles[status.toLowerCase()] || "bg-gray-100 text-gray-600"
+    );
+  };
+
+  const hasDefaultActions = Boolean(onEdit || onSend || onDelete);
+  const shouldRenderActions = renderActions && (hasDefaultActions || renderActionsCell);
+
+  const renderCellContent = (column, item, isMobile = false) => {
+    if (column.render) {
+      return column.render(item[column.key], item, { isMobile });
+    }
+
+    if (column.key === "status") {
+      return (
+        <span
+          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+            item[column.key],
+          )}`}
+        >
+          {item[column.key]}
+        </span>
+      );
+    }
+
+    return item[column.key];
+  };
 
   const handleDeleteClick = (item) => {
     setDeleteConfirm({ isOpen: true, item });
@@ -47,9 +75,8 @@ const Table = ({
 
   return (
     <>
-      {/* DESKTOP TABLE */}
-      <div className="hidden sm:block w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-        <table className="w-full min-w-175 text-left table-auto">
+      <div className={containerClassName}>
+        <table className={tableClassName}>
           <thead className="bg-gray-50 text-gray-500 text-xs uppercase border border-gray-200">
             <tr>
               {columns.map((column) => (
@@ -57,9 +84,9 @@ const Table = ({
                   {column.label}
                 </th>
               ))}
-              {renderActions && (
+              {shouldRenderActions && (
                 <th className="px-6 py-3 text-center whitespace-nowrap">
-                  Actions
+                  {actionsHeaderLabel}
                 </th>
               )}
             </tr>
@@ -67,43 +94,39 @@ const Table = ({
 
           <tbody className="divide-y divide-gray-200 text-sm">
             {data.map((item, index) => (
-              <tr key={item.id || index} className="hover:bg-gray-50 bg-white">
+              <tr
+                key={item.id || index}
+                className={
+                  rowClassName
+                    ? rowClassName(item, index, { isMobile: false })
+                    : "hover:bg-gray-50 bg-white"
+                }
+              >
                 {columns.map((column) => (
                   <td
                     key={`${item.id || index}-${column.key}`}
-                    className="px-6 py-4 text-gray-600 whitespace-nowrap"
+                    className={column.cellClassName || "px-6 py-4 text-gray-600 whitespace-nowrap"}
                   >
-                    {column.key === "status" ? (
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
-                          item[column.key],
-                        )}`}
-                      >
-                        • {item[column.key]}
-                      </span>
-                    ) : column.render ? (
-                      column.render(item[column.key], item)
-                    ) : (
-                      item[column.key]
-                    )}
+                    {renderCellContent(column, item)}
                   </td>
                 ))}
 
-                {renderActions && (
+                {shouldRenderActions && (
                   <td className="px-6 py-4 flex justify-center gap-4 text-gray-500">
+                    {renderActionsCell && renderActionsCell(item)}
                     {onEdit && (
                       <button onClick={() => onEdit(item)}>
-                        <Pencil size={16} className="cursor-pointer hover:text-primary"/>
+                        <Pencil size={16} className="cursor-pointer hover:text-primary" />
                       </button>
                     )}
                     {onSend && (
                       <button onClick={() => onSend(item)}>
-                        <Send size={16} className="cursor-pointer hover:text-green-600"/>
+                        <Send size={16} className="cursor-pointer hover:text-green-600" />
                       </button>
                     )}
                     {onDelete && (
                       <button onClick={() => handleDeleteClick(item)}>
-                        <Trash2 size={16} className="cursor-pointer hover:text-red-600"/>
+                        <Trash2 size={16} className="cursor-pointer hover:text-red-600" />
                       </button>
                     )}
                   </td>
@@ -114,7 +137,6 @@ const Table = ({
         </table>
       </div>
 
-      {/* MOBILE CARDS */}
       <div className="sm:hidden space-y-4">
         {data.map((item, index) => (
           <div
@@ -129,26 +151,14 @@ const Table = ({
                 <span className="text-gray-400 text-xs">{column.label}</span>
 
                 <span className="text-gray-800 text-sm font-medium text-right">
-                  {column.key === "status" ? (
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs ${getStatusStyle(
-                        item[column.key],
-                      )}`}
-                    >
-                      {item[column.key]}
-                    </span>
-                  ) : column.render ? (
-                    column.render(item[column.key], item)
-                  ) : (
-                    item[column.key]
-                  )}
+                  {renderCellContent(column, item, true)}
                 </span>
               </div>
             ))}
 
-            {/* Actions */}
-            {renderActions && (
+            {shouldRenderActions && (
               <div className="flex justify-end gap-4 mt-3">
+                {renderActionsCell && renderActionsCell(item)}
                 {onEdit && (
                   <button
                     onClick={() => onEdit(item)}
@@ -158,10 +168,10 @@ const Table = ({
                   </button>
                 )}
                 {onSend && (
-                      <button onClick={() => onSend(item)}>
-                        <Send size={16} className="text-green-600"/>
-                      </button>
-                    )}
+                  <button onClick={() => onSend(item)}>
+                    <Send size={16} className="text-green-600" />
+                  </button>
+                )}
                 {onDelete && (
                   <button
                     onClick={() => handleDeleteClick(item)}
@@ -176,7 +186,6 @@ const Table = ({
         ))}
       </div>
 
-      {/* Confirm Dialog */}
       <ConfirmDialog
         isOpen={deleteConfirm.isOpen}
         title="Delete Client"

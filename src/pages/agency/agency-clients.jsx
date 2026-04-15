@@ -3,10 +3,9 @@ import { UserPlus, SendHorizontal, SquarePen } from "lucide-react";
 import { toast } from "react-toastify";
 import Pagination from "../../components/agency/pagination";
 import Table from "../../components/common/table";
-import ClientCard from "../../components/common/client-card";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { inviteClientSchema } from "../../schema/agency-scema.js";
+import { inviteClientSchema } from "../../schema/agency-schema.js";
 import InputField from "../../components/common/input-field.jsx";
 import Button from "../../components/common/button.jsx";
 import FormModal from "../../components/common/popup-modal.jsx";
@@ -18,16 +17,18 @@ import {
   deleteClientInvitation,
 } from "../../services/agency-services.js";
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 5;
 
 const AgencyClients = () => {
-  const [allInvitations, setAllInvitations] = useState([]);
+  const [invitations, setInvitations] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [editClient, setEditClient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
-
+  const [totalInvitations, setTotalInvitations] = useState(0); // New state for total invitations
+  const [fetch, setFetch] = useState(false);
   const {
     register,
     handleSubmit,
@@ -42,54 +43,34 @@ const AgencyClients = () => {
     const fetchInvitations = async () => {
       try {
         setLoading(true);
-        const data = await getClientInvitations();
-        setAllInvitations(data);
+
+        const response = await getClientInvitations({
+          page: currentPage,
+          limit: ITEMS_PER_PAGE,
+        });
+
+        setInvitations(response.data);
+        const totalItems = Math.ceil(response.meta.total / ITEMS_PER_PAGE);
+        setTotalPages(totalItems);
+        setTotalInvitations(response.meta.total)
       } catch (error) {
-        console.error("Error fetching invitations:", error);
-        toast.error("Failed to load client invitations");
+        console.error(error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchInvitations();
-  }, []);
-
-  // Separate pending/expired invitations from accepted clients
-  const pendingInvitations = useMemo(
-    () =>
-      allInvitations.filter(
-        (inv) => inv.status === "PENDING" || inv.status === "EXPIRED",
-      ),
-    [allInvitations],
-  );
-
-  const acceptedClients = useMemo(
-    () =>
-      allInvitations.filter(
-        (inv) =>
-          inv.isAccepted ||
-          (inv.status !== "PENDING" && inv.status !== "EXPIRED"),
-      ),
-    [allInvitations],
-  );
-
-  const totalPages = Math.ceil(pendingInvitations.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentData = pendingInvitations.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE,
-  );
+  }, [currentPage, fetch]);
 
   // Handle inviting new client from main form
   const onSubmit = async (formData) => {
     try {
       await inviteClient(formData);
-      const updatedInvitations = await getClientInvitations();
-      setAllInvitations(updatedInvitations);
       toast.success("Invitation sent successfully");
       reset();
-      setCurrentPage(1);
+      setFetch(!fetch)
+      setCurrentPage(1); // Reset to page 1 to see new invitation
     } catch (error) {
       console.error("Error:", error);
       toast.error(
@@ -111,8 +92,14 @@ const AgencyClients = () => {
   const handleUpdate = async (data) => {
     try {
       await updateClient(editClient.id, data);
-      const updatedInvitations = await getClientInvitations();
-      setAllInvitations(updatedInvitations);
+      // Refetch current page after update
+      const response = await getClientInvitations({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      });
+      setInvitations(response.data);
+      setTotalPages(response.meta.totalPages);
+      setTotalInvitations(response.meta.total)
       toast.success("Update invitation successfully");
       setSelectedClient(null);
       setEditClient(null);
@@ -133,8 +120,14 @@ const AgencyClients = () => {
   const handleDelete = async (item) => {
     try {
       await deleteClientInvitation(item.id);
-      const updatedInvitations = await getClientInvitations();
-      setAllInvitations(updatedInvitations);
+      // Refetch current page after delete
+      const response = await getClientInvitations({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+      });
+      setInvitations(response.data);
+      setTotalPages(response.meta.totalPages);
+      setTotalInvitations(response.meta.total)
       toast.success("Client invitation deleted successfully");
     } catch (error) {
       console.error("Error deleting invitation:", error);
@@ -160,18 +153,6 @@ const AgencyClients = () => {
     }
   };
 
-  const handleDeleteClient = async (clientId) => {
-    try {
-      await deleteClientInvitation(clientId);
-      const updatedInvitations = await getClientInvitations();
-      setAllInvitations(updatedInvitations);
-      toast.success("Client deleted successfully");
-    } catch (error) {
-      console.error("Error deleting client:", error);
-      toast.error(error?.response?.data?.message || "Failed to delete client");
-    }
-  };
-
   return (
     <>
       <FormModal
@@ -193,7 +174,7 @@ const AgencyClients = () => {
         submitText="Update Client"
         defaultValues={selectedClient}
         onSubmit={handleUpdate}
-        schema={inviteClientSchema} // 👈 HERE
+        schema={inviteClientSchema}
         fields={[
           {
             name: "name",
@@ -257,7 +238,8 @@ const AgencyClients = () => {
             <div className="w-full mb-1">
               <Button
                 type="submit"
-                className="w-full md:w-auto bg-primary text-white px-4 py-2 cursor-pointer hover:bg-hover-primary shadow-md shadow-indigo-200"
+                isLoading={loading}
+                className="w-full md:w-auto bg-primary text-white px-4 py-2 cursor-pointer hover:bg-hover-primary shadow-md shadow-indigo-200 mb-1"
               >
                 <SendHorizontal size={18} className="mr-3" />
                 Send Invite
@@ -266,22 +248,25 @@ const AgencyClients = () => {
           </form>
         </div>
 
-        <div className="mt-5">
-          <h2 className="mb-3 text-subheading font-semibold text-gray-800">
-            Pending Invitations
+        <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
+          <h2 className="flex items-center mb-3 text-subheading font-semibold text-gray-800">
+            <span>Pending Invitations</span>
+            <span className="px-3 py-1 bg-gray-200 text-xs rounded-xl ml-3">
+              {totalInvitations} Total
+            </span>
           </h2>
 
           {loading ? (
             <div className="bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
               <p className="text-gray-500">Loading client invitations...</p>
             </div>
-          ) : pendingInvitations.length > 0 ? (
+          ) : invitations.length > 0 ? (
             <>
               <div className="w-full max-w-full">
                 <div className="w-full overflow-x-auto">
                   <div className="min-w-max">
                     <Table
-                      data={currentData}
+                      data={invitations}
                       columns={columns}
                       onEdit={handleEdit}
                       onDelete={handleDelete}
@@ -305,40 +290,6 @@ const AgencyClients = () => {
           ) : (
             <div className="bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
               <p className="text-gray-500">No pending invitations</p>
-            </div>
-          )}
-        </div>
-
-        <div className="mt-5">
-          <h2 className="mb-3 text-subheading font-semibold text-gray-800">
-            Accepted Clients
-          </h2>
-
-          {acceptedClients.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-              {acceptedClients.map((client, index) => (
-                <ClientCard
-                  key={client.id || index}
-                  companyName={client.clientName || "-"}
-                  pointOfContact={"-"}
-                  email={client.email}
-                  phone={"-"}
-                  activeProjects={0}
-                  status="Active"
-                  initials={
-                    client.clientName
-                      ?.split(" ")
-                      .map((w) => w[0])
-                      .join("")
-                      .toUpperCase() || "CC"
-                  }
-                  onDelete={() => handleDeleteClient(client.id)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
-              <p className="text-gray-500">No accepted clients yet</p>
             </div>
           )}
         </div>

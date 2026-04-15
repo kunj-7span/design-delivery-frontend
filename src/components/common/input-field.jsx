@@ -15,7 +15,7 @@ const InputField = React.forwardRef(
         {label && (
           <label
             htmlFor={id}
-            className={`text-sm tracking-wider mb-2 block ${labelClassName || ""} ${error ? "text-red-500" : "text-gray-400"}`}
+            className={`text-sm tracking-wider font-semibold mb-2 block ${labelClassName || ""} ${error ? "text-red-500" : "text-gray-500"}`}
           >
             {label}
           </label>

@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import logo from "../../assets/DDLogoFull.png";
-import profile from "../../assets/user-icon.png";
 import {
   FolderOpen,
   LayoutGrid,
@@ -17,7 +15,6 @@ const PROJECT_ROWS = [
     phase: "Phase 2: Mobile View",
     clientName: "Acme Corp",
     totalRequirements: 48,
-    dueDate: "Oct 24, 2023",
     status: "Backlog",
   },
   {
@@ -25,7 +22,6 @@ const PROJECT_ROWS = [
     phase: "Campaign Assets",
     clientName: "Globex",
     totalRequirements: 125,
-    dueDate: "Oct 28, 2023",
     status: "In Progress",
   },
   {
@@ -33,7 +29,6 @@ const PROJECT_ROWS = [
     phase: "Instagram & LinkedIn",
     clientName: "Soylent Corp",
     totalRequirements: 14,
-    dueDate: "Oct 30, 2023",
     status: "In Progress",
   },
   {
@@ -41,7 +36,6 @@ const PROJECT_ROWS = [
     phase: "Brand Identity",
     clientName: "Umbrella Inc",
     totalRequirements: 8,
-    dueDate: "Nov 02, 2023",
     status: "Completed",
   },
   {
@@ -49,7 +43,6 @@ const PROJECT_ROWS = [
     phase: "Q4 Launch",
     clientName: "Cyberdyne",
     totalRequirements: 3,
-    dueDate: "Nov 05, 2023",
     status: "In Progress",
   },
   {
@@ -57,7 +50,6 @@ const PROJECT_ROWS = [
     phase: "Conversion Copy",
     clientName: "Wayne Enterprises",
     totalRequirements: 22,
-    dueDate: "Nov 10, 2023",
     status: "Backlog",
   },
   {
@@ -65,7 +57,6 @@ const PROJECT_ROWS = [
     phase: "Checkout Optimization",
     clientName: "Stark Industries",
     totalRequirements: 67,
-    dueDate: "Nov 12, 2023",
     status: "In Progress",
   },
   {
@@ -73,7 +64,6 @@ const PROJECT_ROWS = [
     phase: "Design System",
     clientName: "Gordons",
     totalRequirements: 39,
-    dueDate: "Nov 15, 2023",
     status: "Backlog",
   },
   {
@@ -81,7 +71,6 @@ const PROJECT_ROWS = [
     phase: "Typography + Colors",
     clientName: "Initech",
     totalRequirements: 17,
-    dueDate: "Nov 18, 2023",
     status: "Completed",
   },
   {
@@ -89,7 +78,6 @@ const PROJECT_ROWS = [
     phase: "Media Assets",
     clientName: "Hooli",
     totalRequirements: 9,
-    dueDate: "Nov 20, 2023",
     status: "In Progress",
   },
   {
@@ -97,7 +85,6 @@ const PROJECT_ROWS = [
     phase: "Templates",
     clientName: "Monsters, Inc.",
     totalRequirements: 11,
-    dueDate: "Nov 22, 2023",
     status: "Backlog",
   },
   {
@@ -105,7 +92,6 @@ const PROJECT_ROWS = [
     phase: "Icon Set v2",
     clientName: "Vandelay",
     totalRequirements: 6,
-    dueDate: "Nov 25, 2023",
     status: "Completed",
   },
 ];
@@ -133,7 +119,7 @@ function formatShowing(from, to, total) {
   return `Showing ${from} to ${to} of ${total} results`;
 }
 
-export default function DesignerProjects() {
+export default function EmployeeProjects() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -206,123 +192,11 @@ export default function DesignerProjects() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      {sidebarOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 z-40 bg-black/40 lg:hidden"
-          aria-label="Close menu"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <aside
-        id="dashboard-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 max-w-[85vw] flex-col border-r border-gray-200 bg-gray-100 transition-transform duration-200 ease-out lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-      >
-        <div className="px-4 py-3 ">
-          <img src={logo} className="w-30 sm:w-32 md:w-34 lg:w-36" alt="" />
-        </div>
-
-        <nav className="flex flex-1 flex-col gap-1 px-3 py-4" aria-label="Main">
-          <a
-            href="/designer"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold text-gray-600 hover:bg-gray-200/80"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <LayoutGrid className="h-5 w-5 shrink-0" aria-hidden />
-            Dashboard
-          </a>
-
-          <a
-            href="/designer/projects"
-            className="flex items-center gap-3 rounded-lg bg-sky-100 px-3 py-2.5 text-sm font-semibold text-sky-700"
-            aria-current="page"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <FolderOpen className="h-5 w-5 shrink-0" aria-hidden />
-            Projects
-          </a>
-        </nav>
-
-        <div className="border-t border-gray-200 px-3 py-4">
-          <a
-            href="#settings"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-200/80"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <Settings className="h-5 w-5 shrink-0" aria-hidden />
-            Settings
-          </a>
-
-          <button
-            type="button"
-            className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-gray-600 hover:bg-gray-200/80"
-          >
-            <LogOut className="h-5 w-5 shrink-0" aria-hidden />
-            Logout
-          </button>
-        </div>
-      </aside>
-
       <div className="flex min-h-screen flex-1 flex-col lg:ml-64">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 lg:px-8">
-          <div className="flex min-w-0 items-center gap-3">
-            <button
-              type="button"
-              className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
-              aria-expanded={sidebarOpen}
-              aria-controls="dashboard-sidebar"
-              onClick={() => setSidebarOpen((o) => !o)}
-            >
-              {sidebarOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-              <span className="sr-only">Toggle sidebar</span>
-            </button>
-
-            <div className="min-w-0">
-              {/* <p className="truncate text-sm font-medium text-gray-500">
-                Dashboard / <span className="text-gray-900">Projects</span>
-              </p> */}
-              <h1 className="truncate text-xl font-bold text-gray-900 sm:text-2xl">
-                Projects
-              </h1>
-            </div>
-          </div>
-
-          <div className="hidden shrink-0 items-center gap-2 sm:flex">
-            <button
-              type="button"
-              className="flex h-9 items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-            >
-              <span className="hidden text-sm font-semibold text-gray-800 sm:inline">
-                Designer
-              </span>
-              <img
-                src={profile}
-                width="50px"
-                alt="profile"
-                className="cursor-pointer rounded-full"
-                onError={(e) => {
-                  e.target.src = profile;
-                }}
-              />
-              {/* <span
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-primary to-purple-700 text-xs font-bold text-white"
-                aria-hidden
-              >
-                K
-              </span> */}
-            </button>
-          </div>
-        </header>
 
 
-        <main className="flex min-h-screen bg-gray p-5">Comming Soon</main>
-        {/* 
+        {/* <main className="flex min-h-screen bg-gray p-5">Comming Soon</main> */}
+
         <main className="flex-1 bg-gray-50/80 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <div className="mx-auto max-w-6xl">
             <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -353,7 +227,7 @@ export default function DesignerProjects() {
                       `(${selectedStatuses.length})`}
                   </button>
 
-  
+
                   {showFilters && (
                     <div className="absolute right-0 z-10 mt-2 w-48 rounded-lg border border-gray-200 bg-white shadow-lg">
                       <div className="border-b border-gray-100 p-4">
@@ -427,9 +301,6 @@ export default function DesignerProjects() {
                         total Requirements
                       </th>
                       <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                        Due Date
-                      </th>
-                      <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-600">
                         Status
                       </th>
                     </tr>
@@ -454,9 +325,7 @@ export default function DesignerProjects() {
                         <td className="px-4 py-4 text-gray-700">
                           {row.totalRequirements}
                         </td>
-                        <td className="px-4 py-4 text-gray-700">
-                          {row.dueDate}
-                        </td>
+
                         <td className="px-4 py-4">
                           <StatusBadge status={row.status} />
                         </td>
@@ -515,7 +384,6 @@ export default function DesignerProjects() {
               </div>
 
               <div className="flex flex-col gap-3 border-t border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-gray-600">{showingText}</p>
 
                 <div className="flex items-center gap-2">
                   <button
@@ -543,7 +411,7 @@ export default function DesignerProjects() {
               </div>
             </section>
           </div>
-        </main> */}
+        </main>
       </div>
     </div>
   );

@@ -46,24 +46,18 @@ const LoginForm = () => {
       } else {
         navigate("/employee/employee-dashboard");
       }
-    } else {
-      navigate("/login");
     }
   }, []);
 
   const onSubmit = async (data) => {
     try {
       const res = await authServices.loginUser(data.email, data.password);
-
-      // According to your JSON: res.data contains { user, token }
       const { token, user } = res.data;
 
       if (token) {
-        // Store auth data in Zustand
         setToken(token);
         setUser(user);
-        console.log(user);
-        console.log(token);
+
         if (user?.avatar) {
           setAvatar(user.avatar);
         }

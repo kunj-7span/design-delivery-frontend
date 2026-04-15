@@ -54,9 +54,20 @@ const Navbar = () => {
                         </ul>
                     </nav>
                     <div className="">
-                        <div className="flex flex-col gap-2 items-center mt-10">
-                            <Link to="/login" className="px-4 py-2 w-full text-sm border text-gray-500">Login</Link>
-                            <Button className="px-4 py-2 bg-primary hover:bg-hover-primary text-white text-sm w-full">Get Started</Button>
+                        <div className="flex flex-col gap-3 items-center mt-10">
+                            <Link
+                                to="/login"
+                                className="w-full text-center px-4 py-3 rounded-2xl border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:border-gray-300 hover:text-primary transition-all duration-200"
+                            >
+                                Login
+                            </Link>
+
+                            <Button
+                                onClick={handleClick}
+                                className="w-full px-4 py-3 rounded-2xl bg-primary hover:bg-hover-primary text-white text-sm font-semibold transition-all duration-200"
+                            >
+                                Get Started
+                            </Button>
                         </div>
                     </div>
                 </div>
