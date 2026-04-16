@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { UserPlus, SendHorizontal, SquarePen } from "lucide-react";
 import { toast } from "react-toastify";
-import Pagination from "../../components/agency/pagination";
-import RequirementFilter from "../../components/agency/requirement-filter";
+import Pagination from "../../components/common/pagination";
+import RequirementFilter from "../../components/common/requirement-filter";
 import Table from "../../components/common/table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

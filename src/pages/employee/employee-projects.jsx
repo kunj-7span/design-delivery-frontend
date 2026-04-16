@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FolderOpen,
   LayoutGrid,
@@ -120,6 +121,7 @@ function formatShowing(from, to, total) {
 }
 
 export default function EmployeeProjects() {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -191,15 +193,10 @@ export default function EmployeeProjects() {
   );
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      <div className="flex min-h-screen flex-1 flex-col lg:ml-64">
-
-
-        {/* <main className="flex min-h-screen bg-gray p-5">Comming Soon</main> */}
-
-        <main className="flex-1 bg-gray-50/80 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-          <div className="mx-auto max-w-6xl">
-            <section className="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <div className="p-4 md:p-6 min-h-screen">
+      <main>
+        <div className="mx-auto max-w-7xl">
+          <section className="rounded-xl border border-gray-200 bg-white shadow-sm">
               <div className="flex flex-col gap-3 border-b border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="w-full sm:w-auto ">
                   <label className="sr-only" htmlFor="project-search">
@@ -309,7 +306,8 @@ export default function EmployeeProjects() {
                     {pageRows.map((row) => (
                       <tr
                         key={`${row.projectName}-${row.clientName}-${row.totalRequirements}`}
-                        className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60"
+                        className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 cursor-pointer"
+                        onClick={() => navigate("/employee/employee-projects/employee-projects-requirement")}
                       >
                         <td className="px-4 py-4">
                           <div className="font-bold text-gray-900">
@@ -339,7 +337,8 @@ export default function EmployeeProjects() {
                 {pageRows.map((row) => (
                   <article
                     key={`${row.projectName}-${row.clientName}-${row.totalRequirements}-mobile`}
-                    className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+                    className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => navigate("/employee/employee-projects/employee-projects-requirement")}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -411,8 +410,7 @@ export default function EmployeeProjects() {
               </div>
             </section>
           </div>
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

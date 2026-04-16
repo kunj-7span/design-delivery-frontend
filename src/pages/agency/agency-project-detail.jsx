@@ -11,8 +11,8 @@ import {
 import Button from "../../components/common/button";
 import ConfirmDialog from "../../components/common/confirm-dialog";
 import FormModal from "../../components/common/popup-modal";
-import RequirementFilter from "../../components/agency/requirement-filter";
-import Pagination from "../../components/agency/pagination";
+import RequirementFilter from "../../components/common/requirement-filter";
+import Pagination from "../../components/common/pagination";
 import Table from "../../components/common/table";
 import SearchInput from "../../components/common/search-input";
 
@@ -239,9 +239,8 @@ const AgencyProjectDetail = () => {
         label: "Type",
         render: (value, item) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${
-              typeStyles[value] || "bg-slate-100 text-slate-500"
-            } ${item.archived ? "opacity-45" : ""}`}
+            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${typeStyles[value] || "bg-slate-100 text-slate-500"
+              } ${item.archived ? "opacity-45" : ""}`}
           >
             {value}
           </span>
@@ -253,9 +252,8 @@ const AgencyProjectDetail = () => {
         label: "Status",
         render: (value) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${
-              statusStyles[value] || "bg-slate-100 text-slate-500"
-            }`}
+            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${statusStyles[value] || "bg-slate-100 text-slate-500"
+              }`}
           >
             {value}
           </span>
@@ -277,9 +275,9 @@ const AgencyProjectDetail = () => {
     const formattedDeadline = new Date(formData.deadline).toLocaleDateString(
       "en-US",
       {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
       },
     );
 
@@ -310,20 +308,20 @@ const AgencyProjectDetail = () => {
             </div>
 
             {/* <div className="flex flex-wrap gap-3"> */}
-              {/* <button
+            {/* <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
               >
                 <FolderOpen size={16} />
                 Edit Project
               </button> */}
-              <Button
-                type="button"
-                onClick={() => setIsAddRequirementOpen(true)}
-                className="bg-primary px-4 py-2 text-sm text-white shadow-lg shadow-indigo-200 hover:bg-hover-primary"
-              >
-                + New Requirement
-              </Button>
+            <Button
+              type="button"
+              onClick={() => setIsAddRequirementOpen(true)}
+              className="bg-primary px-4 py-2 text-sm text-white shadow-lg shadow-indigo-200 hover:bg-hover-primary"
+            >
+              + New Requirement
+            </Button>
             {/* </div> */}
           </div>
 

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-// import { toast } from "react-toastify";
-import Pagination from "../../components/agency/pagination";
+import Pagination from "../../components/common/pagination";
 import { getProjects } from "../../services/agency-services";
 
 const ITEMS_PER_PAGE = 5;

@@ -6,6 +6,7 @@ import {
   IdCard,
   UsersRound,
   Mail,
+  Settings,
 } from "lucide-react";
 
 export const useAuthStore = create(
@@ -43,6 +44,10 @@ export const useAuthStore = create(
         { name: "Dashboard", icon: LayoutDashboard, path: "/employee/employee-dashboard" },
         { name: "Projects", icon: Folders, path: "/employee/employee-projects" },
       ],
+      agency_bottomItems: [{ name: "Settings", icon: Settings, path: "/agency/agency-settings" }],
+      client_bottomItems: [{ name: "Settings", icon: Settings, path: "/client/client-settings" }],
+      employee_bottomItems: [{ name: "Settings", icon: Settings, path: "/employee/employee-settings" }],
+
       setAvatar: (avatarURL) => set({ user_avatarURL: avatarURL }),
 
       setUser: (userData) =>
