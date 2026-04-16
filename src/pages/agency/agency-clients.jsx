@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { UserPlus, SendHorizontal, SquarePen } from "lucide-react";
 import { toast } from "react-toastify";
 import Pagination from "../../components/agency/pagination";
+import RequirementFilter from "../../components/agency/requirement-filter";
 import Table from "../../components/common/table";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,6 +30,7 @@ const AgencyClients = () => {
   const [selectedClient, setSelectedClient] = useState(null);
   const [totalInvitations, setTotalInvitations] = useState(0); // New state for total invitations
   const [fetch, setFetch] = useState(false);
+  const [filters, setFilters] = useState({ type: "", status: "" });
   const {
     register,
     handleSubmit,
@@ -47,6 +49,7 @@ const AgencyClients = () => {
         const response = await getClientInvitations({
           page: currentPage,
           limit: ITEMS_PER_PAGE,
+          status: filters.status || undefined,
         });
 
         setInvitations(response.data);
@@ -61,7 +64,11 @@ const AgencyClients = () => {
     };
 
     fetchInvitations();
-  }, [currentPage, fetch]);
+  }, [currentPage, fetch, filters.status]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters.status]);
 
   // Handle inviting new client from main form
   const onSubmit = async (formData) => {
@@ -96,6 +103,7 @@ const AgencyClients = () => {
       const response = await getClientInvitations({
         page: currentPage,
         limit: ITEMS_PER_PAGE,
+        status: filters.status || undefined,
       });
       setInvitations(response.data);
       setTotalPages(response.meta.totalPages);
@@ -124,6 +132,7 @@ const AgencyClients = () => {
       const response = await getClientInvitations({
         page: currentPage,
         limit: ITEMS_PER_PAGE,
+        status: filters.status || undefined,
       });
       setInvitations(response.data);
       setTotalPages(response.meta.totalPages);
@@ -151,6 +160,14 @@ const AgencyClients = () => {
         error?.response?.data?.message || "Failed to resend invitation",
       );
     }
+  };
+
+  const handleFilterChange = (key, value) => {
+    setFilters((current) => ({ ...current, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ type: "", status: "" });
   };
 
   return (
@@ -249,12 +266,21 @@ const AgencyClients = () => {
         </div>
 
         <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
-          <h2 className="flex items-center mb-3 text-subheading font-semibold text-gray-800">
-            <span>Pending Invitations</span>
-            <span className="px-3 py-1 bg-gray-200 text-xs rounded-xl ml-3">
-              {totalInvitations} Total
-            </span>
-          </h2>
+          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="flex items-center text-subheading font-semibold text-gray-800">
+              <span>Client Invitations</span>
+              <span className="px-3 py-1 bg-gray-200 text-xs rounded-xl ml-3">
+                {totalInvitations} Total
+              </span>
+            </h2>
+            <RequirementFilter
+              filters={filters}
+              typeOptions={[]}
+              statusOptions={["ACTIVE", "PENDING", "EXPIRED"]}
+              onChange={handleFilterChange}
+              onClear={handleClearFilters}
+            />
+          </div>
 
           {loading ? (
             <div className="bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">

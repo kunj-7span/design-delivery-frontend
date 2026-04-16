@@ -55,9 +55,9 @@ function App() {
         <Route element={<RoleProtectedRoute allowedRoles={["agency_admin"]} />}>
           <Route path="agency" element={<DashboardLayout />}>
             <Route path="agency-dashboard" element={<AgencyDashboard />} />
-            <Route path="create-project" element={<CreateProject />} />
             <Route path="agency-projects">
               <Route index element={<AgencyProjectsList />} />
+              <Route path="create-project" element={<CreateProject />} />
               <Route path="view-project-detail/:projectId" element={<AgencyProjectDetail />} />
             </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
