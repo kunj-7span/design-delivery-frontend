@@ -11,6 +11,8 @@ import {
     ChevronDown,
     Bell,
 } from "lucide-react";
+import Table from "../../components/common/table";
+import Pagination from "../../components/common/pagination";
 
 const REQUIREMENTS = [
     {
@@ -246,6 +248,53 @@ function StatCard({ value, label, icon: Icon, colorScheme }) {
         </div>
     );
 }
+
+const requirementColumns = [
+    {
+        key: "name",
+        label: "Requirement Name",
+        cellClassName: "px-4 py-4 md:px-6",
+        render: (value, item) => (
+            <>
+                <div className="font-bold text-gray-900">{value}</div>
+                <div className="mt-0.5 text-xs text-gray-400">
+                    {item.fileType} • {item.fileSize}
+                </div>
+            </>
+        ),
+    },
+    {
+        key: "type",
+        label: "Type",
+        cellClassName: "px-4 py-4 md:px-6",
+        render: (value, item) => (
+            <TypeBadge type={value} colorKey={item.typeColor} />
+        ),
+    },
+    {
+        key: "status",
+        label: "Status",
+        cellClassName: "px-4 py-4 md:px-6",
+        render: (value, item) => (
+            <StatusBadge status={value} colorKey={item.statusColor} />
+        ),
+    },
+    {
+        key: "assetsLabel",
+        label: "Total Assets",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+    },
+    {
+        key: "deadline",
+        label: "Deadline",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+    },
+    {
+        key: "comments",
+        label: "Comments",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+    }
+];
 
 /* ─── main component ─── */
 export default function EmployeeProjectsRequirement() {
@@ -556,244 +605,48 @@ export default function EmployeeProjectsRequirement() {
                         </div>
 
                         {/* Desktop Table */}
-                        <div className="hidden overflow-x-auto md:block">
-                            <table className="w-full text-left text-sm">
-                                <thead>
-                                    <tr className="border-b border-gray-200 bg-gray-50/80">
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Requirement Name
-                                        </th>
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Type
-                                        </th>
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Status
-                                        </th>
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Total Assets
-                                        </th>
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Deadline
-                                        </th>
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Comments
-                                        </th>
-                                        <th className="px-4 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500 md:px-6">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {pageRows.length > 0 ? (
-                                        pageRows.map((row) => (
-                                            <tr
-                                                key={row.id}
-                                                className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 transition-colors"
-                                            >
-                                                <td className="px-4 py-4 md:px-6">
-                                                    <div className="font-bold text-gray-900">
-                                                        {row.name}
-                                                    </div>
-                                                    <div className="mt-0.5 text-xs text-gray-400">
-                                                        {row.fileType} • {row.fileSize}
-                                                    </div>
-                                                </td>
-                                                <td className="px-4 py-4 md:px-6">
-                                                    <TypeBadge
-                                                        type={row.type}
-                                                        colorKey={row.typeColor}
-                                                    />
-                                                </td>
-                                                <td className="px-4 py-4 md:px-6">
-                                                    <StatusBadge
-                                                        status={row.status}
-                                                        colorKey={row.statusColor}
-                                                    />
-                                                </td>
-                                                <td className="px-4 py-4 text-gray-700 md:px-6">
-                                                    {row.assetsLabel}
-                                                </td>
-                                                <td className="px-4 py-4 text-gray-700 md:px-6">
-                                                    {row.deadline}
-                                                </td>
-                                                <td className="px-4 py-4 text-gray-700 md:px-6">
-                                                    {row.comments}
-                                                </td>
-                                                <td className="px-4 py-4 md:px-6">
+                        {pageRows.length > 0 ? (
+                            <>
+                                <div className="w-full max-w-full">
+                                    <div className="w-full overflow-x-auto">
+                                        <div className="min-w-max">
+                                            <Table
+                                                data={pageRows}
+                                                columns={requirementColumns}
+                                                renderActions
+                                                actionsHeaderLabel="Action"
+                                                renderActionsCell={(item) => (
                                                     <button
                                                         type="button"
                                                         className="inline-flex items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-95"
                                                     >
                                                         Start Working
                                                     </button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    ) : (
-                                        <tr>
-                                            <td
-                                                colSpan="7"
-                                                className="px-4 py-12 text-center text-gray-400"
-                                            >
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <Search className="h-8 w-8 text-gray-300" />
-                                                    <p className="text-sm font-medium">
-                                                        No requirements found
-                                                    </p>
-                                                    <p className="text-xs">
-                                                        Try adjusting your search or filters
-                                                    </p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {/* Mobile Card View */}
-                        <div className="space-y-3 p-4 md:hidden">
-                            {pageRows.length > 0 ? (
-                                pageRows.map((row) => (
-                                    <article
-                                        key={`${row.id}-mobile`}
-                                        className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow"
-                                    >
-                                        {/* Card header */}
-                                        <div className="flex items-start justify-between gap-3">
-                                            <div className="min-w-0 flex-1">
-                                                <h4 className="truncate font-bold text-gray-900">
-                                                    {row.name}
-                                                </h4>
-                                                <p className="mt-0.5 text-xs text-gray-400">
-                                                    {row.fileType} • {row.fileSize}
-                                                </p>
-                                            </div>
-                                            <StatusBadge
-                                                status={row.status}
-                                                colorKey={row.statusColor}
+                                                )}
+                                                rowClassName={(item) => "hover:bg-gray-50 bg-white"}
                                             />
                                         </div>
-
-                                        {/* Card details */}
-                                        <div className="mt-4 space-y-2.5 text-sm">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-medium text-gray-500">
-                                                    Type
-                                                </span>
-                                                <TypeBadge type={row.type} colorKey={row.typeColor} />
-                                            </div>
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-medium text-gray-500">
-                                                    Total Assets
-                                                </span>
-                                                <span className="font-semibold text-gray-800">
-                                                    {row.assetsLabel}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-medium text-gray-500">
-                                                    Deadline
-                                                </span>
-                                                <span className="font-semibold text-gray-800">
-                                                    {row.deadline}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-xs font-medium text-gray-500">
-                                                    Comments
-                                                </span>
-                                                <span className="font-semibold text-gray-800">
-                                                    {row.comments}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Action */}
-                                        <div className="mt-4">
-                                            <button
-                                                type="button"
-                                                className="w-full rounded-full bg-sky-500 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-[0.98]"
-                                            >
-                                                Start Working
-                                            </button>
-                                        </div>
-                                    </article>
-                                ))
-                            ) : (
-                                <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50">
-                                    <Search className="h-8 w-8 text-gray-300" />
-                                    <p className="text-sm font-medium text-gray-400">
-                                        No requirements found
-                                    </p>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
 
-                        {/* Pagination */}
-                        <div className="flex flex-col gap-4 border-t border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 md:p-6">
-                            <p className="text-xs text-gray-500 sm:text-sm">
-                                Showing{" "}
-                                {filteredRows.length === 0
-                                    ? "0"
-                                    : `${fromIdx + 1} to ${toIdx}`}{" "}
-                                of {filteredRows.length} requirements
-                            </p>
 
-                            <div className="flex items-center gap-1.5">
-                                {/* Left arrow */}
-                                <button
-                                    type="button"
-                                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                                    disabled={safePage <= 1}
-                                    aria-label="Previous page"
-                                >
-                                    <svg
-                                        className="h-4 w-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M15 19l-7-7 7-7"
-                                        />
-                                    </svg>
-                                </button>
-
-                                {/* Page numbers */}
-                                {/* Current page number */}
-                                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white shadow-md shadow-primary/30">
-                                    {safePage}
-                                </span>
-
-                                {/* Right arrow */}
-                                <button
-                                    type="button"
-                                    className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                                    disabled={safePage >= totalPages}
-                                    aria-label="Next page"
-                                >
-                                    <svg
-                                        className="h-4 w-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M9 5l7 7-7 7"
-                                        />
-                                    </svg>
-                                </button>
+                                <Pagination
+                                    currentPage={safePage}
+                                    totalPages={totalPages}
+                                    onPageChange={(p) => {
+                                        if (p < 1 || p > totalPages) return;
+                                        setPage(p);
+                                    }}
+                                />
+                            </>
+                        ) : (
+                            <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50">
+                                <Search className="h-8 w-8 text-gray-300" />
+                                <p className="text-sm font-medium text-gray-400">
+                                    No requirements found
+                                </p>
                             </div>
-                        </div>
+                        )}
                     </section>
                 </div>
             </main>

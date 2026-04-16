@@ -8,6 +8,7 @@ const Table = ({
   onEdit,
   onDelete,
   onSend,
+  onRowClick,
   renderActions = true,
   renderActionsCell,
   actionsHeaderLabel = "Actions",
@@ -96,6 +97,7 @@ const Table = ({
             {data.map((item, index) => (
               <tr
                 key={item.id || index}
+                onClick={onRowClick ? () => onRowClick(item) : undefined}
                 className={
                   rowClassName
                     ? rowClassName(item, index, { isMobile: false })

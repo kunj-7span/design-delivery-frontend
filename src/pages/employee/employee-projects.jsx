@@ -9,6 +9,8 @@ import {
   X,
   Filter,
 } from "lucide-react";
+import Table from "../../components/common/table";
+import Pagination from "../../components/common/pagination";
 
 const PROJECT_ROWS = [
   {
@@ -114,6 +116,36 @@ function StatusBadge({ status }) {
     </span>
   );
 }
+
+const projectColumns = [
+  {
+    key: "projectName",
+    label: "Project Name",
+    cellClassName: "px-4 py-4",
+    render: (value, item) => (
+      <>
+        <div className="font-bold text-gray-900">{value}</div>
+        <div className="mt-1 text-xs text-gray-500">{item.phase}</div>
+      </>
+    ),
+  },
+  {
+    key: "clientName",
+    label: "Client Name",
+    cellClassName: "px-4 py-4 text-gray-700",
+  },
+  {
+    key: "totalRequirements",
+    label: "total Requirements",
+    cellClassName: "px-4 py-4 text-gray-700",
+  },
+  {
+    key: "status",
+    label: "Status",
+    cellClassName: "px-4 py-4",
+    render: (value) => <StatusBadge status={value} />,
+  },
+];
 
 function formatShowing(from, to, total) {
   if (total === 0) return "Showing 0 results";
@@ -284,54 +316,15 @@ export default function EmployeeProjects() {
                 </div>
               </div>
 
-              <div className="hidden overflow-x-auto md:block">
-                <table className="w-full min-w-96 text-left text-sm">
-                  <thead>
-                    <tr className="border-b border-gray-200 bg-gray-50/80">
-                      <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                        Project Name
-                      </th>
-                      <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                        Client Name
-                      </th>
-                      <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                        total Requirements
-                      </th>
-                      <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-600">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {pageRows.map((row) => (
-                      <tr
-                        key={`${row.projectName}-${row.clientName}-${row.totalRequirements}`}
-                        className="border-b border-gray-100 last:border-0 hover:bg-gray-50/60 cursor-pointer"
-                        onClick={() => navigate("/employee/employee-projects/employee-projects-requirement")}
-                      >
-                        <td className="px-4 py-4">
-                          <div className="font-bold text-gray-900">
-                            {row.projectName}
-                          </div>
-                          <div className="mt-1 text-xs text-gray-500">
-                            {row.phase}
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 text-gray-700">
-                          {row.clientName}
-                        </td>
-                        <td className="px-4 py-4 text-gray-700">
-                          {row.totalRequirements}
-                        </td>
-
-                        <td className="px-4 py-4">
-                          <StatusBadge status={row.status} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <Table
+                data={pageRows}
+                columns={projectColumns}
+                onRowClick={() => navigate("/employee/employee-projects/employee-projects-requirement")}
+                renderActions={false}
+                rowClassName={() => "border-b border-gray-100 last:border-0 hover:bg-gray-50/60 cursor-pointer bg-white"}
+                tableClassName="w-full min-w-96 text-left text-sm"
+                containerClassName="hidden overflow-x-auto md:block"
+              />
 
               <div className="space-y-3 p-4 md:hidden">
                 {pageRows.map((row) => (
@@ -382,32 +375,18 @@ export default function EmployeeProjects() {
                 ))}
               </div>
 
-              <div className="flex flex-col gap-3 border-t border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between">
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={safePage <= 1}
-                    aria-label="Previous page"
-                  >
-                    ‹
-                  </button>
-                  <div className="min-w-18 text-center text-sm font-semibold text-gray-700">
-                    Page {safePage} of {totalPages}
-                  </div>
-                  <button
-                    type="button"
-                    className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={safePage >= totalPages}
-                    aria-label="Next page"
-                  >
-                    ›
-                  </button>
+              {totalPages > 1 && (
+                <div className="border-t border-gray-100 p-4">
+                  <Pagination
+                    currentPage={safePage}
+                    totalPages={totalPages}
+                    onPageChange={(p) => {
+                      if (p < 1 || p > totalPages) return;
+                      setPage(p);
+                    }}
+                  />
                 </div>
-              </div>
+              )}
             </section>
           </div>
       </main>
