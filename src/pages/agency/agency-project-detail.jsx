@@ -156,23 +156,28 @@ const AgencyProjectDetail = () => {
   const [filters, setFilters] = useState({ type: "", status: "" });
   const [currentPage, setCurrentPage] = useState(1);
   const [requirementToArchive, setRequirementToArchive] = useState(null);
+  const maxClientIndex = Math.max(
+    0,
+    Math.floor((projectClients.length - 1) / clientWindowSize) * clientWindowSize,
+  );
+  const maxEmployeeIndex = Math.max(
+    0,
+    Math.floor((employeeTeam.length - 1) / employeeWindowSize) * employeeWindowSize,
+  );
+  const isClientPrevDisabled = clientIndex === 0;
+  const isClientNextDisabled = clientIndex >= maxClientIndex;
+  const isEmployeePrevDisabled = employeeStartIndex === 0;
+  const isEmployeeNextDisabled = employeeStartIndex >= maxEmployeeIndex;
 
   const visibleEmployees = useMemo(() => {
-    const entries = [];
-    for (let offset = 0; offset < employeeWindowSize; offset += 1) {
-      const index = (employeeStartIndex + offset) % employeeTeam.length;
-      entries.push(employeeTeam[index]);
-    }
-    return entries;
+    return employeeTeam.slice(
+      employeeStartIndex,
+      employeeStartIndex + employeeWindowSize,
+    );
   }, [employeeStartIndex]);
 
   const visibleClients = useMemo(() => {
-    const entries = [];
-    for (let offset = 0; offset < clientWindowSize; offset += 1) {
-      const index = (clientIndex + offset) % projectClients.length;
-      entries.push(projectClients[index]);
-    }
-    return entries;
+    return projectClients.slice(clientIndex, clientIndex + clientWindowSize);
   }, [clientIndex]);
 
   const filteredRequirements = useMemo(() => {
@@ -297,21 +302,21 @@ const AgencyProjectDetail = () => {
     <>
       <div className="min-h-screen bg-[#f7f8fc] p-4 md:p-6">
         <div className="w-full max-w-full overflow-x-hidden">
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-row justify-between items-center gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <h1 className="text-heading text-slate-900">
                 {initialProject.name}
               </h1>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button
+            {/* <div className="flex flex-wrap gap-3"> */}
+              {/* <button
                 type="button"
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-slate-900"
               >
                 <FolderOpen size={16} />
                 Edit Project
-              </button>
+              </button> */}
               <Button
                 type="button"
                 onClick={() => setIsAddRequirementOpen(true)}
@@ -319,10 +324,10 @@ const AgencyProjectDetail = () => {
               >
                 + New Requirement
               </Button>
-            </div>
+            {/* </div> */}
           </div>
 
-          <div className="mt-5 flex gap-5 flex-wrap">
+          <div className="mt-5 flex gap-5 flex-wrap justify-center sm:justify-start">
             <section className="rounded-xl bg-white max-w-90 p-4 shadow-sm md:p-6">
               <div className="flex items-center justify-between gap-4 pb-4 border-b border-gray-300">
                 <div className="flex items-center gap-3">
@@ -342,26 +347,27 @@ const AgencyProjectDetail = () => {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    disabled={isClientPrevDisabled}
                     onClick={() =>
                       setClientIndex(
-                        (current) =>
-                          (current - 1 + projectClients.length) %
-                          projectClients.length,
+                        (current) => Math.max(0, current - clientWindowSize),
                       )
                     }
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
                     aria-label="Previous client"
                   >
                     <ChevronLeft size={14} />
                   </button>
                   <button
                     type="button"
+                    disabled={isClientNextDisabled}
                     onClick={() =>
                       setClientIndex(
-                        (current) => (current + 1) % projectClients.length,
+                        (current) =>
+                          Math.min(maxClientIndex, current + clientWindowSize),
                       )
                     }
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
                     aria-label="Next client"
                   >
                     <ChevronRight size={14} />
@@ -369,7 +375,7 @@ const AgencyProjectDetail = () => {
                 </div>
               </div>
 
-              <div className="mt-4 divide-y divide-slate-100 text-sm text-slate-500">
+              <div className="mt-4 min-h-[104px] divide-y divide-slate-100 text-sm text-slate-500">
                 {visibleClients.map((client) => (
                   <div
                     key={client.id}
@@ -408,26 +414,27 @@ const AgencyProjectDetail = () => {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
+                    disabled={isEmployeePrevDisabled}
                     onClick={() =>
                       setEmployeeStartIndex(
-                        (current) =>
-                          (current - 1 + employeeTeam.length) %
-                          employeeTeam.length,
+                        (current) => Math.max(0, current - employeeWindowSize),
                       )
                     }
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
                     aria-label="Previous employee"
                   >
                     <ChevronLeft size={14} />
                   </button>
                   <button
                     type="button"
+                    disabled={isEmployeeNextDisabled}
                     onClick={() =>
                       setEmployeeStartIndex(
-                        (current) => (current + 1) % employeeTeam.length,
+                        (current) =>
+                          Math.min(maxEmployeeIndex, current + employeeWindowSize),
                       )
                     }
-                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700"
+                    className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
                     aria-label="Next employee"
                   >
                     <ChevronRight size={14} />
@@ -435,7 +442,7 @@ const AgencyProjectDetail = () => {
                 </div>
               </div>
 
-              <div className="mt-4 divide-y divide-slate-100">
+              <div className="mt-4 min-h-[94px] divide-y divide-slate-100">
                 {visibleEmployees.map((employee) => (
                   <div
                     key={employee.id}
