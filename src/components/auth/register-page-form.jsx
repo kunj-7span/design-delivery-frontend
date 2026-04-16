@@ -45,14 +45,11 @@ const RegisterPageForm = () => {
   useEffect(() => {
     const initializeForm = async () => {
       try {
-        console.log("first");
         if (invitationToken) {
           // Verify the invitation token
           const response =
             await authServices.verifyInvitationToken(invitationToken);
-          console.log(response);
           if (response.success) {
-            console.log(response);
             const { user_exists, client_name, email } = response.data;
             setInvitationData(response.data);
             if (user_exists) {
@@ -70,9 +67,7 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-          } else {
-            console.log(response);
-          }
+          } 
         }
       } catch (err) {
         console.error("Error validating invitation token:", err);
@@ -203,7 +198,17 @@ const RegisterPageForm = () => {
 
       // Navigate to client dashboard if registered via invitation
 
-      navigate("/verify-otp");
+      navigate(`/verify-otp?email=${encodeURIComponent(data.email)}`, {
+        state: {
+          registerData: {
+            email: data.email,
+            name: data.name,
+            role: data.role,
+            password: data.password,
+            ...(avatarUrl && { avatar: avatarUrl }),
+          },
+        },
+      });
     } catch (err) {
       setError("root", {
         type: "server",

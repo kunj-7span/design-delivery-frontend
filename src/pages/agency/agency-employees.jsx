@@ -5,7 +5,7 @@ import Pagination from "../../components/agency/pagination";
 import EmployeeTable from "../../components/agency/employee-table.jsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addEmployeeSchema } from "../../schema/agency-scema.js";
+import { addEmployeeSchema } from "../../schema/agency-schema.js";
 import InputField from "../../components/common/input-field.jsx";
 import Button from "../../components/common/button.jsx";
 import {
@@ -155,8 +155,8 @@ const AgencyEmployees = () => {
         <div className="mt-5 bg-white rounded-xl p-4 md:p-6 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <h2 className="flex items-center gap-3 text-subheading font-semibold text-gray-800">
-              <span>Employees</span> 
-              <span className="text-xs bg-gray-200 px-3 py-1 rounded-full">{totalEmp} Total</span>
+              <span>Employees</span>
+              <span className="text-sm bg-gray-200 px-3 py-1 rounded-full">{totalEmp} Total</span>
             </h2>
           </div>
 
