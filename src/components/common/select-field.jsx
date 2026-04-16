@@ -26,10 +26,11 @@ const SelectField = React.forwardRef(
           <select
             id={id}
             ref={ref}
-            className="w-full p-2 sm:p-3 rounded-xl focus:outline-none text-sm bg-transparent appearance-none cursor-pointer pr-8 text-gray-400"
+            required
+            className="w-full p-2 sm:p-3 rounded-xl focus:outline-none text-sm bg-transparent appearance-none cursor-pointer pr-8 text-gray-900 invalid:text-gray-400"
             {...props}
           >
-            <option value="" disabled>
+            <option value="" disabled hidden>
               {placeholder}
             </option>
             {options.map((option) => (
