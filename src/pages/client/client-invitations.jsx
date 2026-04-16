@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../../api/axios-client";
 import { Loader2, Mail, Calendar } from "lucide-react";
 import Button from "../../components/common/button";
 import { toast } from "react-toastify";
@@ -17,15 +17,7 @@ const ClientInvitations = () => {
 
   const fetchPendingInvitations = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/pending`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const response = await axiosClient.get("/agency/client-invitations/pending");
 
       if (response.data.success) {
         const data = response.data.data;
@@ -53,15 +45,9 @@ const ClientInvitations = () => {
     try {
       setAcceptingId(invitationId);
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/agency/client-invitations/accept`,
-        { invitation_id: invitationId },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
+      const response = await axiosClient.post(
+        `/agency/client-invitations/${invitationId}/accept`,
+        {}
       );
 
       if (response.data.success) {
