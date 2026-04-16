@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { UserPlus } from "lucide-react";
 import { toast } from "react-toastify";
-import Pagination from "../../components/agency/pagination";
+import Pagination from "../../components/common/pagination";
 import EmployeeTable from "../../components/agency/employee-table.jsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,15 +53,15 @@ const AgencyEmployees = () => {
     };
 
     fetchEmployees();
-  }, [currentPage,fetch]);
+  }, [currentPage, fetch]);
 
   const onSubmit = async (formData) => {
     try {
-        await addEmployee(formData);
-        setCurrentPage(1);
-        setFetch(!fetch)
-        toast.success("Employee added successfully");
-        reset();
+      await addEmployee(formData);
+      setCurrentPage(1);
+      setFetch(!fetch)
+      toast.success("Employee added successfully");
+      reset();
     } catch (error) {
       console.error("Error adding employee:", error);
       toast.error(error?.response?.data?.message || "Failed to add employee");

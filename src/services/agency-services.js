@@ -26,9 +26,13 @@ export const getClientGrowth = async () => {
 };
 
 // Client API Calls
-export const getClientInvitations = async ({ page = 1, limit = 10 }) => {
+export const getClientInvitations = async ({
+  page = 1,
+  limit = 10,
+  status,
+} = {}) => {
   const response = await axiosClient.get("/agency/client-invitations", {
-    params: { page, limit },
+    params: { page, limit, status },
   });
 
   const invitations = response.data?.data?.invitations || [];
@@ -89,7 +93,7 @@ export const deleteClientInvitation = async (clientId) => {
 
 // Employee API Calls
 export const getEmployees = async ({ page = 1, limit = 10 } = {}) => {
-  const response = await axiosClient.get("/employee-profiles", {
+  const response = await axiosClient.get("/agency/employee-profiles", {
     params: { page, limit },
   });
 
@@ -111,7 +115,7 @@ export const getEmployees = async ({ page = 1, limit = 10 } = {}) => {
 };
 
 export const addEmployee = async (formData) => {
-  const response = await axiosClient.post("/employee-profiles", {
+  const response = await axiosClient.post("/agency/employee-profiles", {
     name: formData.name,
     email: formData.email,
   });
@@ -131,13 +135,13 @@ export const addEmployee = async (formData) => {
 };
 
 export const deleteEmployee = async (employeeId) => {
-  await axiosClient.delete(`/employee-profiles/${employeeId}`);
+  await axiosClient.delete(`/agency/employee-profiles/${employeeId}`);
   return true;
 };
 
 // Employees for select dropdown (id + name)
 export const getEmployeesForSelect = async () => {
-  const response = await axiosClient.get("/employee-profiles");
+  const response = await axiosClient.get("/agency/employee-profiles");
   const employees = response.data?.data || [];
 
   return employees.map((emp) => ({
