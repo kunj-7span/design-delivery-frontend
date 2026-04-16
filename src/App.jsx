@@ -29,6 +29,7 @@ import UnauthorizedPage from "./pages/unauthorized-page";
 import DashboardLayout from "./components/common/dashboard-layout";
 import EmployeeProjects from "./pages/employee/employee-projects";
 import EmployeeDashboard from "./pages/employee/employee-dashboard";
+import EmployeeProjectsRequirement from "./pages/employee/employee-projects-requirement";
 
 function App() {
   const router = createBrowserRouter(
@@ -40,10 +41,6 @@ function App() {
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="unauthorized" element={<UnauthorizedPage />} />
-        <Route path="designer" element={<DesignerDashboard />} />
-        <Route path="employee/projects" element={<EmployeeProjects />} />
-        <Route path="/projects" element={<MainApp />} />
-
         <Route path="verify-otp" element={<VerifyOtpPage />} />
         {/* <Route path='reset-password' element={<ResetPassword />} /> */}
 
@@ -85,18 +82,20 @@ function App() {
         <Route element={<RoleProtectedRoute allowedRoles={["employee"]} />}>
           <Route path="employee" element={<DashboardLayout />}>
             <Route path="employee-dashboard" element={<EmployeeDashboard />} />
-            <Route path="employee-projects" element={<EmployeeProjects />}>
+            <Route path="employee-projects">
+              <Route index element={<EmployeeProjects />} />
+              <Route path="employee-projects-requirement" element={<EmployeeProjectsRequirement />} />
               <Route
                 path="view-project/:project-id"
-                // element={<ViewDesignerProject />}
+              // element={<ViewDesignerProject />}
               />
               <Route
                 path="view-project/:project-id/requirement/:requirement-id"
-                // element={<ViewAssets />}
+              // element={<ViewAssets />}
               />
               <Route
                 path="view-project/:project-id/requirement/:requirement-id/asset-collaboration"
-                // element={<ViewAssetsCollaboration />}
+              // element={<ViewAssetsCollaboration />}
               />
             </Route>
             {/* <Route path="employee-settings" element={<DesignerSettings />} />
