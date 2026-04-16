@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     Filter,
     Search,
@@ -8,8 +8,6 @@ import {
     MessageSquare,
     AlertTriangle,
     CheckCircle2,
-    ChevronDown,
-    Bell,
 } from "lucide-react";
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
@@ -298,6 +296,7 @@ const requirementColumns = [
 
 /* ─── main component ─── */
 export default function EmployeeProjectsRequirement() {
+    const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
@@ -403,29 +402,6 @@ export default function EmployeeProjectsRequirement() {
         <div className="p-4 md:p-6 min-h-screen">
             <main>
                 <div className="mx-auto max-w-7xl">
-                    {/* Breadcrumb */}
-                    <nav
-                        aria-label="Breadcrumb"
-                        className="mb-5 flex items-center gap-1.5 text-sm text-gray-500"
-                    >
-                        <Link
-                            to="/employee/employee-dashboard"
-                            className="hover:text-gray-700 transition-colors"
-                        >
-                            Dashboard
-                        </Link>
-                        <ChevronRight className="h-3.5 w-3.5" />
-                        <Link
-                            to="/employee/employee-projects"
-                            className="hover:text-gray-700 transition-colors"
-                        >
-                            Projects
-                        </Link>
-                        <ChevronRight className="h-3.5 w-3.5" />
-                        <span className="font-semibold text-gray-900">
-                            {PROJECT_INFO.name}
-                        </span>
-                    </nav>
 
                     {/* Project Header */}
                     <div className="mb-6">
@@ -618,6 +594,7 @@ export default function EmployeeProjectsRequirement() {
                                                 renderActionsCell={(item) => (
                                                     <button
                                                         type="button"
+                                                        onClick={() => navigate("/employee/employee-projects/employee-projects-requirement/employee-asset-collaboration")}
                                                         className="inline-flex items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-95"
                                                     >
                                                         Start Working
