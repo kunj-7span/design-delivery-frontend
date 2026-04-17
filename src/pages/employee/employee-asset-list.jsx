@@ -5,7 +5,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import FormModal from "../../components/common/popup-modal";
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
-import { getRequirementAssets } from "../../services/employee-services";
+import { getRequirementAssets, getAssetUploadUrl, uploadFileToS3, saveAssetMetadata } from "../../services/employee-services";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -25,15 +25,23 @@ const assetColumns = [
   {
     key: "status",
     label: "Status",
-    cellClassName: "px-4 py-4 md:px-6 text-gray-700 uppercase text-xs font-bold",
+    cellClassName: "px-4 py-4 md:px-6",
     render: (value, item) => {
-      const s = value || item.status || "Unknown";
-      return s;
+      const s = (value || item.status || "").toLowerCase();
+      const styles = {
+        pending:  "bg-amber-100 text-amber-700",
+        approved: "bg-emerald-100 text-emerald-700",
+        rejected: "bg-red-100 text-red-600",
+      };
+      return (
+        <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold capitalize ${styles[s] || "bg-gray-100 text-gray-600"}`}>
+          {s || "Unknown"}
+        </span>
+      );
     }
   }
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
 export default function EmployeeAssetList() {
   const { id } = useParams();
   const location = useLocation();
@@ -54,8 +62,8 @@ export default function EmployeeAssetList() {
   const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
+  const [uploading, setUploading] = useState(false);
 
-  // ── Upload handlers ────────────────────────────────────────────────────────
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
@@ -78,18 +86,46 @@ export default function EmployeeAssetList() {
     return `${ext} File`;
   };
 
-  const handleUploadSubmit = (formData) => {
+  const handleUploadSubmit = async (formData) => {
     if (!uploadedFile) {
       toast.error("Please select a file to upload");
       return;
     }
-    // API logic will go here
-    toast.success("Asset uploaded successfully");
-    setUploadedFile(null);
-    setShowUploadModal(false);
+    try {
+      setUploading(true);
+
+      // Get S3 pre-signed upload URL
+      const urlRes = await getAssetUploadUrl(projectId, id, {
+        fileName: uploadedFile.name,
+        contentType: uploadedFile.type,
+      });
+      const { uploadUrl, fileUrl } = urlRes.data;
+
+      // Upload file directly to S3
+      await uploadFileToS3(uploadUrl, uploadedFile);
+
+      // Save asset metadata to DB
+      await saveAssetMetadata(projectId, id, {
+        title: formData.assetName || uploadedFile.name,
+        asset_link: fileUrl,
+        internal_notes: formData.internalNotes || "",
+      });
+
+      toast.success("Asset uploaded successfully!");
+      setUploadedFile(null);
+      setShowUploadModal(false);
+      // Refresh the assets list
+      setCurrentPage(1);
+      setQuery("");
+      setSelectedStatuses([]);
+    } catch (err) {
+      console.error("Upload failed:", err);
+      toast.error(err?.response?.data?.message || "Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
   };
 
-  // ── Fetch assets ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (!id) return;
     const fetchAssets = async () => {
@@ -104,7 +140,6 @@ export default function EmployeeAssetList() {
           search: query,
           sort: "date",
           status: statusQuery,
-          version_no: 1,
         });
 
         if (res && res.data) {
@@ -123,19 +158,16 @@ export default function EmployeeAssetList() {
     return () => clearTimeout(timer);
   }, [currentPage, query, id, projectId, selectedStatuses]);
 
-  // Reset to page 1 when filters / search change
   useEffect(() => {
     setCurrentPage(1);
   }, [query, selectedStatuses]);
 
-  // ── Close filter panel on Escape ───────────────────────────────────────────
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") setShowFilters(false); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // ── Close filter panel on outside click ───────────────────────────────────
   useEffect(() => {
     if (!showFilters) return;
     const onClick = (e) => {
@@ -150,18 +182,14 @@ export default function EmployeeAssetList() {
     return () => document.removeEventListener("mousedown", onClick);
   }, [showFilters]);
 
-  // ── Predefined Filter Statuses (matching API values: pending, approved, rejected) ──
   const uniqueStatuses = ["pending", "approved", "rejected"];
 
-
-  // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <>
       <div className="p-4 md:p-6 min-h-screen">
         <main>
           <div className="mx-auto max-w-7xl">
 
-            {/* Page Title */}
             <div className="mb-6">
               <h2 className="text-heading font-bold text-gray-900 flex items-center gap-3">
                 Creative Assets
@@ -171,13 +199,10 @@ export default function EmployeeAssetList() {
               </p>
             </div>
 
-            {/* Table Section */}
             <section className="rounded-xl border border-gray-200 bg-white shadow-sm">
 
-              {/* Toolbar: Search | Filter | Upload Asset */}
               <div className="flex flex-col gap-3 border-b border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between md:p-6">
 
-                {/* Search */}
                 <div className="flex items-center gap-3">
                   <div className="relative w-full sm:w-64">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -201,7 +226,6 @@ export default function EmployeeAssetList() {
 
                 <div className="flex items-center gap-3">
 
-                  {/* Filter Button + Dropdown */}
                   <div className="relative">
                     <button
                       id="asset-filter-btn"
@@ -267,7 +291,6 @@ export default function EmployeeAssetList() {
                     )}
                   </div>
 
-                  {/* Upload Asset Button */}
                   <button
                     type="button"
                     onClick={() => setShowUploadModal(true)}
@@ -279,7 +302,6 @@ export default function EmployeeAssetList() {
                 </div>
               </div>
 
-              {/* Table Body */}
               {loading ? (
                 <div className="flex h-40 items-center justify-center text-sm text-gray-500">
                   Loading assets...
@@ -291,7 +313,18 @@ export default function EmployeeAssetList() {
                       data={assets}
                       columns={assetColumns}
                       renderActions={false}
-                      onRowClick={(item) => navigate(`/employee/employee-projects/employee-asset-detail/${item.id}`)}
+                      onRowClick={(item) =>
+                        navigate(
+                          `/employee/employee-projects/employee-asset-detail/${item.asset_id}`,
+                          {
+                            state: {
+                              projectId,
+                              requirementId: id,
+                              versionNo: item.version_no || 1,
+                            },
+                          }
+                        )
+                      }
                       rowClassName={() => "hover:bg-gray-50 bg-white cursor-pointer"}
                       tableClassName="w-full min-w-[600px] text-left text-sm"
                     />
@@ -317,7 +350,6 @@ export default function EmployeeAssetList() {
         </main>
       </div>
 
-      {/* ── Upload Asset Modal ─────────────────────────────────────────── */}
       <FormModal
         isOpen={showUploadModal}
         onClose={() => {
@@ -342,7 +374,6 @@ export default function EmployeeAssetList() {
         renderContent={({ register, errors }) => (
           <div className="flex flex-col gap-4">
 
-            {/* File Upload Drop Zone */}
             <div>
               <label className="text-sm text-gray-400 mb-1 block">File Upload</label>
               <div
@@ -355,7 +386,7 @@ export default function EmployeeAssetList() {
                   : "border-gray-300 bg-gray-50 hover:border-gray-400"
                   }`}
               >
-                {/* File type icons */}
+
                 <div className="flex items-center gap-2">
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
                     <FileText className="h-5 w-5 text-red-500" />
@@ -386,8 +417,7 @@ export default function EmployeeAssetList() {
                 />
               </div>
             </div>
-
-            {/* Internal Notes */}
+            
             <div>
               <label className="text-sm text-gray-400 mb-1 block">
                 Internal Notes <span className="text-gray-400 text-xs">(Optional)</span>

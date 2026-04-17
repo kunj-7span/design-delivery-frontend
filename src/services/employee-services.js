@@ -52,3 +52,43 @@ export const getRequirementAssets = async (projectId, requirementId, params = {}
   );
   return response.data;
 };
+
+// Step 1: Get S3 pre-signed upload URL
+export const getAssetUploadUrl = async (projectId, requirementId, { fileName, contentType }) => {
+  const response = await axiosClient.post(
+    `/agency/projects/${projectId}/requirements/${requirementId}/assets/upload-url`,
+    { fileName, contentType }
+  );
+  return response.data;
+};
+
+// Step 2: Upload file directly to S3 using pre-signed URL (no auth header needed - direct S3)
+export const uploadFileToS3 = async (uploadUrl, file) => {
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+  if (!response.ok) throw new Error("S3 upload failed");
+  return true;
+};
+
+// Step 3: Save asset metadata to database
+export const saveAssetMetadata = async (projectId, requirementId, { title, asset_link, internal_notes, asset_id }) => {
+  const body = { title, asset_link, internal_notes };
+  if (asset_id) body.asset_id = asset_id;
+  const response = await axiosClient.post(
+    `/agency/projects/${projectId}/requirements/${requirementId}/assets/upload`,
+    body
+  );
+  return response.data;
+};
+
+// Get specific asset version details
+export const getAssetVersionDetails = async (projectId, requirementId, assetId, versionNo) => {
+  const response = await axiosClient.get(
+    `/agency/projects/${projectId}/requirements/${requirementId}/assets/${assetId}/${versionNo}`
+  );
+  return response.data;
+};
+
