@@ -29,7 +29,7 @@ const assetColumns = [
     render: (value, item) => {
       const s = (value || item.status || "").toLowerCase();
       const styles = {
-        pending:  "bg-amber-100 text-amber-700",
+        pending: "bg-amber-100 text-amber-700",
         approved: "bg-emerald-100 text-emerald-700",
         rejected: "bg-red-100 text-red-600",
       };
@@ -100,6 +100,11 @@ export default function EmployeeAssetList() {
         contentType: uploadedFile.type,
       });
       const { uploadUrl, fileUrl } = urlRes.data;
+
+
+      if (!uploadUrl || !fileUrl) {
+        throw new Error("Failed to get upload URL");
+      }
 
       // Upload file directly to S3
       await uploadFileToS3(uploadUrl, uploadedFile);
@@ -417,7 +422,7 @@ export default function EmployeeAssetList() {
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="text-sm text-gray-400 mb-1 block">
                 Internal Notes <span className="text-gray-400 text-xs">(Optional)</span>

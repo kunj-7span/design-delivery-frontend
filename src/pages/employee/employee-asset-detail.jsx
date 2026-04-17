@@ -10,7 +10,6 @@ import {
   saveAssetMetadata,
 } from "../../services/employee-services";
 
-// ─── Status Badge ─────────────────────────────────────────────────────────────
 function StatusBadge({ status }) {
   const map = {
     pending: "bg-amber-100 text-amber-700",
@@ -25,26 +24,23 @@ function StatusBadge({ status }) {
 }
 
 export default function EmployeeAssetDetail() {
-  // Route params
-  const { id: assetId } = useParams();           // assetId from URL
+  const { id: assetId } = useParams();
   const location = useLocation();
   const projectId = location.state?.projectId || "0";
   const requirementId = location.state?.requirementId || "0";
   const initialVersion = location.state?.versionNo || 1;
 
-  // Asset data
   const [asset, setAsset] = useState(null);
   const [versionNo, setVersionNo] = useState(initialVersion);
   const [loading, setLoading] = useState(false);
 
-  // Upload modal
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
-  // ── Fetch asset version details ──────────────────────────────────────────────
+
   useEffect(() => {
     if (!assetId) return;
     const fetch = async () => {
@@ -62,7 +58,7 @@ export default function EmployeeAssetDetail() {
     fetch();
   }, [assetId, versionNo, projectId, requirementId]);
 
-  // ── File drag/drop ───────────────────────────────────────────────────────────
+
   const handleDrop = (e) => {
     e.preventDefault();
     setDragActive(false);
@@ -75,7 +71,7 @@ export default function EmployeeAssetDetail() {
     if (file) setUploadedFile(file);
   };
 
-  // ── 3-step S3 upload ─────────────────────────────────────────────────────────
+
   const handleUploadSubmit = async (formData) => {
     if (!uploadedFile) {
       toast.error("Please select a file to upload");
@@ -84,7 +80,6 @@ export default function EmployeeAssetDetail() {
     try {
       setUploading(true);
 
-      // Step 1: Get pre-signed S3 URL
       toast.info("Requesting upload URL...", { autoClose: 1500 });
       const urlRes = await getAssetUploadUrl(projectId, requirementId, {
         fileName: uploadedFile.name,
@@ -92,17 +87,19 @@ export default function EmployeeAssetDetail() {
       });
       const { uploadUrl, fileUrl } = urlRes.data;
 
-      // Step 2: Upload file directly to S3
+      if (!uploadUrl || !fileUrl) {
+        throw new Error("Failed to get upload URL");
+      }
+
       toast.info("Uploading file to S3...", { autoClose: 1500 });
       await uploadFileToS3(uploadUrl, uploadedFile);
 
-      // Step 3: Save metadata — pass asset_id so backend creates a NEW VERSION
       toast.info("Saving new version...", { autoClose: 1500 });
       await saveAssetMetadata(projectId, requirementId, {
         title: formData.versionNotes || asset?.asset_name || uploadedFile.name,
         asset_link: fileUrl,
         internal_notes: formData.internalNotes || "",
-        asset_id: assetId,              // signals backend to add a version
+        asset_id: assetId,
       });
 
       toast.success("New version uploaded successfully!");
@@ -118,7 +115,6 @@ export default function EmployeeAssetDetail() {
     }
   };
 
-  // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       <div className="mx-auto max-w-7xl p-4 md:p-6">
@@ -175,10 +171,8 @@ export default function EmployeeAssetDetail() {
           )}
         </div>
 
-        {/* Main Content */}
         <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">
 
-          {/* Left Panel: Asset Preview */}
           <div className="flex-1 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             {loading ? (
               <div className="flex min-h-75 items-center justify-center text-sm text-gray-400">
@@ -186,7 +180,6 @@ export default function EmployeeAssetDetail() {
               </div>
             ) : asset?.asset_link ? (
               <div className="flex flex-col gap-4">
-                {/* Image preview if applicable */}
                 {/\.(png|jpg|jpeg|gif|webp|svg)$/i.test(asset.asset_link) ? (
                   <img
                     src={asset.asset_link}
@@ -200,7 +193,6 @@ export default function EmployeeAssetDetail() {
                   </div>
                 )}
 
-                {/* View link */}
                 <a
                   href={asset.asset_link}
                   target="_blank"
@@ -218,7 +210,6 @@ export default function EmployeeAssetDetail() {
             )}
           </div>
 
-          {/* Right Panel: Comments (static for now) */}
           <div className="w-full lg:w-96 shrink-0 rounded-xl border border-gray-200 bg-white shadow-sm flex flex-col">
             <div className="border-b border-gray-100 p-4">
               <h3 className="font-semibold text-[#1e2a4a] border-b-2 border-[#1e2a4a] pb-2 inline-block">
@@ -261,7 +252,6 @@ export default function EmployeeAssetDetail() {
         </div>
       </div>
 
-      {/* Upload New Version Modal */}
       <FormModal
         isOpen={showUploadModal}
         onClose={() => {
@@ -279,7 +269,6 @@ export default function EmployeeAssetDetail() {
         renderContent={({ register }) => (
           <div className="flex flex-col gap-4">
 
-            {/* Asset Name — read-only, pre-filled */}
             <div>
               <label className="text-sm text-gray-400 mb-1 block">Asset Name</label>
               <input
@@ -290,7 +279,6 @@ export default function EmployeeAssetDetail() {
               />
             </div>
 
-            {/* File Upload Drop Zone */}
             <div>
               <label className="text-sm text-gray-400 mb-1 block">File Upload</label>
               <div
@@ -334,7 +322,6 @@ export default function EmployeeAssetDetail() {
               </div>
             </div>
 
-            {/* Internal Notes */}
             <div>
               <label className="text-sm text-gray-400 mb-1 block">
                 Internal Notes <span className="text-gray-400 text-xs">(Optional)</span>
