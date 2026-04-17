@@ -14,7 +14,6 @@ const Table = ({
   actionsHeaderLabel = "Actions",
   statusStyles = {},
   rowClassName,
-  onRowClick,
   isRowClickable,
   tableClassName = "w-full min-w-175 text-left table-auto",
   containerClassName = "hidden sm:block w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm",
@@ -99,7 +98,6 @@ const Table = ({
             {data.map((item, index) => (
               <tr
                 key={item.id || index}
-                onClick={onRowClick ? () => onRowClick(item) : undefined}
                 className={
                   rowClassName
                     ? rowClassName(item, index, { isMobile: false })
@@ -142,17 +140,26 @@ const Table = ({
                   <td className="px-6 py-4 flex justify-center gap-4 text-gray-500">
                     {renderActionsCell && renderActionsCell(item)}
                     {onEdit && (
-                      <button onClick={() => onEdit(item)}>
+                      <button onClick={(event) => {
+                        event.stopPropagation();
+                        onEdit(item);
+                      }}>
                         <Pencil size={16} className="cursor-pointer hover:text-primary" />
                       </button>
                     )}
                     {onSend && (
-                      <button onClick={() => onSend(item)}>
+                      <button onClick={(event) => {
+                        event.stopPropagation();
+                        onSend(item);
+                      }}>
                         <Send size={16} className="cursor-pointer hover:text-green-600" />
                       </button>
                     )}
                     {onDelete && (
-                      <button onClick={() => handleDeleteClick(item)}>
+                      <button onClick={(event) => {
+                        event.stopPropagation();
+                        handleDeleteClick(item);
+                      }}>
                         <Trash2 size={16} className="cursor-pointer hover:text-red-600" />
                       </button>
                     )}
