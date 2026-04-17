@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, Filter, Plus, FileImage, FileText, FileCode } from "lucide-react";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import FormModal from "../../components/common/popup-modal";
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
@@ -29,6 +30,7 @@ const assetColumns = [
 // ─────────────────────────────────────────────────────────────────────────────
 export default function EmployeeAssetList() {
   // ── State ──────────────────────────────────────────────────────────────────
+  const [allAssets, setAllAssets] = useState(STATIC_ASSETS);
   const [assets, setAssets] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalAssets, setTotalAssets] = useState(0);
@@ -43,6 +45,8 @@ export default function EmployeeAssetList() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const fileInputRef = useRef(null);
 
+  const navigate = useNavigate();
+
   // ── Upload handlers ────────────────────────────────────────────────────────
   const handleDrop = (e) => {
     e.preventDefault();
@@ -56,13 +60,36 @@ export default function EmployeeAssetList() {
     if (file) setUploadedFile(file);
   };
 
+  const getFileType = (fileName) => {
+    if (!fileName) return "Unknown File";
+    const ext = fileName.split('.').pop().toUpperCase();
+    if (['PNG', 'JPG', 'JPEG'].includes(ext)) return `${ext} Image`;
+    if (ext === 'PDF') return `PDF Document`;
+    if (ext === 'SVG') return `SVG Graphics`;
+    if (ext === 'JSON') return `JSON Data`;
+    return `${ext} File`;
+  };
+
   const handleUploadSubmit = (formData) => {
     if (!uploadedFile) {
       toast.error("Please select a file to upload");
       return;
     }
-    // TODO: call upload API here with { ...formData, file: uploadedFile }
-    console.log("Upload payload:", { ...formData, file: uploadedFile });
+
+    const newAsset = {
+      id: Date.now(),
+      name: formData.assetName || uploadedFile.name,
+      fileType: getFileType(uploadedFile.name),
+      currentVersion: "1.0",
+      uploadedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
+      internalNotes: formData.internalNotes || ""
+    };
+
+    setAllAssets(prev => [newAsset, ...prev]);
+
+    // TODO: call POST upload API here later
+    // console.log("Upload payload:", { ...formData, file: uploadedFile });
+
     toast.success("Asset uploaded successfully");
     setUploadedFile(null);
     setShowUploadModal(false);
@@ -76,22 +103,9 @@ export default function EmployeeAssetList() {
     const fetchAssets = async () => {
       try {
         setLoading(true);
-
-        // TODO: Replace with real API call, e.g.:
-        // const response = await getAssets({
-        //   page: currentPage,
-        //   limit: ITEMS_PER_PAGE,
-        //   search: query,
-        //   fileType: selectedFileTypes,
-        // });
-        // setAssets(response.data);
-        // setTotalPages(response.meta.totalPages);
-        // setTotalAssets(response.meta.totalAssets);
-
-        // ── Static simulation (remove when API is ready) ──────────────────
         await new Promise((r) => setTimeout(r, 300)); // simulate network delay
 
-        let filtered = STATIC_ASSETS;
+        let filtered = allAssets;
         if (selectedFileTypes.length > 0) {
           filtered = filtered.filter((a) => selectedFileTypes.includes(a.fileType));
         }
@@ -122,7 +136,7 @@ export default function EmployeeAssetList() {
     };
 
     fetchAssets();
-  }, [currentPage, query, selectedFileTypes]);
+  }, [currentPage, query, selectedFileTypes, allAssets]);
 
   // Reset to page 1 when filters / search change
   useEffect(() => {
@@ -160,13 +174,10 @@ export default function EmployeeAssetList() {
 
             {/* Page Title */}
             <div className="mb-6">
-              <h2 className="text-heading font-bold text-gray-900 sm:text-3xl flex items-center gap-3">
+              <h2 className="text-heading font-bold text-gray-900 flex items-center gap-3">
                 Creative Assets
-                <span className="text-sm bg-gray-200 px-3 py-1 rounded-full font-normal">
-                  {totalAssets} Total
-                </span>
               </h2>
-              <p className="mt-1 text-subheading text-gray-500">
+              <p className="mt-1 text-sm text-gray-500">
                 Manage and version control your design deliverables.
               </p>
             </div>
@@ -178,16 +189,25 @@ export default function EmployeeAssetList() {
               <div className="flex flex-col gap-3 border-b border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between md:p-6">
 
                 {/* Search */}
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                  <input
-                    id="asset-search"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    type="search"
-                    placeholder="Search assets..."
-                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
-                  />
+                <div className="flex items-center gap-3">
+                  <div className="relative w-full sm:w-64">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+
+
+                    <input
+                      id="asset-search"
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      type="search"
+                      placeholder="Search assets..."
+                      className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+                    />
+                  </div>
+
+                  <span className="text-sm bg-gray-200 px-3 py-1 rounded-full font-normal">
+                    {totalAssets} Total
+                  </span>
+
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -282,7 +302,8 @@ export default function EmployeeAssetList() {
                       data={assets}
                       columns={assetColumns}
                       renderActions={false}
-                      rowClassName={() => "hover:bg-gray-50 bg-white"}
+                      onRowClick={(item) => navigate(`/employee/employee-projects/employee-asset-detail/${item.id}`)}
+                      rowClassName={() => "hover:bg-gray-50 bg-white cursor-pointer"}
                       tableClassName="w-full min-w-[600px] text-left text-sm"
                     />
                   </div>

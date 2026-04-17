@@ -186,7 +186,7 @@ function TypeBadge({ type, colorKey }) {
 function StatusBadge({ status, colorKey }) {
     return (
         <span
-            className={`inline-flex items-center justify-center rounded-full min-w-[110px] px-3 py-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap ${STATUS_COLORS[colorKey] || STATUS_COLORS.gray}`}
+            className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap ${STATUS_COLORS[colorKey] || STATUS_COLORS.gray}`}
         >
             {status}
         </span>
@@ -405,7 +405,7 @@ export default function EmployeeProjectsRequirement() {
 
                     {/* Project Header */}
                     <div className="mb-6">
-                        <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                        <h2 className="text-heading font-bold text-gray-900">
                             {PROJECT_INFO.name}
                         </h2>
                     </div>
@@ -442,7 +442,7 @@ export default function EmployeeProjectsRequirement() {
                     <section className="rounded-xl border border-gray-200 bg-white shadow-sm">
                         {/* Section Header with Search & Filter */}
                         <div className="flex flex-col gap-3 border-b border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:p-6">
-                            <h3 className="text-lg font-bold text-gray-900">
+                            <h3 className="text-subheading font-bold text-gray-900">
                                 Requirements
                             </h3>
 

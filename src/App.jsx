@@ -90,7 +90,7 @@ function App() {
                 element={<EmployeeAssetList />}
               />
               <Route
-                path="employee-asset-detail"
+                path="employee-asset-detail/:id"
                 element={<EmployeeAssetDetail />}
               />
 
