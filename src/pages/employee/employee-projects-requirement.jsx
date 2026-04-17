@@ -298,7 +298,6 @@ const requirementColumns = [
 
 /* ─── main component ─── */
 export default function EmployeeProjectsRequirement() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
@@ -309,25 +308,10 @@ export default function EmployeeProjectsRequirement() {
     const uniqueStatuses = [...new Set(REQUIREMENTS.map((r) => r.status))];
     const uniqueTypes = [...new Set(REQUIREMENTS.map((r) => r.type))];
 
-    /* responsive sidebar close */
-    useEffect(() => {
-        const mq = window.matchMedia("(min-width: 1024px)");
-        const onResize = () => {
-            if (mq.matches) setSidebarOpen(false);
-        };
-        mq.addEventListener("change", onResize);
-        window.addEventListener("resize", onResize);
-        onResize();
-        return () => {
-            mq.removeEventListener("change", onResize);
-            window.removeEventListener("resize", onResize);
-        };
-    }, []);
-
+    /* close filter dropdown on Escape */
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "Escape") {
-                setSidebarOpen(false);
                 setShowFilters(false);
             }
         };
@@ -402,7 +386,6 @@ export default function EmployeeProjectsRequirement() {
     return (
         <div className="p-4 md:p-6 min-h-screen">
             <main>
-                <div className="mx-auto max-w-7xl">
                     {/* Breadcrumb */}
                     <nav
                         aria-label="Breadcrumb"
@@ -607,9 +590,8 @@ export default function EmployeeProjectsRequirement() {
                         {/* Desktop Table */}
                         {pageRows.length > 0 ? (
                             <>
-                                <div className="w-full max-w-full">
-                                    <div className="w-full overflow-x-auto">
-                                        <div className="min-w-max">
+                                <div className="w-full overflow-x-auto">
+                                    <div className="min-w-[800px]">
                                             <Table
                                                 data={pageRows}
                                                 columns={requirementColumns}
@@ -625,7 +607,6 @@ export default function EmployeeProjectsRequirement() {
                                                 )}
                                                 rowClassName={(item) => "hover:bg-gray-50 bg-white"}
                                             />
-                                        </div>
                                     </div>
                                 </div>
 
@@ -648,7 +629,6 @@ export default function EmployeeProjectsRequirement() {
                             </div>
                         )}
                     </section>
-                </div>
             </main>
         </div>
     );
