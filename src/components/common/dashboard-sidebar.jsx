@@ -17,24 +17,29 @@ const DashboardSidebar = ({
   closeMobile,
   onLogoutClick,
 }) => {
-  const { user, agency_menuItems, client_menuItems, employee_menuItems } =
+  const { user, agency_menuItems, client_menuItems, employee_menuItems, agency_bottomItems, client_bottomItems, employee_bottomItems } =
     useAuthStore();
-  const bottomItems = [
-    { name: "Settings", icon: Settings, path: "/agency/agency-settings" },
-  ];
   let menuItems = [];
-  if (user.role === "agency_admin") menuItems = agency_menuItems;
-  else if (user.role === "client") menuItems = client_menuItems;
-  else menuItems = employee_menuItems;
+  let bottomItems = [];
+  if (user.role === "agency_admin") { 
+    menuItems = agency_menuItems; 
+    bottomItems = agency_bottomItems;
+  } else if (user.role === "client") { 
+    menuItems = client_menuItems; 
+    bottomItems = client_bottomItems;
+  } else { 
+    menuItems = employee_menuItems; 
+    bottomItems = employee_bottomItems;
+  }
 
   return (
     <aside
       className={`
-    fixed md:static top-0 left-0 z-50 h-screen bg-white flex flex-col justify-between
+    fixed lg:static top-0 left-0 z-50 min-h-screen bg-white flex flex-col justify-between
     transition-all duration-300 ease-in-out overflow-hidden shadow
 
     ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} 
-    md:translate-x-0
+    lg:translate-x-0
 
     ${isSidebarOpen ? "w-56" : "w-16"} 
   `}
@@ -65,10 +70,9 @@ const DashboardSidebar = ({
                 to={item.path}
                 onClick={closeMobile}
                 className={({ isActive }) =>
-                  `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                    isActive
-                      ? "bg-primary text-white font-medium shadow-md shadow-indigo-200"
-                      : "hover:bg-gray-200 text-gray-700"
+                  `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive
+                    ? "bg-primary text-white font-medium shadow-md shadow-indigo-200"
+                    : "hover:bg-gray-200 text-gray-700"
                   }`
                 }
               >
@@ -79,11 +83,10 @@ const DashboardSidebar = ({
 
                 {/* TEXT */}
                 <span
-                  className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                    isSidebarOpen
+                  className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
                       ? "opacity-100 translate-x-0"
                       : "opacity-0 -translate-x-2 w-0"
-                  }`}
+                    }`}
                 >
                   {item.name}
                 </span>
@@ -104,10 +107,9 @@ const DashboardSidebar = ({
               to={item.path}
               onClick={closeMobile}
               className={({ isActive }) =>
-                `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                  isActive
-                    ? "bg-primary text-white font-medium"
-                    : "hover:bg-gray-200 text-gray-700"
+                `flex items-center p-2 rounded-lg cursor-pointer transition-all duration-200 ${isActive
+                  ? "bg-primary text-white font-medium"
+                  : "hover:bg-gray-200 text-gray-700"
                 }`
               }
             >
@@ -116,11 +118,10 @@ const DashboardSidebar = ({
               </div>
 
               <span
-                className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                  isSidebarOpen
+                className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
                     ? "opacity-100 translate-x-0"
                     : "opacity-0 -translate-x-2 w-0"
-                }`}
+                  }`}
               >
                 {item.name}
               </span>
@@ -137,11 +138,10 @@ const DashboardSidebar = ({
             <LogOut size={22} />
           </div>
           <span
-            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${
-              isSidebarOpen
+            className={`ml-3 whitespace-nowrap overflow-hidden transition-all duration-300 ${isSidebarOpen
                 ? "opacity-100 translate-x-0"
                 : "opacity-0 -translate-x-2 w-0"
-            }`}
+              }`}
           >
             Logout
           </span>

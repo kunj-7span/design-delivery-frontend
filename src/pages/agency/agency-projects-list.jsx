@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Search } from "lucide-react";
 import { Link } from "react-router-dom";
-// import { toast } from "react-toastify";
-import Pagination from "../../components/agency/pagination";
+import Pagination from "../../components/common/pagination";
 import { getProjects } from "../../services/agency-services";
 
 const ITEMS_PER_PAGE = 5;
@@ -85,12 +84,12 @@ const AgencyProjectsList = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 min-h-screen w-full max-w-full overflow-x-hidden">
+    <div className="p-4 md:p-6 min-h-screen">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 className="text-heading">Projects</h2>
         <Link
-          to="/agency/create-project"
+          to="/agency/agency-projects/create-project"
           className="bg-primary hover:bg-hover-primary text-white px-5 py-2.5 rounded-xl font-semibold flex items-center gap-2 shadow-md shadow-indigo-100 text-sm transition-colors"
         >
           <Plus size={18} />

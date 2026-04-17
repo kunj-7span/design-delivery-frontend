@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { UserPlus } from "lucide-react";
 import { toast } from "react-toastify";
-import Pagination from "../../components/agency/pagination";
+import Pagination from "../../components/common/pagination";
 import EmployeeTable from "../../components/agency/employee-table.jsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,15 +53,15 @@ const AgencyEmployees = () => {
     };
 
     fetchEmployees();
-  }, [currentPage,fetch]);
+  }, [currentPage, fetch]);
 
   const onSubmit = async (formData) => {
     try {
-        await addEmployee(formData);
-        setCurrentPage(1);
-        setFetch(!fetch)
-        toast.success("Employee added successfully");
-        reset();
+      await addEmployee(formData);
+      setCurrentPage(1);
+      setFetch(!fetch)
+      toast.success("Employee added successfully");
+      reset();
     } catch (error) {
       console.error("Error adding employee:", error);
       toast.error(error?.response?.data?.message || "Failed to add employee");
@@ -156,24 +156,26 @@ const AgencyEmployees = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <h2 className="flex items-center gap-3 text-subheading font-semibold text-gray-800">
               <span>Employees</span>
-              <span className="text-sm bg-gray-200 px-3 py-1 rounded-full">{totalEmp} Total</span>
+              <span className="px-3 py-1.5 bg-gray-200 text-xs rounded-xl">{totalEmp} Total</span>
             </h2>
           </div>
 
-          <div className="w-full max-w-full">
-            <div className="w-full overflow-x-auto">
-              <div className="min-w-max">
-                {loading ? (
-                  <div className="text-center py-8 text-gray-500">
-                    Loading employees...
-                  </div>
-                ) : employees.length > 0 ? (
-                  <EmployeeTable data={employees} onDelete={handleDelete} />
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No employees found
-                  </div>
-                )}
+          <div className="min-h-[360px]">
+            <div className="w-full max-w-full h-full">
+              <div className="w-full overflow-x-auto h-full">
+                <div className="min-w-max h-full">
+                  {loading ? (
+                    <div className="h-full min-h-[360px] text-center py-8 text-gray-500 flex items-center justify-center">
+                      Loading employees...
+                    </div>
+                  ) : employees.length > 0 ? (
+                    <EmployeeTable data={employees} onDelete={handleDelete} />
+                  ) : (
+                    <div className="h-full min-h-[360px] text-center py-8 text-gray-500 flex items-center justify-center">
+                      No employees found
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

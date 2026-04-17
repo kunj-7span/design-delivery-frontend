@@ -19,8 +19,6 @@ import AgencyClients from "./pages/agency/agency-clients";
 import AgencyEmployees from "./pages/agency/agency-employees";
 import AgencySettings from "./pages/agency/agency-settings";
 import AgencyProjectDetail from "./pages/agency/agency-project-detail";
-import DesignerDashboard from "./pages/employee/employee-dashboard";
-import MainApp from "./pages/agency/agency-projects-list";
 import ClientDashboard from "./pages/client/client-dashboard";
 import ClientInvitations from "./pages/client/client-invitations";
 import AgencyProjectsList from "./pages/agency/agency-projects-list";
@@ -29,6 +27,9 @@ import UnauthorizedPage from "./pages/unauthorized-page";
 import DashboardLayout from "./components/common/dashboard-layout";
 import EmployeeProjects from "./pages/employee/employee-projects";
 import EmployeeDashboard from "./pages/employee/employee-dashboard";
+import EmployeeProjectsRequirement from "./pages/employee/employee-projects-requirement";
+import EmployeeAssetList from "./pages/employee/employee-asset-list";
+import EmployeeAssetDetail from "./pages/employee/employee-asset-detail";
 
 function App() {
   const router = createBrowserRouter(
@@ -40,10 +41,6 @@ function App() {
         <Route path="reset-password" element={<ResetPasswordPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="unauthorized" element={<UnauthorizedPage />} />
-        <Route path="designer" element={<DesignerDashboard />} />
-        <Route path="employee/projects" element={<EmployeeProjects />} />
-        <Route path="/projects" element={<MainApp />} />
-
         <Route path="verify-otp" element={<VerifyOtpPage />} />
         {/* <Route path='reset-password' element={<ResetPassword />} /> */}
 
@@ -55,9 +52,9 @@ function App() {
         <Route element={<RoleProtectedRoute allowedRoles={["agency_admin"]} />}>
           <Route path="agency" element={<DashboardLayout />}>
             <Route path="agency-dashboard" element={<AgencyDashboard />} />
-            <Route path="create-project" element={<CreateProject />} />
             <Route path="agency-projects">
               <Route index element={<AgencyProjectsList />} />
+              <Route path="create-project" element={<CreateProject />} />
               <Route path="view-project-detail/:projectId" element={<AgencyProjectDetail />} />
             </Route>
             <Route path="agency-clients" element={<AgencyClients />} />
@@ -85,19 +82,18 @@ function App() {
         <Route element={<RoleProtectedRoute allowedRoles={["employee"]} />}>
           <Route path="employee" element={<DashboardLayout />}>
             <Route path="employee-dashboard" element={<EmployeeDashboard />} />
-            <Route path="employee-projects" element={<EmployeeProjects />}>
+            <Route path="employee-projects">
+              <Route index element={<EmployeeProjects />} />
+              <Route path="employee-projects-requirement" element={<EmployeeProjectsRequirement />} />
               <Route
-                path="view-project/:project-id"
-                // element={<ViewDesignerProject />}
+                path="employee-asset-list"
+                element={<EmployeeAssetList />}
               />
               <Route
-                path="view-project/:project-id/requirement/:requirement-id"
-                // element={<ViewAssets />}
+                path="employee-asset-detail/:id"
+                element={<EmployeeAssetDetail />}
               />
-              <Route
-                path="view-project/:project-id/requirement/:requirement-id/asset-collaboration"
-                // element={<ViewAssetsCollaboration />}
-              />
+
             </Route>
             {/* <Route path="employee-settings" element={<DesignerSettings />} />
             <Route
@@ -123,8 +119,8 @@ function App() {
         </Route> */}
 
         {/* Catch-all route for undefined paths */}
-        <Route path="*" element={<ErrorPage />} />
-      </Route>,
+        < Route path="*" element={< ErrorPage />} />
+      </Route >,
     ),
   );
 
@@ -144,8 +140,8 @@ function App() {
       />
       <RouterProvider router={router} />
     </>
-    // <LandingPage/>
-    // <Login/>
+    // <LandingPage />
+    // <Login />
     // <LoginPage />
     // <ResetPasswordPage />
   );

@@ -95,7 +95,12 @@ const VerifyOtpForm = () => {
         return;
       }
 
-      const res = await authServices.verifyOTP({ ...registerData, otp: otpValue });
+      const { avatar, ...otpPayload } = registerData;
+      const res = await authServices.verifyOTP({
+        ...otpPayload,
+        otp: otpValue,
+        ...(avatar && { avatar }),
+      });
       const { user, token } = res.data;
 
       // Store in Zustand instead of localStorage
