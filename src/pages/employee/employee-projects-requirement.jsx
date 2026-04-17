@@ -594,7 +594,7 @@ export default function EmployeeProjectsRequirement() {
                                                 renderActionsCell={(item) => (
                                                     <button
                                                         type="button"
-                                                        onClick={() => navigate("/employee/employee-projects/employee-projects-requirement/employee-asset-collaboration")}
+                                                        onClick={() => navigate("/employee/employee-projects/employee-asset-list")}
                                                         className="inline-flex items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-95"
                                                     >
                                                         Start Working

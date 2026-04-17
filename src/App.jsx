@@ -29,6 +29,7 @@ import EmployeeProjects from "./pages/employee/employee-projects";
 import EmployeeDashboard from "./pages/employee/employee-dashboard";
 import EmployeeProjectsRequirement from "./pages/employee/employee-projects-requirement";
 import EmployeeAssetList from "./pages/employee/employee-asset-list";
+import EmployeeAssetDetail from "./pages/employee/employee-asset-detail";
 
 function App() {
   const router = createBrowserRouter(
@@ -85,9 +86,14 @@ function App() {
               <Route index element={<EmployeeProjects />} />
               <Route path="employee-projects-requirement" element={<EmployeeProjectsRequirement />} />
               <Route
-                path="employee-projects-requirement/employee-asset-collaboration"
+                path="employee-asset-list"
                 element={<EmployeeAssetList />}
               />
+              <Route
+                path="employee-asset-detail"
+                element={<EmployeeAssetDetail />}
+              />
+
             </Route>
             {/* <Route path="employee-settings" element={<DesignerSettings />} />
             <Route
