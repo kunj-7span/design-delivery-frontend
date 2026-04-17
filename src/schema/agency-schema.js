@@ -39,3 +39,11 @@ export const changePasswordSchema = z
     message: "Confirm password must match the new password",
     path: ["confirmPassword"],
   });
+
+export const createRequirementSchema = z.object({
+  requirement: z.string().min(2, "Requirement name is required"),
+  deadline: z.string().min(1, "Deadline is required"),
+  type: z.string().min(1, "Type is required"),
+  description: z.string().min(2, "Description is required"),
+  referenceFile: z.any().optional(),
+});

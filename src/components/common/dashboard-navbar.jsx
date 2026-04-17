@@ -10,7 +10,7 @@ const DashboardNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
   return (
     <header className="min-h-16 bg-white shadow-md border-b border-gray-200 flex items-center justify-between px-4">
       {/* DESKTOP TOGGLE */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         {isSidebarOpen ? (
           <PanelRightOpen onClick={toggleSidebar} className="cursor-pointer" />
         ) : (
@@ -19,7 +19,7 @@ const DashboardNavbar = ({ isSidebarOpen, toggleSidebar, toggleMobile }) => {
       </div>
 
       {/* MOBILE TOGGLE */}
-      <div className="md:hidden">
+      <div className="lg:hidden">
         <PanelRightOpen onClick={toggleMobile} className="cursor-pointer" />
       </div>
 

@@ -269,7 +269,7 @@ const AgencyClients = () => {
           <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h2 className="flex items-center text-subheading font-semibold text-gray-800">
               <span>Client Invitations</span>
-              <span className="px-3 py-1 bg-gray-200 text-xs rounded-xl ml-3">
+              <span className="px-3 py-1.5 bg-gray-200 text-xs rounded-xl ml-3">
                 {totalInvitations} Total
               </span>
             </h2>
@@ -282,42 +282,44 @@ const AgencyClients = () => {
             />
           </div>
 
-          {loading ? (
-            <div className="bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
-              <p className="text-gray-500">Loading client invitations...</p>
-            </div>
-          ) : invitations.length > 0 ? (
-            <>
-              <div className="w-full max-w-full">
-                <div className="w-full overflow-x-auto">
-                  <div className="min-w-max">
-                    <Table
-                      data={invitations}
-                      columns={columns}
-                      onEdit={handleEdit}
-                      onDelete={handleDelete}
-                      onSend={handleResendInvitation}
-                      renderActions={true}
-                    />
+          <div className="min-h-[360px]">
+            {loading ? (
+              <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+                <p className="text-gray-500">Loading client invitations...</p>
+              </div>
+            ) : invitations.length > 0 ? (
+              <>
+                <div className="w-full max-w-full">
+                  <div className="w-full overflow-x-auto">
+                    <div className="min-w-max">
+                      <Table
+                        data={invitations}
+                        columns={columns}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
+                        onSend={handleResendInvitation}
+                        renderActions={true}
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Pagination */}
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={(page) => {
-                  if (page < 1 || page > totalPages) return;
-                  setCurrentPage(page);
-                }}
-              />
-            </>
-          ) : (
-            <div className="bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
-              <p className="text-gray-500">No pending invitations</p>
-            </div>
-          )}
+                {/* Pagination */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => {
+                    if (page < 1 || page > totalPages) return;
+                    setCurrentPage(page);
+                  }}
+                />
+              </>
+            ) : (
+              <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+                <p className="text-gray-500">No pending invitations</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
