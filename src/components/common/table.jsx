@@ -9,6 +9,9 @@ const Table = ({
   onDelete,
   onSend,
   onRowClick,
+  isEditDisabled,
+  isSendDisabled,
+  isDeleteDisabled,
   renderActions = true,
   renderActionsCell,
   actionsHeaderLabel = "Actions",
@@ -140,27 +143,63 @@ const Table = ({
                   <td className="px-6 py-4 flex justify-center gap-4 text-gray-500">
                     {renderActionsCell && renderActionsCell(item)}
                     {onEdit && (
-                      <button onClick={(event) => {
-                        event.stopPropagation();
-                        onEdit(item);
-                      }}>
-                        <Pencil size={16} className="cursor-pointer hover:text-primary" />
+                      <button
+                        type="button"
+                        disabled={Boolean(isEditDisabled?.(item))}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (isEditDisabled?.(item)) return;
+                          onEdit(item);
+                        }}
+                      >
+                        <Pencil
+                          size={16}
+                          className={`${
+                            isEditDisabled?.(item)
+                              ? "cursor-not-allowed text-gray-300"
+                              : "cursor-pointer hover:text-primary"
+                          }`}
+                        />
                       </button>
                     )}
                     {onSend && (
-                      <button onClick={(event) => {
-                        event.stopPropagation();
-                        onSend(item);
-                      }}>
-                        <Send size={16} className="cursor-pointer hover:text-green-600" />
+                      <button
+                        type="button"
+                        disabled={Boolean(isSendDisabled?.(item))}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (isSendDisabled?.(item)) return;
+                          onSend(item);
+                        }}
+                      >
+                        <Send
+                          size={16}
+                          className={`${
+                            isSendDisabled?.(item)
+                              ? "cursor-not-allowed text-gray-300"
+                              : "cursor-pointer hover:text-green-600"
+                          }`}
+                        />
                       </button>
                     )}
                     {onDelete && (
-                      <button onClick={(event) => {
-                        event.stopPropagation();
-                        handleDeleteClick(item);
-                      }}>
-                        <Trash2 size={16} className="cursor-pointer hover:text-red-600" />
+                      <button
+                        type="button"
+                        disabled={Boolean(isDeleteDisabled?.(item))}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (isDeleteDisabled?.(item)) return;
+                          handleDeleteClick(item);
+                        }}
+                      >
+                        <Trash2
+                          size={16}
+                          className={`${
+                            isDeleteDisabled?.(item)
+                              ? "cursor-not-allowed text-gray-300"
+                              : "cursor-pointer hover:text-red-600"
+                          }`}
+                        />
                       </button>
                     )}
                   </td>
@@ -195,21 +234,41 @@ const Table = ({
                 {renderActionsCell && renderActionsCell(item)}
                 {onEdit && (
                   <button
-                    onClick={() => onEdit(item)}
-                    className="text-blue-600"
+                    type="button"
+                    disabled={Boolean(isEditDisabled?.(item))}
+                    onClick={() => {
+                      if (isEditDisabled?.(item)) return;
+                      onEdit(item);
+                    }}
+                    className={isEditDisabled?.(item) ? "text-gray-300 cursor-not-allowed" : "text-blue-600"}
                   >
                     <Pencil size={16} />
                   </button>
                 )}
                 {onSend && (
-                  <button onClick={() => onSend(item)}>
-                    <Send size={16} className="text-green-600" />
+                  <button
+                    type="button"
+                    disabled={Boolean(isSendDisabled?.(item))}
+                    onClick={() => {
+                      if (isSendDisabled?.(item)) return;
+                      onSend(item);
+                    }}
+                  >
+                    <Send
+                      size={16}
+                      className={isSendDisabled?.(item) ? "text-gray-300 cursor-not-allowed" : "text-green-600"}
+                    />
                   </button>
                 )}
                 {onDelete && (
                   <button
-                    onClick={() => handleDeleteClick(item)}
-                    className="text-red-600"
+                    type="button"
+                    disabled={Boolean(isDeleteDisabled?.(item))}
+                    onClick={() => {
+                      if (isDeleteDisabled?.(item)) return;
+                      handleDeleteClick(item);
+                    }}
+                    className={isDeleteDisabled?.(item) ? "text-gray-300 cursor-not-allowed" : "text-red-600"}
                   >
                     <Trash2 size={16} />
                   </button>

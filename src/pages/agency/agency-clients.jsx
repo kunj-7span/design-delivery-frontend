@@ -298,6 +298,9 @@ const AgencyClients = () => {
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                         onSend={handleResendInvitation}
+                        isEditDisabled={(item) => item.status === "ACTIVE"}
+                        isSendDisabled={(item) => item.status === "ACTIVE"}
+                        isDeleteDisabled={(item) => item.status === "ACTIVE"}
                         renderActions={true}
                       />
                     </div>
