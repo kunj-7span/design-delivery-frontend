@@ -51,7 +51,7 @@ const LoginForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await authServices.loginUser(data.email, data.password);
+      const res = await authServices.loginUser(data.email, data.password.trim());
       const { token, user } = res.data;
 
       if (token) {
