@@ -44,3 +44,11 @@ export const getEmployeeProjectRequirements = async (
   );
   return response.data;
 };
+
+export const getRequirementAssets = async (projectId, requirementId, params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const response = await axiosClient.get(
+    `/agency/projects/${projectId}/requirements/${requirementId}/assets?${query}`
+  );
+  return response.data;
+};

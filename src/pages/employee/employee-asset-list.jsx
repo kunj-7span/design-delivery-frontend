@@ -1,45 +1,53 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, Filter, Plus, FileImage, FileText, FileCode } from "lucide-react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import FormModal from "../../components/common/popup-modal";
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
+import { getRequirementAssets } from "../../services/employee-services";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
 const ITEMS_PER_PAGE = 5;
 
-// ─── Static placeholder data (replace with API call) ─────────────────────────
-const STATIC_ASSETS = [
-  { id: 1, name: "Hero_Desktop_v3.png", fileType: "PNG Image", currentVersion: "3.0", uploadedDate: "Oct 12, 2023" },
-  { id: 2, name: "Hero_Mobile_v2.png", fileType: "PNG Image", currentVersion: "2.0", uploadedDate: "Oct 10, 2023" },
-  { id: 3, name: "Styleguide_v1.pdf", fileType: "PDF Document", currentVersion: "1.0", uploadedDate: "Oct 05, 2023" },
-  { id: 4, name: "Iconography_Set.svg", fileType: "SVG Graphics", currentVersion: "4.0", uploadedDate: "Sep 28, 2023" },
-  { id: 5, name: "Typography_Config.json", fileType: "JSON Data", currentVersion: "1.0", uploadedDate: "Sep 25, 2023" },
-  { id: 6, name: "Banner_v1.png", fileType: "PNG Image", currentVersion: "1.0", uploadedDate: "Sep 20, 2023" },
-];
-
-// ─── Table column definitions ─────────────────────────────────────────────────
 const assetColumns = [
-  { key: "name", label: "Asset Name", cellClassName: "px-4 py-4 md:px-6 font-semibold text-gray-900" },
-  { key: "fileType", label: "File Type", cellClassName: "px-4 py-4 md:px-6 text-gray-700" },
-  { key: "currentVersion", label: "Current Version", cellClassName: "px-4 py-4 md:px-6 text-gray-700" },
-  { key: "uploadedDate", label: "Uploaded Date", cellClassName: "px-4 py-4 md:px-6 text-gray-700" },
+  { key: "asset_name", label: "Asset Name", cellClassName: "px-4 py-4 md:px-6 font-semibold text-gray-900", render: (value, item) => value || item.asset_name || "-" },
+  { key: "file_type", label: "File Type", cellClassName: "px-4 py-4 md:px-6 text-gray-700", render: (value, item) => value || item.file_type || "Unknown" },
+  { key: "version_no", label: "Current Version", cellClassName: "px-4 py-4 md:px-6 text-gray-700", render: (value, item) => value || item.version_no || "1.0" },
+  {
+    key: "uploaded_date",
+    label: "Uploaded Date",
+    cellClassName: "px-4 py-4 md:px-6 text-gray-700",
+    render: (value, item) => {
+      const d = value || item.uploaded_date;
+      return d ? new Date(d).toLocaleDateString() : "-";
+    }
+  },
+  {
+    key: "status",
+    label: "Status",
+    cellClassName: "px-4 py-4 md:px-6 text-gray-700 uppercase text-xs font-bold",
+    render: (value, item) => {
+      const s = value || item.status || "Unknown";
+      return s;
+    }
+  }
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
 export default function EmployeeAssetList() {
-  // ── State ──────────────────────────────────────────────────────────────────
-  const [allAssets, setAllAssets] = useState(STATIC_ASSETS);
+  const { id } = useParams();
+  const location = useLocation();
+  const projectId = location.state?.projectId || "0";
+
   const [assets, setAssets] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalAssets, setTotalAssets] = useState(0);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
   const [query, setQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedFileTypes, setSelectedFileTypes] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
+
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -75,73 +83,50 @@ export default function EmployeeAssetList() {
       toast.error("Please select a file to upload");
       return;
     }
-
-    const newAsset = {
-      id: Date.now(),
-      name: formData.assetName || uploadedFile.name,
-      fileType: getFileType(uploadedFile.name),
-      currentVersion: "1.0",
-      uploadedDate: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-      internalNotes: formData.internalNotes || ""
-    };
-
-    setAllAssets(prev => [newAsset, ...prev]);
-
-    // TODO: call POST upload API here later
-    // console.log("Upload payload:", { ...formData, file: uploadedFile });
-
+    // API logic will go here
     toast.success("Asset uploaded successfully");
     setUploadedFile(null);
     setShowUploadModal(false);
   };
 
-  // Derive unique file types from fetched data
-  const fileTypes = [...new Set(assets.map((a) => a.fileType))];
-
   // ── Fetch assets ───────────────────────────────────────────────────────────
   useEffect(() => {
+    if (!id) return;
     const fetchAssets = async () => {
       try {
         setLoading(true);
-        await new Promise((r) => setTimeout(r, 300)); // simulate network delay
 
-        let filtered = allAssets;
-        if (selectedFileTypes.length > 0) {
-          filtered = filtered.filter((a) => selectedFileTypes.includes(a.fileType));
-        }
-        const q = query.trim().toLowerCase();
-        if (q) {
-          filtered = filtered.filter(
-            (a) =>
-              a.name.toLowerCase().includes(q) ||
-              a.fileType.toLowerCase().includes(q) ||
-              a.currentVersion.toLowerCase().includes(q) ||
-              a.uploadedDate.toLowerCase().includes(q),
-          );
-        }
-        const pages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-        const from = (currentPage - 1) * ITEMS_PER_PAGE;
-        const page = filtered.slice(from, from + ITEMS_PER_PAGE);
+        const statusQuery = selectedStatuses.length > 0 ? selectedStatuses.join(",") : "all";
 
-        setAssets(page);
-        setTotalPages(pages);
-        setTotalAssets(filtered.length);
-        // ── End static simulation ─────────────────────────────────────────
+        const res = await getRequirementAssets(projectId, id, {
+          page: currentPage,
+          limit: ITEMS_PER_PAGE,
+          search: query,
+          sort: "date",
+          status: statusQuery,
+          version_no: 1,
+        });
+
+        if (res && res.data) {
+          setAssets(res.data);
+          setTotalPages(res.meta?.totalPages || 1);
+          setTotalAssets(res.meta?.total || res.data.length);
+        }
       } catch (error) {
         console.error("Error fetching assets:", error);
-        toast.error("Failed to load assets");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAssets();
-  }, [currentPage, query, selectedFileTypes, allAssets]);
+    const timer = setTimeout(() => fetchAssets(), 300);
+    return () => clearTimeout(timer);
+  }, [currentPage, query, id, projectId, selectedStatuses]);
 
   // Reset to page 1 when filters / search change
   useEffect(() => {
     setCurrentPage(1);
-  }, [query, selectedFileTypes]);
+  }, [query, selectedStatuses]);
 
   // ── Close filter panel on Escape ───────────────────────────────────────────
   useEffect(() => {
@@ -164,6 +149,10 @@ export default function EmployeeAssetList() {
     document.addEventListener("mousedown", onClick);
     return () => document.removeEventListener("mousedown", onClick);
   }, [showFilters]);
+
+  // ── Predefined Filter Statuses (matching API values: pending, approved, rejected) ──
+  const uniqueStatuses = ["pending", "approved", "rejected"];
+
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -222,9 +211,9 @@ export default function EmployeeAssetList() {
                     >
                       <Filter className="h-4 w-4" />
                       Filter
-                      {selectedFileTypes.length > 0 && (
+                      {selectedStatuses.length > 0 && (
                         <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-xs text-white">
-                          {selectedFileTypes.length}
+                          {selectedStatuses.length}
                         </span>
                       )}
                     </button>
@@ -232,36 +221,36 @@ export default function EmployeeAssetList() {
                     {showFilters && (
                       <div
                         id="asset-filter-panel"
-                        className="absolute right-0 top-full z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg"
+                        className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg"
                       >
                         <div className="border-b border-gray-100 p-4">
                           <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                            File Type
+                            Status
                           </p>
                         </div>
                         <div className="space-y-2.5 px-4 py-3">
-                          {fileTypes.map((type) => (
-                            <label key={type} className="flex items-center gap-2.5 cursor-pointer">
+                          {uniqueStatuses.map((status) => (
+                            <label key={status} className="flex items-center gap-2.5 cursor-pointer">
                               <input
                                 type="checkbox"
-                                checked={selectedFileTypes.includes(type)}
+                                checked={selectedStatuses.includes(status)}
                                 onChange={(e) => {
-                                  setSelectedFileTypes(
+                                  setSelectedStatuses(
                                     e.target.checked
-                                      ? [...selectedFileTypes, type]
-                                      : selectedFileTypes.filter((t) => t !== type),
+                                      ? [...selectedStatuses, status]
+                                      : selectedStatuses.filter((s) => s !== status),
                                   );
                                 }}
                                 className="h-4 w-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500 cursor-pointer"
                               />
-                              <span className="text-sm text-gray-700">{type}</span>
+                              <span className="text-sm text-gray-700 capitalize">{status}</span>
                             </label>
                           ))}
                         </div>
                         <div className="flex gap-2 border-t border-gray-100 p-4">
                           <button
                             type="button"
-                            onClick={() => setSelectedFileTypes([])}
+                            onClick={() => setSelectedStatuses([])}
                             className="flex-1 rounded-lg py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
                           >
                             Clear

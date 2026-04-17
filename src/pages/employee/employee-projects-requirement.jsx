@@ -407,7 +407,7 @@ export default function EmployeeProjectsRequirement() {
                     {requirements.length > 0 ? (
                         <>
                             <div className="w-full overflow-x-auto">
-                                <div className="min-w-[800px]">
+                                <div className="min-w-200">
                                     <Table
                                         data={requirements}
                                         columns={requirementColumns}
@@ -416,7 +416,7 @@ export default function EmployeeProjectsRequirement() {
                                         renderActionsCell={(item) => (
                                             <button
                                                 type="button"
-                                                onClick={() => navigate(`/employee/employee-projects/employee-asset-list/${item.id}`)}
+                                                onClick={() => navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } })}
                                                 className="inline-flex items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-95"
                                             >
                                                 Start Working

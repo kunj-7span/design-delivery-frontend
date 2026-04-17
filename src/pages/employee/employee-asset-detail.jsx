@@ -1,8 +1,39 @@
-import { ChevronRight, Upload, Bell } from "lucide-react";
+import { useState, useRef } from "react";
+import { ChevronRight, Upload, Bell, FileImage, FileText, FileCode } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+import FormModal from "../../components/common/popup-modal";
 
 export default function EmployeeAssetDetail() {
   const { id } = useParams();
+  
+  const [showUploadModal, setShowUploadModal] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) setUploadedFile(file);
+  };
+
+  const handleFileInput = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setUploadedFile(file);
+  };
+
+  const handleUploadSubmit = (formData) => {
+    if (!uploadedFile) {
+      toast.error("Please select a file to upload");
+      return;
+    }
+    // TODO: call API to upload new version
+    toast.success("New version uploaded successfully");
+    setUploadedFile(null);
+    setShowUploadModal(false);
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -27,7 +58,10 @@ export default function EmployeeAssetDetail() {
               <span>Updated 2 hours ago by Sarah Jenkins</span>
             </div>
           </div>
-          <button className="inline-flex items-center gap-2 rounded-lg bg-[#1e2a4a] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#2a3b63] transition-colors">
+          <button 
+            onClick={() => setShowUploadModal(true)}
+            className="inline-flex items-center gap-2 rounded-lg bg-[#1e2a4a] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#2a3b63] transition-colors"
+          >
             <Upload className="h-4 w-4" />
             Upload New Version
           </button>
@@ -83,6 +117,91 @@ export default function EmployeeAssetDetail() {
 
         </div>
       </div>
+
+      <FormModal
+        isOpen={showUploadModal}
+        onClose={() => {
+          setShowUploadModal(false);
+          setUploadedFile(null);
+        }}
+        title="Upload New Version"
+        maxWidth="max-w-lg"
+        submitText="Upload"
+        showCancelButton
+        cancelText="Cancel"
+        submitClassName="font-semibold"
+        fields={[
+          {
+            name: "versionNotes",
+            label: "Version Notes",
+            placeholder: "e.g. Updated contrast on header",
+            type: "text",
+          },
+        ]}
+        onSubmit={handleUploadSubmit}
+        renderContent={({ register, errors }) => (
+          <div className="flex flex-col gap-4">
+
+            {/* File Upload Drop Zone */}
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">File Upload</label>
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+                onDragLeave={() => setDragActive(false)}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`relative flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 cursor-pointer transition-colors ${dragActive
+                  ? "border-[#1e2a4a] bg-slate-50"
+                  : "border-gray-300 bg-gray-50 hover:border-gray-400"
+                  }`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-100">
+                    <FileText className="h-5 w-5 text-red-500" />
+                  </span>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-100">
+                    <FileImage className="h-5 w-5 text-blue-500" />
+                  </span>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-green-100">
+                    <FileCode className="h-5 w-5 text-green-500" />
+                  </span>
+                </div>
+
+                {uploadedFile ? (
+                  <p className="text-sm font-medium text-gray-700">{uploadedFile.name}</p>
+                ) : (
+                  <>
+                    <p className="text-sm font-medium text-gray-600">Click to upload or drag and drop</p>
+                    <p className="text-xs text-gray-400">PDF, PNG, or JPG (MAX. 25MB)</p>
+                  </>
+                )}
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.png,.jpg,.jpeg,.svg,.json"
+                  className="hidden"
+                  onChange={handleFileInput}
+                />
+              </div>
+            </div>
+
+            {/* Internal Notes */}
+            <div>
+              <label className="text-sm text-gray-400 mb-1 block">
+                Internal Notes <span className="text-gray-400 text-xs">(Optional)</span>
+              </label>
+              <textarea
+                {...register("internalNotes")}
+                rows={3}
+                placeholder="Add any specific instructions for the review team..."
+                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 outline-none resize-none focus:ring-1 focus:ring-[#1e2a4a] focus:border-[#1e2a4a] transition-colors"
+              />
+            </div>
+
+          </div>
+        )}
+      />
     </div>
   );
 }

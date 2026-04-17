@@ -283,10 +283,10 @@ export default function EmployeeProjects() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0 flex-1">
                         <div className="flex min-w-0 flex-col gap-1">
-                          <h3 className="break-words text-sm font-bold text-gray-900 sm:text-base">
+                          <h3 className="wrap-break-word text-sm font-bold text-gray-900 sm:text-base">
                             {row.name}
                           </h3>
-                          <p className="break-words text-xs text-gray-500">
+                          <p className="wrap-break-word text-xs text-gray-500">
                             {row.createdAt ? new Date(row.createdAt).toLocaleDateString() : ""}
                           </p>
                         </div>
