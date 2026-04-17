@@ -84,9 +84,9 @@ function App() {
             <Route path="employee-dashboard" element={<EmployeeDashboard />} />
             <Route path="employee-projects">
               <Route index element={<EmployeeProjects />} />
-              <Route path="employee-projects-requirement" element={<EmployeeProjectsRequirement />} />
+              <Route path="employee-projects-requirement/:id" element={<EmployeeProjectsRequirement />} />
               <Route
-                path="employee-asset-list"
+                path="employee-asset-list/:id"
                 element={<EmployeeAssetList />}
               />
               <Route
