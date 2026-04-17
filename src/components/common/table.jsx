@@ -14,6 +14,7 @@ const Table = ({
   actionsHeaderLabel = "Actions",
   statusStyles = {},
   rowClassName,
+  isRowClickable,
   tableClassName = "w-full min-w-175 text-left table-auto",
   containerClassName = "hidden sm:block w-full overflow-x-auto rounded-xl border border-gray-200 shadow-sm",
 }) => {
@@ -23,9 +24,9 @@ const Table = ({
   });
 
   const defaultStatusStyles = {
-    pending: "bg-yellow-100 text-yellow-700",
-    expired: "bg-red-100 text-red-600",
-    active: "bg-green-100 text-green-700",
+    pending: "bg-yellow-50 text-yellow-700",
+    expired: "bg-red-50 text-red-600",
+    active: "bg-green-50 text-green-700",
     ...statusStyles,
   };
 
@@ -47,7 +48,7 @@ const Table = ({
     if (column.key === "status") {
       return (
         <span
-          className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+          className={`px-3 py-1 rounded-full text-[10px] font-semibold ${getStatusStyle(
             item[column.key],
           )}`}
         >
@@ -97,12 +98,34 @@ const Table = ({
             {data.map((item, index) => (
               <tr
                 key={item.id || index}
-                onClick={onRowClick ? () => onRowClick(item) : undefined}
                 className={
                   rowClassName
                     ? rowClassName(item, index, { isMobile: false })
                     : "hover:bg-gray-50 bg-white"
                 }
+                onClick={() => {
+                  if (onRowClick && (!isRowClickable || isRowClickable(item))) {
+                    onRowClick(item);
+                  }
+                }}
+                role={onRowClick ? "button" : undefined}
+                tabIndex={onRowClick ? 0 : undefined}
+                onKeyDown={(event) => {
+                  if (
+                    onRowClick &&
+                    (event.key === "Enter" || event.key === " ") &&
+                    (!isRowClickable || isRowClickable(item))
+                  ) {
+                    event.preventDefault();
+                    onRowClick(item);
+                  }
+                }}
+                style={{
+                  cursor:
+                    onRowClick && (!isRowClickable || isRowClickable(item))
+                      ? "pointer"
+                      : "default",
+                }}
               >
                 {columns.map((column) => (
                   <td
@@ -117,17 +140,26 @@ const Table = ({
                   <td className="px-6 py-4 flex justify-center gap-4 text-gray-500">
                     {renderActionsCell && renderActionsCell(item)}
                     {onEdit && (
-                      <button onClick={() => onEdit(item)}>
+                      <button onClick={(event) => {
+                        event.stopPropagation();
+                        onEdit(item);
+                      }}>
                         <Pencil size={16} className="cursor-pointer hover:text-primary" />
                       </button>
                     )}
                     {onSend && (
-                      <button onClick={() => onSend(item)}>
+                      <button onClick={(event) => {
+                        event.stopPropagation();
+                        onSend(item);
+                      }}>
                         <Send size={16} className="cursor-pointer hover:text-green-600" />
                       </button>
                     )}
                     {onDelete && (
-                      <button onClick={() => handleDeleteClick(item)}>
+                      <button onClick={(event) => {
+                        event.stopPropagation();
+                        handleDeleteClick(item);
+                      }}>
                         <Trash2 size={16} className="cursor-pointer hover:text-red-600" />
                       </button>
                     )}

@@ -123,7 +123,7 @@ export default function AgencySettings() {
         <div className="bg-white rounded-xl p-4 md:p-6 shadow-sm flex flex-col gap-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
-              <h2 className="text-subheading font-semibold text-gray-800">
+              <h2 className="text-heading font-semibold text-gray-800">
                 Agency Identity
               </h2>
               <p className="text-xs md:text-sm text-gray-400">

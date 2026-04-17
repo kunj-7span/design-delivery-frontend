@@ -184,3 +184,36 @@ export const getProjects = async ({
   );
   return response.data;
 };
+
+export const getProjectById = async (projectId) => {
+  const response = await axiosClient.get(`/agency/projects/${projectId}`);
+  return response.data;
+};
+
+export const createProjectRequirement = async (projectId, payload) => {
+  const response = await axiosClient.post(
+    `/agency/projects/${projectId}/requirements`,
+    payload,
+  );
+  return response.data;
+};
+
+export const getProjectRequirements = async (
+  projectId,
+  { page = 1, limit = 5, search = "", status, type } = {},
+) => {
+  const response = await axiosClient.get(
+    `/agency/projects/${projectId}/requirements`,
+    {
+      params: { page, limit, search, status, type },
+    },
+  );
+  return response.data;
+};
+
+export const archiveProjectRequirement = async (projectId, requirementId) => {
+  const response = await axiosClient.delete(
+    `/agency/projects/${projectId}/requirements/${requirementId}`,
+  );
+  return response.data;
+};

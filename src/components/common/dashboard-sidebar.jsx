@@ -35,11 +35,11 @@ const DashboardSidebar = ({
   return (
     <aside
       className={`
-    fixed md:static top-0 left-0 z-50 h-screen bg-white flex flex-col justify-between
+    fixed lg:static top-0 left-0 z-50 min-h-screen bg-white flex flex-col justify-between
     transition-all duration-300 ease-in-out overflow-hidden shadow
 
     ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} 
-    md:translate-x-0
+    lg:translate-x-0
 
     ${isSidebarOpen ? "w-56" : "w-16"} 
   `}
