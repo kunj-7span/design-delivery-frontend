@@ -121,7 +121,7 @@ export const authServices = {
       });
       return res.data;
     } catch (error) {
-      throw error;
+      throw error.response?.data || error;
     }
   },
 

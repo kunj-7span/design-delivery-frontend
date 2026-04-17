@@ -19,8 +19,6 @@ import AgencyClients from "./pages/agency/agency-clients";
 import AgencyEmployees from "./pages/agency/agency-employees";
 import AgencySettings from "./pages/agency/agency-settings";
 import AgencyProjectDetail from "./pages/agency/agency-project-detail";
-import DesignerDashboard from "./pages/employee/employee-dashboard";
-import MainApp from "./pages/agency/agency-projects-list";
 import ClientDashboard from "./pages/client/client-dashboard";
 import ClientInvitations from "./pages/client/client-invitations";
 import AgencyProjectsList from "./pages/agency/agency-projects-list";
@@ -30,6 +28,8 @@ import DashboardLayout from "./components/common/dashboard-layout";
 import EmployeeProjects from "./pages/employee/employee-projects";
 import EmployeeDashboard from "./pages/employee/employee-dashboard";
 import EmployeeProjectsRequirement from "./pages/employee/employee-projects-requirement";
+import EmployeeAssetList from "./pages/employee/employee-asset-list";
+import EmployeeAssetDetail from "./pages/employee/employee-asset-detail";
 
 function App() {
   const router = createBrowserRouter(
@@ -86,17 +86,14 @@ function App() {
               <Route index element={<EmployeeProjects />} />
               <Route path="employee-projects-requirement" element={<EmployeeProjectsRequirement />} />
               <Route
-                path="view-project/:project-id"
-              // element={<ViewDesignerProject />}
+                path="employee-asset-list"
+                element={<EmployeeAssetList />}
               />
               <Route
-                path="view-project/:project-id/requirement/:requirement-id"
-              // element={<ViewAssets />}
+                path="employee-asset-detail/:id"
+                element={<EmployeeAssetDetail />}
               />
-              <Route
-                path="view-project/:project-id/requirement/:requirement-id/asset-collaboration"
-              // element={<ViewAssetsCollaboration />}
-              />
+
             </Route>
             {/* <Route path="employee-settings" element={<DesignerSettings />} />
             <Route
@@ -122,8 +119,8 @@ function App() {
         </Route> */}
 
         {/* Catch-all route for undefined paths */}
-        <Route path="*" element={<ErrorPage />} />
-      </Route>,
+        < Route path="*" element={< ErrorPage />} />
+      </Route >,
     ),
   );
 
@@ -143,8 +140,8 @@ function App() {
       />
       <RouterProvider router={router} />
     </>
-    // <LandingPage/>
-    // <Login/>
+    // <LandingPage />
+    // <Login />
     // <LoginPage />
     // <ResetPasswordPage />
   );
