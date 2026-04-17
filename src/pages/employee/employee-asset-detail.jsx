@@ -123,7 +123,7 @@ export default function EmployeeAssetDetail() {
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl wrap-break-word max-w-full">
                 {loading ? "Loading..." : asset?.asset_name || `Asset #${assetId}`}
               </h1>
               {asset && <StatusBadge status={asset.status} />}
@@ -304,7 +304,9 @@ export default function EmployeeAssetDetail() {
                 </div>
 
                 {uploadedFile ? (
-                  <p className="text-sm font-medium text-gray-700">{uploadedFile.name}</p>
+                  <p className="text-sm font-medium text-gray-700 wrap-break-word text-center px-4 w-full">
+                    {uploadedFile.name}
+                  </p>
                 ) : (
                   <>
                     <p className="text-sm font-medium text-gray-600">Click to upload or drag and drop</p>

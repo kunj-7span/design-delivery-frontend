@@ -10,7 +10,7 @@ import { getRequirementAssets, getAssetUploadUrl, uploadFileToS3, saveAssetMetad
 const ITEMS_PER_PAGE = 5;
 
 const assetColumns = [
-  { key: "asset_name", label: "Asset Name", cellClassName: "px-4 py-4 md:px-6 font-semibold text-gray-900", render: (value, item) => value || item.asset_name || "-" },
+  { key: "asset_name", label: "Asset Name", cellClassName: "px-4 py-4 md:px-6 font-semibold text-gray-900 break-words max-w-[200px] md:max-w-xs", render: (value, item) => value || item.asset_name || "-" },
   { key: "file_type", label: "File Type", cellClassName: "px-4 py-4 md:px-6 text-gray-700", render: (value, item) => value || item.file_type || "Unknown" },
   { key: "version_no", label: "Current Version", cellClassName: "px-4 py-4 md:px-6 text-gray-700", render: (value, item) => value || item.version_no || "1.0" },
   {
@@ -405,7 +405,9 @@ export default function EmployeeAssetList() {
                 </div>
 
                 {uploadedFile ? (
-                  <p className="text-sm font-medium text-gray-700">{uploadedFile.name}</p>
+                  <p className="text-sm font-medium text-gray-700 wrap-break-word text-center px-4 w-full">
+                    {uploadedFile.name}
+                  </p>
                 ) : (
                   <>
                     <p className="text-sm font-medium text-gray-600">Click to upload or drag and drop</p>
