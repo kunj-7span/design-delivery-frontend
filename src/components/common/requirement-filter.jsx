@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronDown, Filter } from "lucide-react";
 
+const formatLabel = (value = "") =>
+  value
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
 const RequirementFilter = ({
   filters,
   typeOptions = [],
@@ -67,7 +73,7 @@ const RequirementFilter = ({
                   <option value="">All types</option>
                   {typeOptions.map((option) => (
                     <option key={option} value={option}>
-                      {option}
+                      {formatLabel(option)}
                     </option>
                   ))}
                 </select>
@@ -90,7 +96,7 @@ const RequirementFilter = ({
                 <option value="">All status</option>
                 {statusOptions.map((option) => (
                   <option key={option} value={option}>
-                    {option}
+                    {formatLabel(option)}
                   </option>
                 ))}
               </select>
