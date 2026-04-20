@@ -8,7 +8,7 @@ import { getEmployeeProjects } from "../../services/employee-services";
 const ITEMS_PER_PAGE = 5;
 
 const PROJECT_TABS = [
-  { label: "Marketplace", workMode: "marketplace", countKey: "marketplaceCount" },
+  { label: "Public", workMode: "marketplace", countKey: "marketplaceCount" },
   { label: "Assigned", workMode: "assigned", countKey: "assignedCount" },
 ];
 
