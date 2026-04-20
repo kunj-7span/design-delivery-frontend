@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
+import InfoModal from "../../components/common/info-modal";
 import { getEmployeeProjectSummary, getEmployeeProjectRequirements } from "../../services/employee-services";
 
 const ITEMS_PER_PAGE = 10;
@@ -28,6 +29,7 @@ const formatStatusToUI = (statusStr) => {
   if (statusStr === "todo") return "Todo";
   if (statusStr === "in_progress") return "In Progress";
   if (statusStr === "complete") return "Complete";
+  if (statusStr === "archived") return "Archived";
   return statusStr?.toUpperCase() || "";
 };
 
@@ -44,6 +46,7 @@ const STATUS_COLORS = {
     in_progress: "bg-sky-100 text-sky-700",
     todo: "bg-gray-100 text-gray-700",
     pending: "bg-violet-100 text-violet-700",
+    archived: "bg-gray-200 text-gray-400",
 };
 
 function TypeBadge({ type }) {
@@ -179,6 +182,7 @@ export default function EmployeeProjectsRequirement() {
     const [meta, setMeta] = useState({});
     const [summary, setSummary] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [selectedRequirement, setSelectedRequirement] = useState(null);
 
     const uniqueStatuses = UI_STATUSES;
 
@@ -413,16 +417,33 @@ export default function EmployeeProjectsRequirement() {
                                         columns={requirementColumns}
                                         renderActions
                                         actionsHeaderLabel="Action"
-                                        renderActionsCell={(item) => (
-                                            <button
-                                                type="button"
-                                                onClick={() => navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } })}
-                                                className="inline-flex items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-95"
-                                            >
-                                                Start Working
-                                            </button>
-                                        )}
-                                        rowClassName={(item) => "hover:bg-gray-50 bg-white"}
+                                        renderActionsCell={(item) => {
+                                            const isArchived = item.status === "archived";
+                                            return (
+                                                <button
+                                                    type="button"
+                                                    disabled={isArchived}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (isArchived) return;
+                                                        navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } });
+                                                    }}
+                                                    className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm transition-colors ${
+                                                        isArchived
+                                                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                            : "bg-sky-500 text-white hover:bg-sky-600 active:scale-95"
+                                                    }`}
+                                                >
+                                                    Start Working
+                                                </button>
+                                            );
+                                        }}
+                                        onRowClick={(item) => setSelectedRequirement(item)}
+                                        rowClassName={(item) =>
+                                            item.status === "archived"
+                                                ? "bg-gray-50 opacity-60 cursor-pointer"
+                                                : "hover:bg-gray-50 bg-white cursor-pointer"
+                                        }
                                     />
                                 </div>
                             </div>
@@ -447,6 +468,21 @@ export default function EmployeeProjectsRequirement() {
                     )}
                 </section>
             </main>
+
+            <InfoModal
+                isOpen={!!selectedRequirement}
+                onClose={() => setSelectedRequirement(null)}
+                title={selectedRequirement?.title || "Requirement Details"}
+                maxWidth="max-w-lg"
+                items={[
+                    { label: "Title", value: selectedRequirement?.title, fullWidth: true },
+                    { label: "Type", value: selectedRequirement?.type ? selectedRequirement.type.charAt(0).toUpperCase() + selectedRequirement.type.slice(1) : "-" },
+                    { label: "Status", value: formatStatusToUI(selectedRequirement?.status) },
+                    { label: "Total Assets", value: selectedRequirement?.totalAssets != null ? `${selectedRequirement.totalAssets} files` : "-" },
+                    { label: "Deadline", value: selectedRequirement?.deadline ? new Date(selectedRequirement.deadline).toLocaleDateString() : "-" },
+                    { label: "Created At", value: selectedRequirement?.createdAt ? new Date(selectedRequirement.createdAt).toLocaleDateString() : "-" },
+                ]}
+            />
         </div>
     );
 }

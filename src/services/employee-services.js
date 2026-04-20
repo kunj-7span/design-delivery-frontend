@@ -1,5 +1,19 @@
 import axiosClient from "../api/axios-client.js";
 
+export const getEmployeeDashboardSummary = async () => {
+  const response = await axiosClient.get("/employee/dashboard/dashboard-summary");
+
+  const data = response.data?.data?.data;
+
+  return {
+    activeProjects: data?.projectSummery?.activeProjects || 0,
+    completedProjects: data?.projectSummery?.completedProjects || 0,
+    overdueRequirements: data?.requirementsSummary?.overDueRequirements || 0,
+    inProgressRequirements: data?.requirementsSummary?.inProgressRequirements || 0,
+    approvedAssets: data?.assetsSummary?.approveAssets || 0,
+  };
+};
+
 export const getEmployeeProjects = async ({
   tab,
   page = 1,
