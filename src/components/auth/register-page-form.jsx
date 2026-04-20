@@ -67,7 +67,7 @@ const RegisterPageForm = () => {
                 contactPersonName: "",
               });
             }
-          } 
+          }
         }
       } catch (err) {
         console.error("Error validating invitation token:", err);
@@ -160,6 +160,9 @@ const RegisterPageForm = () => {
 
         const { uploadUrl, fileUrl } = generateRes.data;
 
+        if (!uploadUrl || !fileUrl) {
+          throw new Error("Failed to get upload URL");
+        }
         // Step 2: Upload file directly to S3
         await authServices.uploadFileToS3(uploadUrl, file, file.type);
 

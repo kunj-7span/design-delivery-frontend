@@ -10,7 +10,7 @@ import { getRequirementAssets, getAssetUploadUrl, uploadFileToS3, saveAssetMetad
 const ITEMS_PER_PAGE = 5;
 
 const assetColumns = [
-  { key: "asset_name", label: "Asset Name", cellClassName: "px-4 py-4 md:px-6 font-semibold text-gray-900", render: (value, item) => value || item.asset_name || "-" },
+  { key: "asset_name", label: "Asset Name", cellClassName: "px-4 py-4 md:px-6 font-semibold text-gray-900 break-words max-w-[200px] md:max-w-xs", render: (value, item) => value || item.asset_name || "-" },
   { key: "file_type", label: "File Type", cellClassName: "px-4 py-4 md:px-6 text-gray-700", render: (value, item) => value || item.file_type || "Unknown" },
   { key: "version_no", label: "Current Version", cellClassName: "px-4 py-4 md:px-6 text-gray-700", render: (value, item) => value || item.version_no || "1.0" },
   {
@@ -29,7 +29,7 @@ const assetColumns = [
     render: (value, item) => {
       const s = (value || item.status || "").toLowerCase();
       const styles = {
-        pending:  "bg-amber-100 text-amber-700",
+        pending: "bg-amber-100 text-amber-700",
         approved: "bg-emerald-100 text-emerald-700",
         rejected: "bg-red-100 text-red-600",
       };
@@ -100,6 +100,11 @@ export default function EmployeeAssetList() {
         contentType: uploadedFile.type,
       });
       const { uploadUrl, fileUrl } = urlRes.data;
+
+
+      if (!uploadUrl || !fileUrl) {
+        throw new Error("Failed to get upload URL");
+      }
 
       // Upload file directly to S3
       await uploadFileToS3(uploadUrl, uploadedFile);
@@ -400,7 +405,9 @@ export default function EmployeeAssetList() {
                 </div>
 
                 {uploadedFile ? (
-                  <p className="text-sm font-medium text-gray-700">{uploadedFile.name}</p>
+                  <p className="text-sm font-medium text-gray-700 wrap-break-word text-center px-4 w-full">
+                    {uploadedFile.name}
+                  </p>
                 ) : (
                   <>
                     <p className="text-sm font-medium text-gray-600">Click to upload or drag and drop</p>
@@ -417,7 +424,7 @@ export default function EmployeeAssetList() {
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="text-sm text-gray-400 mb-1 block">
                 Internal Notes <span className="text-gray-400 text-xs">(Optional)</span>
