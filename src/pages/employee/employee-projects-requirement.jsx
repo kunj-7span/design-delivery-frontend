@@ -51,6 +51,8 @@ const STATUS_COLORS = {
 
 function TypeBadge({ type }) {
     const t = type?.toLowerCase() || '';
+    const formattedType = t.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+
     let colorKey = 'default';
     if (t.includes('brand')) colorKey = 'branding';
     else if (t.includes('logo')) colorKey = 'logo';
@@ -61,7 +63,7 @@ function TypeBadge({ type }) {
         <span
             className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold whitespace-nowrap ${TYPE_COLORS[colorKey]}`}
         >
-            {type}
+            {formattedType}
         </span>
     );
 }
@@ -486,7 +488,7 @@ export default function EmployeeProjectsRequirement() {
                 maxWidth="max-w-lg"
                 items={[
                     { label: "Title", value: selectedRequirement?.title, fullWidth: true },
-                    { label: "Type", value: selectedRequirement?.type ? selectedRequirement.type.charAt(0).toUpperCase() + selectedRequirement.type.slice(1) : "-" },
+                    { label: "Type", value: selectedRequirement?.type ? selectedRequirement.type.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "-" },
                     { label: "Status", value: formatStatusToUI(selectedRequirement?.status) },
                     { label: "Total Assets", value: selectedRequirement?.totalAssets != null ? `${selectedRequirement.totalAssets} files` : "-" },
                     { label: "Deadline", value: selectedRequirement?.deadline ? new Date(selectedRequirement.deadline).toLocaleDateString() : "-" },
