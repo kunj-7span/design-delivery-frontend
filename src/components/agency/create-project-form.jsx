@@ -203,22 +203,20 @@ const CreateProjectForm = () => {
             <button
               type="button"
               onClick={() => handleWorkModeChange("marketplace")}
-              className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
-                workMode === "marketplace"
-                  ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${workMode === "marketplace"
+                ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
+                : "text-gray-500 hover:text-gray-700"
+                }`}
             >
-              Marketplace
+              Public
             </button>
             <button
               type="button"
               onClick={() => handleWorkModeChange("assigned")}
-              className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${
-                workMode === "assigned"
-                  ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
+              className={`px-5 sm:px-6 py-2 text-sm rounded-xl transition-all duration-200 cursor-pointer ${workMode === "assigned"
+                ? "bg-primary hover:bg-hover-primary text-white font-medium shadow"
+                : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               Assigned
             </button>
