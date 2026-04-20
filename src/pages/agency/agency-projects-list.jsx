@@ -8,7 +8,7 @@ const ITEMS_PER_PAGE = 5;
 
 const tabs = [
   { label: "All Projects", workMode: null, status: null },
-  { label: "Marketplace", workMode: "marketplace", status: null },
+  { label: "Public", workMode: "marketplace", status: null },
   { label: "Assigned Projects", workMode: "assigned", status: null },
   { label: "Completed", workMode: null, status: "complete" },
 ];
