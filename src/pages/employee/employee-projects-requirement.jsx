@@ -134,7 +134,8 @@ const requirementColumns = [
     {
         key: "title",
         label: "Requirement Name",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value) => (
             <div className="font-bold text-gray-900">{value}</div>
         ),
@@ -142,7 +143,8 @@ const requirementColumns = [
     {
         key: "type",
         label: "Type",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value) => (
             <TypeBadge type={value} />
         ),
@@ -150,7 +152,8 @@ const requirementColumns = [
     {
         key: "status",
         label: "Status",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value) => (
             <StatusBadge status={formatStatusToUI(value)} originalStatus={value} />
         ),
@@ -158,13 +161,15 @@ const requirementColumns = [
     {
         key: "totalAssets",
         label: "Total Assets",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
         render: (value) => `${value} files`,
     },
     {
         key: "deadline",
         label: "Deadline",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
         render: (value) => value ? new Date(value).toLocaleDateString() : "-"
     }
 ];

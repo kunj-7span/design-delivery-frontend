@@ -85,7 +85,10 @@ const Table = ({
           <thead className="bg-gray-50 text-gray-500 text-xs uppercase border border-gray-200">
             <tr>
               {columns.map((column) => (
-                <th key={column.key} className="px-6 py-3 whitespace-nowrap">
+                <th
+                  key={column.key}
+                  className={`px-6 py-3 whitespace-nowrap ${column.headerClassName || ""}`}
+                >
                   {column.label}
                 </th>
               ))}
