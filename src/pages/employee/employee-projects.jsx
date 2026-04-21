@@ -8,7 +8,7 @@ import { getEmployeeProjects } from "../../services/employee-services";
 const ITEMS_PER_PAGE = 5;
 
 const PROJECT_TABS = [
-  { label: "Public", workMode: "marketplace", countKey: "marketplaceCount" },
+  { label: "Public", workMode: "public", countKey: "publicCount" },
   { label: "Assigned", workMode: "assigned", countKey: "assignedCount" },
 ];
 
@@ -88,7 +88,7 @@ function formatShowing(from, to, total) {
 
 export default function EmployeeProjects() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("marketplace");
+  const [activeTab, setActiveTab] = useState("public");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
