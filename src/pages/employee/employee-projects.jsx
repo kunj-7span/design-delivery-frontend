@@ -8,7 +8,7 @@ import { getEmployeeProjects } from "../../services/employee-services";
 const ITEMS_PER_PAGE = 5;
 
 const PROJECT_TABS = [
-  { label: "Marketplace", workMode: "marketplace", countKey: "marketplaceCount" },
+  { label: "Public", workMode: "public", countKey: "publicCount" },
   { label: "Assigned", workMode: "assigned", countKey: "assignedCount" },
 ];
 
@@ -47,30 +47,36 @@ const projectColumns = [
   {
     key: "name",
     label: "Project Name",
-    cellClassName: "px-4 py-4 xl:w-[40%]",
-    render: (value, item) => (
-      <div className="flex min-w-0 flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
-        <span className="truncate font-bold text-gray-900">{value}</span>
-        <span className="truncate text-xs text-gray-500 xl:whitespace-nowrap">
-          {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}
-        </span>
-      </div>
+    headerClassName: "text-center",
+    cellClassName: "px-4 py-4 text-center",
+    render: (value) => (
+      <span className="truncate font-bold text-gray-900">{value}</span>
     ),
+  },
+  {
+    key: "createdAt",
+    label: "Created At",
+    headerClassName: "text-center",
+    cellClassName: "px-4 py-4 text-gray-700 whitespace-nowrap text-center",
+    render: (value) => (value ? new Date(value).toLocaleDateString() : "-"),
   },
   {
     key: "clientName",
     label: "Client Name",
-    cellClassName: "px-4 py-4 text-gray-700 whitespace-nowrap",
+    headerClassName: "text-center",
+    cellClassName: "px-4 py-4 text-gray-700 whitespace-nowrap text-center",
   },
   {
     key: "totalRequirements",
     label: "Total Requirements",
-    cellClassName: "px-4 py-4 text-gray-700 whitespace-nowrap",
+    headerClassName: "text-center",
+    cellClassName: "px-4 py-4 text-gray-700 whitespace-nowrap text-center",
   },
   {
     key: "status",
     label: "Status",
-    cellClassName: "px-4 py-4 whitespace-nowrap",
+    headerClassName: "text-center",
+    cellClassName: "px-4 py-4 whitespace-nowrap text-center",
     render: (value) => <StatusBadge status={formatStatusToUI(value)} />,
   },
 ];
@@ -82,7 +88,7 @@ function formatShowing(from, to, total) {
 
 export default function EmployeeProjects() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("marketplace");
+  const [activeTab, setActiveTab] = useState("public");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
@@ -268,7 +274,7 @@ export default function EmployeeProjects() {
               onRowClick={(row) => navigate(`/employee/employee-projects/employee-projects-requirement/${row.id}`)}
               renderActions={false}
               rowClassName={() => "border-b border-gray-100 last:border-0 hover:bg-gray-50/60 cursor-pointer bg-white"}
-              tableClassName="w-full min-w-[760px] text-left text-sm xl:min-w-full"
+              tableClassName="w-full min-w-[760px] text-sm"
               containerClassName="hidden overflow-x-auto lg:block"
             />
 
