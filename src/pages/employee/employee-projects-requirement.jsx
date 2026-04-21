@@ -18,19 +18,19 @@ const ITEMS_PER_PAGE = 10;
 
 const UI_STATUSES = ["Pending Review", "Todo", "In Progress", "Complete"];
 const API_STATUS_MAP = {
-  "Pending Review": "pending",
-  "Todo": "todo",
-  "In Progress": "in_progress",
-  "Complete": "complete"
+    "Pending Review": "pending",
+    "Todo": "todo",
+    "In Progress": "in_progress",
+    "Complete": "complete"
 };
 
 const formatStatusToUI = (statusStr) => {
-  if (statusStr === "pending") return "Pending";
-  if (statusStr === "todo") return "Todo";
-  if (statusStr === "in_progress") return "In Progress";
-  if (statusStr === "complete") return "Complete";
-  if (statusStr === "archived") return "Archived";
-  return statusStr?.toUpperCase() || "";
+    if (statusStr === "pending") return "Pending";
+    if (statusStr === "todo") return "Todo";
+    if (statusStr === "in_progress") return "In Progress";
+    if (statusStr === "complete") return "Complete";
+    if (statusStr === "archived") return "Archived";
+    return statusStr?.toUpperCase() || "";
 };
 
 const TYPE_COLORS = {
@@ -51,17 +51,19 @@ const STATUS_COLORS = {
 
 function TypeBadge({ type }) {
     const t = type?.toLowerCase() || '';
+    const formattedType = t.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+
     let colorKey = 'default';
     if (t.includes('brand')) colorKey = 'branding';
     else if (t.includes('logo')) colorKey = 'logo';
     else if (t.includes('video')) colorKey = 'video';
     else if (t.includes('social')) colorKey = 'social';
-    
+
     return (
         <span
             className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold whitespace-nowrap ${TYPE_COLORS[colorKey]}`}
         >
-            {type}
+            {formattedType}
         </span>
     );
 }
@@ -134,7 +136,8 @@ const requirementColumns = [
     {
         key: "title",
         label: "Requirement Name",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value) => (
             <div className="font-bold text-gray-900">{value}</div>
         ),
@@ -142,7 +145,8 @@ const requirementColumns = [
     {
         key: "type",
         label: "Type",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value) => (
             <TypeBadge type={value} />
         ),
@@ -150,7 +154,8 @@ const requirementColumns = [
     {
         key: "status",
         label: "Status",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value) => (
             <StatusBadge status={formatStatusToUI(value)} originalStatus={value} />
         ),
@@ -158,13 +163,15 @@ const requirementColumns = [
     {
         key: "totalAssets",
         label: "Total Assets",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
         render: (value) => `${value} files`,
     },
     {
         key: "deadline",
         label: "Deadline",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
         render: (value) => value ? new Date(value).toLocaleDateString() : "-"
     }
 ];
@@ -177,7 +184,7 @@ export default function EmployeeProjectsRequirement() {
     const [page, setPage] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
     const [selectedStatuses, setSelectedStatuses] = useState([]);
-    
+
     const [requirements, setRequirements] = useState([]);
     const [meta, setMeta] = useState({});
     const [summary, setSummary] = useState(null);
@@ -240,7 +247,7 @@ export default function EmployeeProjectsRequirement() {
                     search: query,
                     status: apiStatuses || undefined
                 });
-                
+
                 if (res && res.data) {
                     setRequirements(res.data);
                     setMeta(res.meta || {});
@@ -420,30 +427,35 @@ export default function EmployeeProjectsRequirement() {
                                         renderActionsCell={(item) => {
                                             const isArchived = item.status === "archived";
                                             return (
-                                                <button
-                                                    type="button"
-                                                    disabled={isArchived}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        if (isArchived) return;
-                                                        navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } });
-                                                    }}
-                                                    className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm transition-colors ${
-                                                        isArchived
+                                                <div className="flex items-center gap-2">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedRequirement(item);
+                                                        }}
+                                                        className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold border border-gray-200 bg-white text-gray-700 shadow-sm cursor-pointer transition-colors hover:bg-gray-50 active:scale-95"
+                                                    >
+                                                        View Detail
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        disabled={isArchived}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (isArchived) return;
+                                                            navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } });
+                                                        }}
+                                                        className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm cursor-pointer transition-colors ${isArchived
                                                             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                                                             : "bg-sky-500 text-white hover:bg-sky-600 active:scale-95"
-                                                    }`}
-                                                >
-                                                    Start Working
-                                                </button>
+                                                            }`}
+                                                    >
+                                                        Start Working
+                                                    </button>
+                                                </div>
                                             );
                                         }}
-                                        onRowClick={(item) => setSelectedRequirement(item)}
-                                        rowClassName={(item) =>
-                                            item.status === "archived"
-                                                ? "bg-gray-50 opacity-60 cursor-pointer"
-                                                : "hover:bg-gray-50 bg-white cursor-pointer"
-                                        }
                                     />
                                 </div>
                             </div>
@@ -476,7 +488,7 @@ export default function EmployeeProjectsRequirement() {
                 maxWidth="max-w-lg"
                 items={[
                     { label: "Title", value: selectedRequirement?.title, fullWidth: true },
-                    { label: "Type", value: selectedRequirement?.type ? selectedRequirement.type.charAt(0).toUpperCase() + selectedRequirement.type.slice(1) : "-" },
+                    { label: "Type", value: selectedRequirement?.type ? selectedRequirement.type.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "-" },
                     { label: "Status", value: formatStatusToUI(selectedRequirement?.status) },
                     { label: "Total Assets", value: selectedRequirement?.totalAssets != null ? `${selectedRequirement.totalAssets} files` : "-" },
                     { label: "Deadline", value: selectedRequirement?.deadline ? new Date(selectedRequirement.deadline).toLocaleDateString() : "-" },

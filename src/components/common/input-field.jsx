@@ -21,7 +21,7 @@ const InputField = React.forwardRef(
           </label>
         )}
         <div
-          className={`flex items-center gap-2 p-2 sm:p-3 rounded-xl border transition-colors bg-white ${error ? "border-red-500" : "border-gray-300 focus-within:border-primary"}`}
+          className={`flex items-center gap-2 p-2 sm:p-3 rounded-xl border transition-colors ${props.disabled ? "bg-gray-50 cursor-not-allowed" : "bg-white"} ${error ? "border-red-500" : "border-gray-300 focus-within:border-primary"}`}
         >
           {Icon && (
             <Icon

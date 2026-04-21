@@ -325,6 +325,7 @@ const RegisterPageForm = () => {
               }
               autoComplete="organization"
               error={errors.name}
+              disabled={!!invitationToken}
               {...register("name")}
             />
 
@@ -338,6 +339,7 @@ const RegisterPageForm = () => {
               }
               autoComplete="email"
               error={errors.email}
+              disabled={!!invitationToken}
               {...register("email")}
             />
 
