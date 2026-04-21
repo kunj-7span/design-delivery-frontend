@@ -138,8 +138,8 @@ const requirementColumns = [
         label: "Requirement Name",
         headerClassName: "text-center",
         cellClassName: "px-4 py-4 md:px-6 text-center",
-        render: (value) => (
-            <div className="font-bold text-gray-900">{value}</div>
+        render: (value, item) => (
+            <div className={`font-bold ${item.status === "archived" ? "text-slate-400" : "text-gray-900"}`}>{value}</div>
         ),
     },
     {
@@ -147,8 +147,10 @@ const requirementColumns = [
         label: "Type",
         headerClassName: "text-center",
         cellClassName: "px-4 py-4 md:px-6 text-center",
-        render: (value) => (
-            <TypeBadge type={value} />
+        render: (value, item) => (
+            <div className={item.status === "archived" ? "opacity-45" : ""}>
+                <TypeBadge type={value} />
+            </div>
         ),
     },
     {
@@ -165,14 +167,22 @@ const requirementColumns = [
         label: "Total Assets",
         headerClassName: "text-center",
         cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
-        render: (value) => `${value} files`,
+        render: (value, item) => (
+            <span className={item.status === "archived" ? "text-slate-400" : ""}>
+                {`${value} files`}
+            </span>
+        ),
     },
     {
         key: "deadline",
         label: "Deadline",
         headerClassName: "text-center",
         cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
-        render: (value) => value ? new Date(value).toLocaleDateString() : "-"
+        render: (value, item) => (
+            <span className={item.status === "archived" ? "text-slate-400" : ""}>
+                {value ? new Date(value).toLocaleDateString() : "-"}
+            </span>
+        ),
     }
 ];
 
@@ -456,6 +466,11 @@ export default function EmployeeProjectsRequirement() {
                                                 </div>
                                             );
                                         }}
+                                        rowClassName={(item) =>
+                                            item.status === "archived"
+                                                ? "bg-slate-50 text-slate-300"
+                                                : "hover:bg-gray-50 bg-white"
+                                        }
                                     />
                                 </div>
                             </div>
