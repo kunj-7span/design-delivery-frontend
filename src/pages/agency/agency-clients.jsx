@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { UserPlus, SendHorizontal, SquarePen } from "lucide-react";
 import { toast } from "react-toastify";
 import Pagination from "../../components/common/pagination";
@@ -282,9 +282,9 @@ const AgencyClients = () => {
             />
           </div>
 
-          <div className="min-h-[360px]">
+          <div className="min-h-90">
             {loading ? (
-              <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+              <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
                 <p className="text-gray-500">Loading client invitations...</p>
               </div>
             ) : invitations.length > 0 ? (
@@ -299,7 +299,7 @@ const AgencyClients = () => {
                         onDelete={handleDelete}
                         onSend={handleResendInvitation}
                         isEditDisabled={(item) => item.status === "ACTIVE"}
-                        isSendDisabled={(item) => item.status === "ACTIVE"}
+                        isSendDisabled={(item) => item.status === "ACTIVE" || item.status === "PENDING"}
                         isDeleteDisabled={(item) => item.status === "ACTIVE"}
                         renderActions={true}
                       />
@@ -318,7 +318,7 @@ const AgencyClients = () => {
                 />
               </>
             ) : (
-              <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+              <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
                 <p className="text-gray-500">No pending invitations</p>
               </div>
             )}
