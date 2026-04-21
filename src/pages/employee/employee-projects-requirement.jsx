@@ -339,7 +339,6 @@ export default function EmployeeProjectsRequirement() {
                                 />
                             </div>
 
-                            {/* Filter Button */}
                             <div className="relative">
                                 <button
                                     id="filter-btn"
@@ -359,9 +358,8 @@ export default function EmployeeProjectsRequirement() {
                                 {showFilters && (
                                     <div
                                         id="filter-panel"
-                                        className="absolute right-0 top-full z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg animate-slide-in"
+                                        className="absolute right-0 top-full z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg"
                                     >
-                                        {/* Status filters */}
                                         <div className="border-b border-gray-100 p-4">
                                             <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
                                                 Status
@@ -413,7 +411,7 @@ export default function EmployeeProjectsRequirement() {
                                             <button
                                                 type="button"
                                                 onClick={() => setShowFilters(false)}
-                                                className="flex-1 rounded-lg bg-sky-500 py-2 text-sm font-semibold text-white hover:bg-sky-600 transition-colors"
+                                                className="flex-1 rounded-lg bg-primary py-2 text-sm font-semibold text-white hover:bg-primary/80 transition-colors"
                                             >
                                                 Done
                                             </button>
