@@ -1,10 +1,12 @@
 import { z } from "zod";
 
 const requirementSchema = z.object({
-  title: z.string().optional(),
-  type: z.string().optional(),
-  deadline: z.string().optional(),
-  description: z.string().optional(),
+  title: z.string().min(1, "Requirement title is required"),
+  type: z.string().min(1, "Requirement type is required"),
+  deadline: z.string().optional().nullable(), // Deadline maps to endDate in payload
+  status: z.enum(["pending", "todo", "in_progress", "complete", "archived"]).optional().default("todo"),
+  description: z.string().optional().nullable(),
+  referenceFile: z.string().url("Invalid reference URL").optional().nullable(),
 });
 
 export const createProjectSchema = z.object({

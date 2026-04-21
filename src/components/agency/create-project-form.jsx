@@ -6,6 +6,7 @@ import InputField from "../common/input-field";
 import TagInput from "../common/tag-input";
 import SelectField from "../common/select-field";
 import TextareaField from "../common/textarea-field";
+import FileField from "../common/file-field";
 import Button from "../common/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -14,6 +15,7 @@ import {
   getClientsForSelect,
   createProject,
 } from "../../services/agency-services";
+import { authServices } from "../../services/auth-services";
 import {
   CircleDot,
   Users,
@@ -25,11 +27,13 @@ import {
 
 const requirementTypes = [
   { value: "logo", label: "Logo" },
-  { value: "banner", label: "Banner" },
-  { value: "icon", label: "Icon" },
-  { value: "brochure", label: "Brochure" },
+  { value: "branding", label: "Branding" },
   { value: "social_media", label: "Social Media" },
-  { value: "website", label: "Website" },
+  { value: "ui_design", label: "UI Design" },
+  { value: "web_design", label: "Web Design" },
+  { value: "development", label: "Development" },
+  { value: "content", label: "Content" },
+  { value: "marketing", label: "Marketing" },
   { value: "other", label: "Other" },
 ];
 
@@ -41,6 +45,7 @@ const CreateProjectForm = () => {
   const [employees, setEmployees] = useState([]);
   const [clientOptions, setClientOptions] = useState([]);
   const [employeeOptions, setEmployeeOptions] = useState([]);
+  const [uploadsMeta, setUploadsMeta] = useState({}); // Tracking { [index]: { uploadUrl, fileUrl, fileObject } }
 
   const {
     register,
@@ -57,7 +62,9 @@ const CreateProjectForm = () => {
       name: "",
       clientIds: [],
       employeeIds: [],
-      requirements: [{ title: "", type: "", deadline: "", description: "" }],
+      requirements: [
+        { title: "", type: "", deadline: "", description: "" },
+      ],
     },
     mode: "onChange",
   });
@@ -76,7 +83,9 @@ const CreateProjectForm = () => {
       name: "",
       clientIds: [],
       employeeIds: [],
-      requirements: [{ title: "", type: "", deadline: "", description: "" }],
+      requirements: [
+        { title: "", type: "", deadline: "", description: "" },
+      ],
     });
   };
 
@@ -102,9 +111,7 @@ const CreateProjectForm = () => {
     fetchClients();
   }, []);
 
-  // Tag handlers for clients (object tags — selected from dropdown)
   const handleAddClient = (opt) => {
-    // opt is { id, name }
     if (!clients.some((c) => c.id === opt.id)) {
       const updated = [...clients, opt];
       setClients(updated);
@@ -125,9 +132,7 @@ const CreateProjectForm = () => {
     );
   };
 
-  // Tag handlers for employees (object tags — selected from dropdown)
   const handleAddEmployee = (opt) => {
-    // opt is { id, name }
     if (!employees.some((e) => e.id === opt.id)) {
       const updated = [...employees, opt];
       setEmployees(updated);
@@ -148,6 +153,42 @@ const CreateProjectForm = () => {
     );
   };
 
+  const handleFileChange = async (index, event) => {
+    const file = event?.target?.files?.[0];
+    if (!file) {
+      const newMeta = { ...uploadsMeta };
+      delete newMeta[index];
+      setUploadsMeta(newMeta);
+      return;
+    }
+
+    try {
+      const response = await authServices.generateUploadUrl(
+        file.name,
+        file.type,
+        "user/reference"
+      );
+      const { uploadUrl, fileUrl } = response?.data || {};
+
+      if (!uploadUrl || !fileUrl) {
+        throw new Error("Invalid upload URL response");
+      }
+
+      setUploadsMeta((prev) => ({
+        ...prev,
+        [index]: {
+          fileName: file.name,
+          contentType: file.type,
+          uploadUrl,
+          fileUrl,
+          fileObject: file,
+        },
+      }));
+    } catch (error) {
+      toast.error(error?.message || "Failed to prepare file upload");
+    }
+  };
+
   const onSubmit = async (data) => {
     try {
       const payload = {
@@ -166,6 +207,40 @@ const CreateProjectForm = () => {
           return;
         }
         payload.employeeIds = data.employeeIds;
+      }
+
+      // Map requirements to backend payload
+      if (data.requirements && data.requirements.length > 0) {
+        const mappedRequirements = await Promise.all(
+          data.requirements.map(async (req, index) => {
+            let fileUrl = null;
+            const meta = uploadsMeta[index];
+
+            if (meta && meta.uploadUrl && meta.fileObject) {
+              try {
+                await authServices.uploadFileToS3(
+                  meta.uploadUrl,
+                  meta.fileObject,
+                  meta.contentType
+                );
+                fileUrl = meta.fileUrl;
+              } catch (error) {
+                console.error(`Failed to upload file for requirement ${index}`, error);
+                throw new Error(`Failed to upload file for "${req.title}"`);
+              }
+            }
+
+            return {
+              title: req.title,
+              type: req.type,
+              description: req.description || null,
+              endDate: req.deadline || null,
+              status: "todo",
+              referenceFile: fileUrl,
+            };
+          })
+        );
+        payload.requirements = mappedRequirements;
       }
 
       await createProject(payload);
@@ -304,7 +379,12 @@ const CreateProjectForm = () => {
             <button
               type="button"
               onClick={() =>
-                append({ title: "", type: "", deadline: "", description: "" })
+                append({
+                  title: "",
+                  type: "",
+                  deadline: "",
+                  description: "",
+                })
               }
               className="flex items-center gap-1.5 text-primary text-sm font-medium hover:text-hover-primary transition-colors cursor-pointer"
             >
@@ -319,7 +399,6 @@ const CreateProjectForm = () => {
                 key={field.id}
                 className={`${index > 0 ? "pt-6 border-t border-gray-100" : ""}`}
               >
-                {/* Remove button for extra requirements */}
                 {fields.length > 1 && (
                   <div className="flex justify-end mb-3">
                     <button
@@ -333,8 +412,7 @@ const CreateProjectForm = () => {
                   </div>
                 )}
 
-                {/* Title, Type, Deadline */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <InputField
                     label="Requirement Title"
                     id={`req-title-${index}`}
@@ -352,6 +430,15 @@ const CreateProjectForm = () => {
                     error={errors.requirements?.[index]?.type}
                     {...register(`requirements.${index}.type`)}
                   />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <FileField
+                    label="Reference File"
+                    id={`req-file-${index}`}
+                    onChange={(e) => handleFileChange(index, e)}
+                    error={errors.requirements?.[index]?.referenceFile}
+                  />
 
                   <InputField
                     label="Deadline"
@@ -363,7 +450,6 @@ const CreateProjectForm = () => {
                   />
                 </div>
 
-                {/* Description */}
                 <TextareaField
                   label="Description"
                   id={`req-desc-${index}`}
