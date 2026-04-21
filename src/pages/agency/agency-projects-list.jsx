@@ -9,7 +9,7 @@ const ITEMS_PER_PAGE = 5;
 const tabs = [
   { label: "All Projects", workMode: null, status: null },
   { label: "Public", workMode: "public", status: null },
-  { label: "Assigned Projects", workMode: "assigned", status: null },
+  { label: "Assigned", workMode: "assigned", status: null },
   { label: "Completed", workMode: null, status: "complete" },
 ];
 
@@ -144,13 +144,12 @@ const AgencyProjectsList = () => {
         ) : filteredProjects.length > 0 ? (
           <>
             {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-gray-50 text-[11px] font-bold text-gray-400 uppercase border-y border-gray-200">
                   <tr>
                     <th className="px-6 py-4">Project Name</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Work Mode</th>
                     <th className="px-6 py-4">Employees</th>
                     <th className="px-6 py-4">Assets</th>
                     <th className="px-6 py-4">Progress</th>
@@ -174,11 +173,6 @@ const AgencyProjectsList = () => {
                             }`}
                         >
                           {formatStatus(p.status)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-medium text-gray-500 capitalize">
-                          {p.workMode}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
@@ -219,7 +213,7 @@ const AgencyProjectsList = () => {
             </div>
 
             {/* Mobile Cards */}
-            <div className="md:hidden divide-y divide-gray-100">
+            <div className="lg:hidden divide-y divide-gray-100">
               {filteredProjects.map((p) => (
                 <div key={p.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between">
