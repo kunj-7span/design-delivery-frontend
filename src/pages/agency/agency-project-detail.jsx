@@ -20,6 +20,8 @@ import SearchInput from "../../components/common/search-input";
 import Table from "../../components/common/table";
 import { createRequirementSchema } from "../../schema/agency-schema";
 import { authServices } from "../../services/auth-services";
+import FileField from "../../components/common/file-field";
+import TagInput from "../../components/common/tag-input";
 import {
   archiveProjectRequirement,
   createProjectRequirement,
@@ -744,51 +746,46 @@ const AgencyProjectDetail = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="reference-file" className="text-sm text-gray-600">
-                Reference File
-              </label>
-              <input
-                id="reference-file"
-                type="file"
-                {...register("referenceFile", {
-                  onChange: async (event) => {
-                    const file = event?.target?.files?.[0];
+            <FileField
+              label="Reference File"
+              id="reference-file"
+              error={errors.referenceFile}
+              {...register("referenceFile", {
+                onChange: async (event) => {
+                  const file = event?.target?.files?.[0];
 
-                    if (!file) {
-                      setReferenceUploadMeta(null);
-                      return;
+                  if (!file) {
+                    setReferenceUploadMeta(null);
+                    return;
+                  }
+
+                  try {
+                    const response = await authServices.generateUploadUrl(
+                      file.name,
+                      file.type,
+                      "user/reference",
+                    );
+                    const { uploadUrl, fileUrl } = response?.data || {};
+
+                    if (!uploadUrl || !fileUrl) {
+                      throw new Error("Invalid upload URL response");
                     }
 
-                    try {
-                      const response = await authServices.generateUploadUrl(
-                        file.name,
-                        file.type,
-                        "user/reference",
-                      );
-                      const { uploadUrl, fileUrl } = response?.data || {};
-
-                      if (!uploadUrl || !fileUrl) {
-                        throw new Error("Invalid upload URL response");
-                      }
-
-                      setReferenceUploadMeta({
-                        fileName: file.name,
-                        contentType: file.type,
-                        uploadUrl,
-                        fileUrl,
-                      });
-                    } catch (error) {
-                      setReferenceUploadMeta(null);
-                      toast.error(
-                        error?.message || "Failed to prepare reference file upload",
-                      );
-                    }
-                  },
-                })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary"
-              />
-            </div>
+                    setReferenceUploadMeta({
+                      fileName: file.name,
+                      contentType: file.type,
+                      uploadUrl,
+                      fileUrl,
+                    });
+                  } catch (error) {
+                    setReferenceUploadMeta(null);
+                    toast.error(
+                      error?.message || "Failed to prepare reference file upload",
+                    );
+                  }
+                },
+              })}
+            />
 
             <div className="flex flex-col gap-1">
               <label htmlFor="requirement-description" className="text-sm text-gray-600">
