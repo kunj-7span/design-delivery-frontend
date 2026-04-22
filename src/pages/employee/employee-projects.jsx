@@ -154,7 +154,7 @@ export default function EmployeeProjects() {
     <div className="min-h-screen p-2 sm:p-4 md:p-5 xl:p-6">
       <main>
         <div className="mx-auto w-full max-w-7xl">
-          <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+          <section className="rounded-2xl border border-gray-200 bg-white shadow-sm">
             <div className="flex gap-3 overflow-x-auto border-b border-gray-100 px-3 pt-4 sm:gap-6 sm:px-5 lg:px-6">
               {PROJECT_TABS.map((tab) => (
                 <button
@@ -199,14 +199,16 @@ export default function EmployeeProjects() {
                   className="inline-flex w-full items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 sm:w-auto"
                 >
                   <Filter className="h-4 w-4" />
-                  Filter{" "}
-                  {selectedStatuses.length > 0 &&
-                    `(${selectedStatuses.length})`}
+                  Filter
+                  {selectedStatuses.length > 0 && (
+                    <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-xs text-white">
+                      {selectedStatuses.length}
+                    </span>
+                  )}
                 </button>
 
-
                 {showFilters && (
-                  <div className="absolute left-0 right-0 top-full z-10 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:w-56">
+                  <div className="absolute left-0 right-0 top-full z-20 mt-2 w-full rounded-xl border border-gray-200 bg-white shadow-lg sm:left-auto sm:right-0 sm:w-56">
                     <div className="border-b border-gray-100 p-4">
                       <p className="text-xs font-semibold uppercase text-gray-600">
                         Filter by Status
@@ -247,14 +249,14 @@ export default function EmployeeProjects() {
                       <button
                         type="button"
                         onClick={() => setSelectedStatuses([])}
-                        className="flex-1 rounded text-sm font-semibold text-gray-700 hover:bg-gray-100 py-2"
+                        className="flex-1 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-100 py-2"
                       >
                         Clear
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowFilters(false)}
-                        className="flex-1 rounded bg-indigo-500 text-sm font-semibold text-white hover:bg-indigo-600 py-2"
+                        className="flex-1 rounded-lg bg-primary text-sm font-semibold text-white hover:bg-primary/80 py-2"
                       >
                         Done
                       </button>
