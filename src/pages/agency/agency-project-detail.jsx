@@ -435,7 +435,7 @@ const AgencyProjectDetail = () => {
                 </div>
               </div>
 
-              <div className="mt-4 min-h-[104px] divide-y divide-slate-100 text-sm text-slate-500">
+              <div className="mt-4 min-h-26 divide-y divide-slate-100 text-sm text-slate-500">
                 {visibleClients.map((client) => (
                   <div
                     key={client.id}
@@ -502,7 +502,7 @@ const AgencyProjectDetail = () => {
                 </div>
               </div>
 
-              <div className="mt-4 min-h-[94px] divide-y divide-slate-100">
+              <div className="mt-4 min-h-23 divide-y divide-slate-100">
                 {visibleEmployees.map((employee) => (
                   <div
                     key={employee.id}
@@ -559,7 +559,7 @@ const AgencyProjectDetail = () => {
               </div>
             </div>
 
-            <div className="min-h-[360px]">
+            <div className="min-h-23">
               {requirements.length > 0 ? (
                 <>
                   <div className="w-full max-w-full">
@@ -607,7 +607,7 @@ const AgencyProjectDetail = () => {
                   />
                 </>
               ) : (
-                <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+                <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
                   <p className="text-gray-500">No requirements found</p>
                 </div>
               )}
