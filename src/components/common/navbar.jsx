@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DDLogoFull from "../../assets/DDLogoFull.png";
 import Button from "./button";
 import {
@@ -11,6 +11,16 @@ const Navbar = () => {
 
     let [mobileOpen, setMobileOpen] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "Escape" && mobileOpen) {
+                setMobileOpen(false);
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [mobileOpen]);
 
 
     const handleClick = () => {

@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
     Filter,
     Search,
@@ -11,182 +11,67 @@ import {
 } from "lucide-react";
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
+import InfoModal from "../../components/common/info-modal";
+import { getEmployeeProjectSummary, getEmployeeProjectRequirements } from "../../services/employee-services";
 
-const REQUIREMENTS = [
-    {
-        id: 1,
-        name: "Homepage_Hero_Desktop",
-        fileType: ".PNG",
-        fileSize: "2.4 MB",
-        type: "Banners",
-        typeColor: "sky",
-        status: "APPROVED",
-        statusColor: "emerald",
-        totalAssets: 12,
-        assetsLabel: "12 designs",
-        deadline: "Oct 24, 2023",
-        comments: 4,
-    },
-    {
-        id: 2,
-        name: "Brand_Guidelines_2023",
-        fileType: ".PDF",
-        fileSize: "8.1 MB",
-        type: "Logo",
-        typeColor: "blue",
-        status: "IN PROGRESS",
-        statusColor: "sky",
-        totalAssets: 8,
-        assetsLabel: "8 designs",
-        deadline: "Oct 23, 2023",
-        comments: 0,
-    },
-    {
-        id: 3,
-        name: "Product_Demo_Teaser",
-        fileType: ".MP4",
-        fileSize: "145 MB",
-        type: "Ad Creative",
-        typeColor: "rose",
-        status: "TODO",
-        statusColor: "gray",
-        totalAssets: 15,
-        assetsLabel: "15 designs",
-        deadline: "Oct 22, 2023",
-        comments: 12,
-    },
-    {
-        id: 4,
-        name: "About_Us_Team_Photo",
-        fileType: ".JPG",
-        fileSize: "4.2 MB",
-        type: "Social Media Post",
-        typeColor: "orange",
-        status: "IN PREVIEW",
-        statusColor: "violet",
-        totalAssets: 6,
-        assetsLabel: "6 designs",
-        deadline: "Oct 21, 2023",
-        comments: 2,
-    },
-    {
-        id: 5,
-        name: "Newsletter_Banner_Oct",
-        fileType: ".PNG",
-        fileSize: "1.8 MB",
-        type: "Banners",
-        typeColor: "sky",
-        status: "APPROVED",
-        statusColor: "emerald",
-        totalAssets: 3,
-        assetsLabel: "3 designs",
-        deadline: "Oct 20, 2023",
-        comments: 1,
-    },
-    {
-        id: 6,
-        name: "Mobile_App_Splash",
-        fileType: ".PNG",
-        fileSize: "3.6 MB",
-        type: "Ad Creative",
-        typeColor: "rose",
-        status: "IN PROGRESS",
-        statusColor: "sky",
-        totalAssets: 9,
-        assetsLabel: "9 designs",
-        deadline: "Oct 19, 2023",
-        comments: 5,
-    },
-    {
-        id: 7,
-        name: "Email_Header_Template",
-        fileType: ".PSD",
-        fileSize: "12.4 MB",
-        type: "Logo",
-        typeColor: "blue",
-        status: "TODO",
-        statusColor: "gray",
-        totalAssets: 4,
-        assetsLabel: "4 designs",
-        deadline: "Oct 18, 2023",
-        comments: 0,
-    },
-    {
-        id: 8,
-        name: "Infographic_Q3_Results",
-        fileType: ".AI",
-        fileSize: "7.2 MB",
-        type: "Social Media Post",
-        typeColor: "orange",
-        status: "APPROVED",
-        statusColor: "emerald",
-        totalAssets: 2,
-        assetsLabel: "2 designs",
-        deadline: "Oct 17, 2023",
-        comments: 8,
-    },
-    {
-        id: 9,
-        name: "Video_Thumbnail_Series",
-        fileType: ".PNG",
-        fileSize: "1.1 MB",
-        type: "Banners",
-        typeColor: "sky",
-        status: "IN PREVIEW",
-        statusColor: "violet",
-        totalAssets: 10,
-        assetsLabel: "10 designs",
-        deadline: "Oct 16, 2023",
-        comments: 3,
-    },
-    {
-        id: 10,
-        name: "Packaging_Design_V2",
-        fileType: ".PDF",
-        fileSize: "22.3 MB",
-        type: "Ad Creative",
-        typeColor: "rose",
-        status: "IN PROGRESS",
-        statusColor: "sky",
-        totalAssets: 7,
-        assetsLabel: "7 designs",
-        deadline: "Oct 15, 2023",
-        comments: 6,
-    },
-];
+const ITEMS_PER_PAGE = 10;
 
-const PROJECT_INFO = {
-    name: "Website Redesign",
+const UI_STATUSES = ["Pending Review", "Todo", "In Progress", "Complete"];
+const API_STATUS_MAP = {
+    "Pending Review": "pending",
+    "Todo": "todo",
+    "In Progress": "in_progress",
+    "Complete": "complete"
+};
+
+const formatStatusToUI = (statusStr) => {
+    if (statusStr === "pending") return "Pending";
+    if (statusStr === "todo") return "Todo";
+    if (statusStr === "in_progress") return "In Progress";
+    if (statusStr === "complete") return "Complete";
+    if (statusStr === "archived") return "Archived";
+    return statusStr?.toUpperCase() || "";
 };
 
 const TYPE_COLORS = {
-    sky: "bg-sky-100 text-sky-700",
-    blue: "bg-blue-100 text-blue-700",
-    rose: "bg-rose-100 text-rose-700",
-    orange: "bg-orange-100 text-orange-700",
+    branding: "bg-sky-100 text-sky-700",
+    logo: "bg-blue-100 text-blue-700",
+    video: "bg-rose-100 text-rose-700",
+    social: "bg-orange-100 text-orange-700",
+    default: "bg-gray-100 text-gray-700",
 };
 
 const STATUS_COLORS = {
-    emerald: "bg-emerald-100 text-emerald-700",
-    sky: "bg-sky-100 text-sky-700",
-    gray: "bg-gray-100 text-gray-700",
-    violet: "bg-violet-100 text-violet-700",
+    complete: "bg-emerald-100 text-emerald-700",
+    in_progress: "bg-sky-100 text-sky-700",
+    todo: "bg-gray-100 text-gray-700",
+    pending: "bg-violet-100 text-violet-700",
+    archived: "bg-gray-200 text-gray-400",
 };
 
-function TypeBadge({ type, colorKey }) {
+function TypeBadge({ type }) {
+    const t = type?.toLowerCase() || '';
+    const formattedType = t.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+
+    let colorKey = 'default';
+    if (t.includes('brand')) colorKey = 'branding';
+    else if (t.includes('logo')) colorKey = 'logo';
+    else if (t.includes('video')) colorKey = 'video';
+    else if (t.includes('social')) colorKey = 'social';
+
     return (
         <span
-            className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold whitespace-nowrap ${TYPE_COLORS[colorKey] || TYPE_COLORS.sky}`}
+            className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold whitespace-nowrap ${TYPE_COLORS[colorKey]}`}
         >
-            {type}
+            {formattedType}
         </span>
     );
 }
 
-function StatusBadge({ status, colorKey }) {
+function StatusBadge({ status, originalStatus }) {
     return (
         <span
-            className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap ${STATUS_COLORS[colorKey] || STATUS_COLORS.gray}`}
+            className={`inline-flex items-center justify-center rounded-full min-w-27.5 px-3 py-1 text-xs font-semibold uppercase tracking-wide whitespace-nowrap ${STATUS_COLORS[originalStatus] || STATUS_COLORS.todo}`}
         >
             {status}
         </span>
@@ -249,64 +134,75 @@ function StatCard({ value, label, icon: Icon, colorScheme }) {
 
 const requirementColumns = [
     {
-        key: "name",
+        key: "title",
         label: "Requirement Name",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value, item) => (
-            <>
-                <div className="font-bold text-gray-900">{value}</div>
-                <div className="mt-0.5 text-xs text-gray-400">
-                    {item.fileType} • {item.fileSize}
-                </div>
-            </>
+            <div className={`font-bold ${item.status === "archived" ? "text-slate-400" : "text-gray-900"}`}>{value}</div>
         ),
     },
     {
         key: "type",
         label: "Type",
-        cellClassName: "px-4 py-4 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
         render: (value, item) => (
-            <TypeBadge type={value} colorKey={item.typeColor} />
+            <div className={item.status === "archived" ? "opacity-45" : ""}>
+                <TypeBadge type={value} />
+            </div>
         ),
     },
     {
         key: "status",
         label: "Status",
-        cellClassName: "px-4 py-4 md:px-6",
-        render: (value, item) => (
-            <StatusBadge status={value} colorKey={item.statusColor} />
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 md:px-6 text-center",
+        render: (value) => (
+            <StatusBadge status={formatStatusToUI(value)} originalStatus={value} />
         ),
     },
     {
-        key: "assetsLabel",
+        key: "totalAssets",
         label: "Total Assets",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
+        render: (value, item) => (
+            <span className={item.status === "archived" ? "text-slate-400" : ""}>
+                {`${value} files`}
+            </span>
+        ),
     },
     {
         key: "deadline",
         label: "Deadline",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
-    },
-    {
-        key: "comments",
-        label: "Comments",
-        cellClassName: "px-4 py-4 text-gray-700 md:px-6",
+        headerClassName: "text-center",
+        cellClassName: "px-4 py-4 text-gray-700 md:px-6 text-center",
+        render: (value, item) => (
+            <span className={item.status === "archived" ? "text-slate-400" : ""}>
+                {value ? new Date(value).toLocaleDateString() : "-"}
+            </span>
+        ),
     }
 ];
 
 /* ─── main component ─── */
 export default function EmployeeProjectsRequirement() {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
     const [showFilters, setShowFilters] = useState(false);
     const [selectedStatuses, setSelectedStatuses] = useState([]);
-    const [selectedTypes, setSelectedTypes] = useState([]);
-    const pageSize = 4;
 
-    const uniqueStatuses = [...new Set(REQUIREMENTS.map((r) => r.status))];
-    const uniqueTypes = [...new Set(REQUIREMENTS.map((r) => r.type))];
+    const [requirements, setRequirements] = useState([]);
+    const [meta, setMeta] = useState({});
+    const [summary, setSummary] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [selectedRequirement, setSelectedRequirement] = useState(null);
 
-    /* close filter dropdown on Escape */
+    const uniqueStatuses = UI_STATUSES;
+
     useEffect(() => {
         const onKey = (e) => {
             if (e.key === "Escape") {
@@ -317,7 +213,6 @@ export default function EmployeeProjectsRequirement() {
         return () => window.removeEventListener("keydown", onKey);
     }, []);
 
-    /* close filter dropdown when clicking outside */
     useEffect(() => {
         if (!showFilters) return;
         const onClick = (e) => {
@@ -332,303 +227,287 @@ export default function EmployeeProjectsRequirement() {
         return () => document.removeEventListener("mousedown", onClick);
     }, [showFilters]);
 
-    /* filtering logic */
-    const filteredRows = useMemo(() => {
-        let results = REQUIREMENTS;
+    // Fetch Summary
+    useEffect(() => {
+        if (!id) return;
+        const fetchSummary = async () => {
+            try {
+                const res = await getEmployeeProjectSummary(id);
+                if (res && res.data) {
+                    setSummary(res.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch summary:", err);
+            }
+        };
+        fetchSummary();
+    }, [id]);
 
-        if (selectedStatuses.length > 0) {
-            results = results.filter((r) => selectedStatuses.includes(r.status));
-        }
+    // Fetch Requirements
+    useEffect(() => {
+        if (!id) return;
+        const fetchReqs = async () => {
+            try {
+                setLoading(true);
+                const apiStatuses = selectedStatuses.map(s => API_STATUS_MAP[s]).join(',');
 
-        if (selectedTypes.length > 0) {
-            results = results.filter((r) => selectedTypes.includes(r.type));
-        }
+                const res = await getEmployeeProjectRequirements(id, {
+                    page,
+                    limit: ITEMS_PER_PAGE,
+                    search: query,
+                    status: apiStatuses || undefined
+                });
 
-        const q = query.trim().toLowerCase();
-        if (q) {
-            results = results.filter(
-                (r) =>
-                    r.name.toLowerCase().includes(q) ||
-                    r.type.toLowerCase().includes(q) ||
-                    r.status.toLowerCase().includes(q) ||
-                    r.deadline.toLowerCase().includes(q),
-            );
-        }
-        return results;
-    }, [query, selectedStatuses, selectedTypes]);
+                if (res && res.data) {
+                    setRequirements(res.data);
+                    setMeta(res.meta || {});
+                }
+            } catch (err) {
+                console.error("Failed to fetch requirements:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    /* pagination logic */
-    const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+        const timer = setTimeout(() => fetchReqs(), 300);
+        return () => clearTimeout(timer);
+    }, [id, page, query, selectedStatuses]);
 
     useEffect(() => {
         setPage(1);
-    }, [query, selectedStatuses, selectedTypes]);
+    }, [query, selectedStatuses]);
 
+    const totalPages = meta.totalPages || 1;
     const safePage = Math.min(page, totalPages);
-    const fromIdx = (safePage - 1) * pageSize;
-    const toIdx = Math.min(fromIdx + pageSize, filteredRows.length);
-    const pageRows = filteredRows.slice(fromIdx, toIdx);
-
-    /* summary stats */
-    const totalReqs = REQUIREMENTS.length;
-    const pendingReview = REQUIREMENTS.filter(
-        (r) => r.status === "IN PREVIEW",
-    ).length;
-    const changesRequested = REQUIREMENTS.filter(
-        (r) => r.status === "TODO",
-    ).length;
-    const approvedAssets = REQUIREMENTS.filter(
-        (r) => r.status === "APPROVED",
-    ).length;
 
     return (
         <div className="p-4 md:p-6 min-h-screen">
             <main>
-                    {/* Breadcrumb */}
-                    <nav
-                        aria-label="Breadcrumb"
-                        className="mb-5 flex items-center gap-1.5 text-sm text-gray-500"
-                    >
-                        <Link
-                            to="/employee/employee-dashboard"
-                            className="hover:text-gray-700 transition-colors"
-                        >
-                            Dashboard
-                        </Link>
-                        <ChevronRight className="h-3.5 w-3.5" />
-                        <Link
-                            to="/employee/employee-projects"
-                            className="hover:text-gray-700 transition-colors"
-                        >
-                            Projects
-                        </Link>
-                        <ChevronRight className="h-3.5 w-3.5" />
-                        <span className="font-semibold text-gray-900">
-                            {PROJECT_INFO.name}
-                        </span>
-                    </nav>
 
-                    {/* Project Header */}
-                    <div className="mb-6">
-                        <h2 className="text-heading font-bold text-gray-900">
-                            {PROJECT_INFO.name}
-                        </h2>
-                    </div>
 
-                    {/* Stat Cards */}
-                    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                        <StatCard
-                            value={totalReqs}
-                            label="Total Requirements"
-                            icon={LayoutGrid}
-                            colorScheme="blue"
-                        />
-                        <StatCard
-                            value={pendingReview}
-                            label="Pending Review"
-                            icon={MessageSquare}
-                            colorScheme="amber"
-                        />
-                        <StatCard
-                            value={changesRequested}
-                            label="Changes Requested"
-                            icon={AlertTriangle}
-                            colorScheme="rose"
-                        />
-                        <StatCard
-                            value={approvedAssets}
-                            label="Approved Assets"
-                            icon={CheckCircle2}
-                            colorScheme="emerald"
-                        />
-                    </div>
+                {/* Project Header */}
+                <div className="mb-6">
+                    <h2 className="text-heading font-bold text-gray-900">
+                        {summary?.name || "Loading..."}
+                    </h2>
+                </div>
 
-                    {/* Requirements Section */}
-                    <section className="rounded-xl border border-gray-200 bg-white shadow-sm">
-                        {/* Section Header with Search & Filter */}
-                        <div className="flex flex-col gap-3 border-b border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:p-6">
-                            <h3 className="text-subheading font-bold text-gray-900">
-                                Requirements
-                            </h3>
+                <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                    <StatCard
+                        value={summary?.summaryCounts?.totalRequirements || 0}
+                        label="Total Requirements"
+                        icon={LayoutGrid}
+                        colorScheme="blue"
+                    />
+                    <StatCard
+                        value={summary?.summaryCounts?.pendingReview || 0}
+                        label="Pending Review"
+                        icon={MessageSquare}
+                        colorScheme="amber"
+                    />
+                    <StatCard
+                        value={summary?.summaryCounts?.changesRequested || 0}
+                        label="Changes Requested"
+                        icon={AlertTriangle}
+                        colorScheme="rose"
+                    />
+                    <StatCard
+                        value={summary?.summaryCounts?.approvedAssets || 0}
+                        label="Approved Assets"
+                        icon={CheckCircle2}
+                        colorScheme="emerald"
+                    />
+                </div>
 
-                            <div className="flex items-center gap-3">
-                                {/* Search */}
-                                <div className="relative flex-1 sm:flex-initial">
-                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                                    <input
-                                        id="req-search"
-                                        value={query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                        type="search"
-                                        placeholder="Search requirements..."
-                                        className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500 sm:w-56"
-                                    />
-                                </div>
+                <section className="rounded-xl border border-gray-200 bg-white shadow-sm">
+                    <div className="flex flex-col gap-3 border-b border-gray-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:p-6">
+                        <h3 className="text-subheading font-bold text-gray-900">
+                            Requirements
+                        </h3>
 
-                                {/* Filter Button */}
-                                <div className="relative">
-                                    <button
-                                        id="filter-btn"
-                                        type="button"
-                                        onClick={() => setShowFilters(!showFilters)}
-                                        className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-                                    >
-                                        <Filter className="h-4 w-4" />
-                                        Filter
-                                        {selectedStatuses.length + selectedTypes.length > 0 && (
-                                            <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-xs text-white">
-                                                {selectedStatuses.length + selectedTypes.length}
-                                            </span>
-                                        )}
-                                    </button>
+                        <div className="flex items-center gap-3">
+                            {/* Search */}
+                            <div className="relative flex-1 sm:flex-initial">
+                                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    id="req-search"
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    type="search"
+                                    placeholder="Search requirements..."
+                                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-800 placeholder:text-gray-400 outline-none transition-colors focus:border-sky-500 focus:ring-1 focus:ring-sky-500 sm:w-56"
+                                />
+                            </div>
 
-                                    {/* Filter dropdown */}
-                                    {showFilters && (
-                                        <div
-                                            id="filter-panel"
-                                            className="absolute right-0 top-full z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg animate-slide-in"
-                                        >
-                                            {/* Status filters */}
-                                            <div className="border-b border-gray-100 p-4">
-                                                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                                    Status
-                                                </p>
-                                            </div>
-                                            <div className="space-y-2.5 px-4 py-3">
-                                                {uniqueStatuses.map((status) => (
-                                                    <label
-                                                        key={status}
-                                                        className="flex items-center gap-2.5 cursor-pointer"
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedStatuses.includes(status)}
-                                                            onChange={(e) => {
-                                                                if (e.target.checked) {
-                                                                    setSelectedStatuses([
-                                                                        ...selectedStatuses,
-                                                                        status,
-                                                                    ]);
-                                                                } else {
-                                                                    setSelectedStatuses(
-                                                                        selectedStatuses.filter(
-                                                                            (s) => s !== status,
-                                                                        ),
-                                                                    );
-                                                                }
-                                                            }}
-                                                            className="h-4 w-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500 cursor-pointer"
-                                                        />
-                                                        <span className="text-sm text-gray-700">
-                                                            {status}
-                                                        </span>
-                                                    </label>
-                                                ))}
-                                            </div>
-
-                                            {/* Type filters */}
-                                            <div className="border-t border-b border-gray-100 p-4">
-                                                <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                                    Type
-                                                </p>
-                                            </div>
-                                            <div className="space-y-2.5 px-4 py-3">
-                                                {uniqueTypes.map((type) => (
-                                                    <label
-                                                        key={type}
-                                                        className="flex items-center gap-2.5 cursor-pointer"
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedTypes.includes(type)}
-                                                            onChange={(e) => {
-                                                                if (e.target.checked) {
-                                                                    setSelectedTypes([...selectedTypes, type]);
-                                                                } else {
-                                                                    setSelectedTypes(
-                                                                        selectedTypes.filter((t) => t !== type),
-                                                                    );
-                                                                }
-                                                            }}
-                                                            className="h-4 w-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500 cursor-pointer"
-                                                        />
-                                                        <span className="text-sm text-gray-700">
-                                                            {type}
-                                                        </span>
-                                                    </label>
-                                                ))}
-                                            </div>
-
-                                            {/* Actions */}
-                                            <div className="flex gap-2 border-t border-gray-100 p-4">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setSelectedStatuses([]);
-                                                        setSelectedTypes([]);
-                                                    }}
-                                                    className="flex-1 rounded-lg py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
-                                                >
-                                                    Clear
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowFilters(false)}
-                                                    className="flex-1 rounded-lg bg-sky-500 py-2 text-sm font-semibold text-white hover:bg-sky-600 transition-colors"
-                                                >
-                                                    Done
-                                                </button>
-                                            </div>
-                                        </div>
+                            <div className="relative">
+                                <button
+                                    id="filter-btn"
+                                    type="button"
+                                    onClick={() => setShowFilters(!showFilters)}
+                                    className="inline-flex items-center gap-2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                                >
+                                    <Filter className="h-4 w-4" />
+                                    Filter
+                                    {selectedStatuses.length > 0 && (
+                                        <span className="ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-xs text-white">
+                                            {selectedStatuses.length}
+                                        </span>
                                     )}
-                                </div>
+                                </button>
+
+                                {showFilters && (
+                                    <div
+                                        id="filter-panel"
+                                        className="absolute right-0 top-full z-20 mt-2 w-56 rounded-xl border border-gray-200 bg-white shadow-lg"
+                                    >
+                                        <div className="border-b border-gray-100 p-4">
+                                            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                                                Status
+                                            </p>
+                                        </div>
+                                        <div className="space-y-2.5 px-4 py-3">
+                                            {uniqueStatuses.map((status) => (
+                                                <label
+                                                    key={status}
+                                                    className="flex items-center gap-2.5 cursor-pointer"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedStatuses.includes(status)}
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedStatuses([
+                                                                    ...selectedStatuses,
+                                                                    status,
+                                                                ]);
+                                                            } else {
+                                                                setSelectedStatuses(
+                                                                    selectedStatuses.filter(
+                                                                        (s) => s !== status,
+                                                                    ),
+                                                                );
+                                                            }
+                                                        }}
+                                                        className="h-4 w-4 rounded border-gray-300 text-sky-500 focus:ring-sky-500 cursor-pointer"
+                                                    />
+                                                    <span className="text-sm text-gray-700">
+                                                        {status}
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        </div>
+
+
+                                        <div className="flex gap-2 border-t border-gray-100 p-4">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedStatuses([]);
+                                                }}
+                                                className="flex-1 rounded-lg py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
+                                            >
+                                                Clear
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowFilters(false)}
+                                                className="flex-1 rounded-lg bg-primary py-2 text-sm font-semibold text-white hover:bg-primary/80 transition-colors"
+                                            >
+                                                Done
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
+                    </div>
 
-                        {/* Desktop Table */}
-                        {pageRows.length > 0 ? (
-                            <>
-                                <div className="w-full overflow-x-auto">
-                                    <div className="min-w-[800px]">
-                                            <Table
-                                                data={pageRows}
-                                                columns={requirementColumns}
-                                                renderActions
-                                                actionsHeaderLabel="Action"
-                                                renderActionsCell={(item) => (
+                    {/* Desktop Table */}
+                    {requirements.length > 0 ? (
+                        <>
+                            <div className="w-full overflow-x-auto">
+                                <div className="min-w-200">
+                                    <Table
+                                        data={requirements}
+                                        columns={requirementColumns}
+                                        renderActions
+                                        actionsHeaderLabel="Action"
+                                        renderActionsCell={(item) => {
+                                            const isArchived = item.status === "archived";
+                                            return (
+                                                <div className="flex items-center gap-2">
                                                     <button
                                                         type="button"
-                                                        onClick={() => navigate("/employee/employee-projects/employee-asset-list")}
-                                                        className="inline-flex items-center rounded-full bg-sky-500 px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-sky-600 transition-colors active:scale-95"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedRequirement(item);
+                                                        }}
+                                                        className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold border border-gray-200 bg-white text-gray-700 shadow-sm cursor-pointer transition-colors hover:bg-gray-50 active:scale-95"
+                                                    >
+                                                        View Detail
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        disabled={isArchived}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (isArchived) return;
+                                                            navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } });
+                                                        }}
+                                                        className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm cursor-pointer transition-colors ${isArchived
+                                                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                            : "bg-sky-500 text-white hover:bg-sky-600 active:scale-95"
+                                                            }`}
                                                     >
                                                         Start Working
                                                     </button>
-                                                )}
-                                                rowClassName={(item) => "hover:bg-gray-50 bg-white"}
-                                            />
-                                    </div>
+                                                </div>
+                                            );
+                                        }}
+                                        rowClassName={(item) =>
+                                            item.status === "archived"
+                                                ? "bg-slate-50 text-slate-300"
+                                                : "hover:bg-gray-50 bg-white"
+                                        }
+                                    />
                                 </div>
-
-
-                                <Pagination
-                                    currentPage={safePage}
-                                    totalPages={totalPages}
-                                    onPageChange={(p) => {
-                                        if (p < 1 || p > totalPages) return;
-                                        setPage(p);
-                                    }}
-                                />
-                            </>
-                        ) : (
-                            <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50">
-                                <Search className="h-8 w-8 text-gray-300" />
-                                <p className="text-sm font-medium text-gray-400">
-                                    No requirements found
-                                </p>
                             </div>
-                        )}
-                    </section>
+
+
+                            <Pagination
+                                currentPage={safePage}
+                                totalPages={totalPages}
+                                onPageChange={(p) => {
+                                    if (p < 1 || p > totalPages) return;
+                                    setPage(p);
+                                }}
+                            />
+                        </>
+                    ) : (
+                        <div className="flex h-40 flex-col items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-50">
+                            <Search className="h-8 w-8 text-gray-300" />
+                            <p className="text-sm font-medium text-gray-400">
+                                No requirements found
+                            </p>
+                        </div>
+                    )}
+                </section>
             </main>
+
+            <InfoModal
+                isOpen={!!selectedRequirement}
+                onClose={() => setSelectedRequirement(null)}
+                title={selectedRequirement?.title || "Requirement Details"}
+                maxWidth="max-w-lg"
+                items={[
+                    { label: "Title", value: selectedRequirement?.title, fullWidth: true },
+                    { label: "Type", value: selectedRequirement?.type ? selectedRequirement.type.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase()) : "-" },
+                    { label: "Status", value: formatStatusToUI(selectedRequirement?.status) },
+                    { label: "Total Assets", value: selectedRequirement?.totalAssets != null ? `${selectedRequirement.totalAssets} files` : "-" },
+                    { label: "Deadline", value: selectedRequirement?.deadline ? new Date(selectedRequirement.deadline).toLocaleDateString() : "-" },
+                    { label: "Created At", value: selectedRequirement?.createdAt ? new Date(selectedRequirement.createdAt).toLocaleDateString() : "-" },
+                ]}
+            />
         </div>
     );
 }

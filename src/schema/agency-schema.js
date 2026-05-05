@@ -21,23 +21,35 @@ const passwordStyles = z
   );
 
 export const agencySettingsSchema = z.object({
-  companyName: z.string().min(2, "Company name is required"),
-  contactEmail: z.string().min(1, "Contact email is required").email("Invalid email address"),
+  name: z
+    .string()
+    .min(2, "Company name must be at least 2 characters")
+    .or(z.literal(""))
+    .optional(),
+  email: z
+    .string()
+    .email("Invalid email address")
+    .or(z.literal(""))
+    .optional(),
   website: z.string().url("Invalid URL").or(z.literal("")).optional(),
-  industry: z.string().min(1, "Please select an industry"),
-  phone: z.string().min(10, "Phone number is too short").or(z.literal("")).optional(),
+  primary_industry: z.string().or(z.literal("")).optional(),
+  mobile_no: z
+    .string()
+    .min(10, "Phone number is too short")
+    .or(z.literal(""))
+    .optional(),
   address: z.string().or(z.literal("")).optional(),
 });
 
 export const changePasswordSchema = z
   .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: passwordStyles,
-    confirmPassword: z.string(),
+    current_password: z.string().min(1, "Current password is required"),
+    password: passwordStyles,
+    confirm_password: z.string(),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine((data) => data.password === data.confirm_password, {
     message: "Confirm password must match the new password",
-    path: ["confirmPassword"],
+    path: ["confirm_password"],
   });
 
 export const createRequirementSchema = z.object({

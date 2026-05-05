@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { UserPlus, SendHorizontal, SquarePen } from "lucide-react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import Pagination from "../../components/common/pagination";
 import RequirementFilter from "../../components/common/requirement-filter";
 import Table from "../../components/common/table";
@@ -24,6 +24,7 @@ const AgencyClients = () => {
   const [invitations, setInvitations] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [editClient, setEditClient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,7 +56,7 @@ const AgencyClients = () => {
         setInvitations(response.data);
         const totalItems = Math.ceil(response.meta.total / ITEMS_PER_PAGE);
         setTotalPages(totalItems);
-        setTotalInvitations(response.meta.total)
+        setTotalInvitations(response.meta.total);
       } catch (error) {
         console.error(error);
       } finally {
@@ -73,16 +74,19 @@ const AgencyClients = () => {
   // Handle inviting new client from main form
   const onSubmit = async (formData) => {
     try {
+      setIsSubmitting(true);
       await inviteClient(formData);
       toast.success("Invitation sent successfully");
       reset();
-      setFetch(!fetch)
+      setFetch(!fetch);
       setCurrentPage(1); // Reset to page 1 to see new invitation
     } catch (error) {
       console.error("Error:", error);
       toast.error(
         error?.response?.data?.message || "Failed to send invitation",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -107,7 +111,7 @@ const AgencyClients = () => {
       });
       setInvitations(response.data);
       setTotalPages(response.meta.totalPages);
-      setTotalInvitations(response.meta.total)
+      setTotalInvitations(response.meta.total);
       toast.success("Update invitation successfully");
       setSelectedClient(null);
       setEditClient(null);
@@ -119,7 +123,11 @@ const AgencyClients = () => {
   };
 
   const columns = [
-    { key: "clientName", label: "Client Name" },
+    {
+      key: "clientName",
+      label: "Client Name",
+      cellClassName: "px-6 py-4 text-gray-800 font-semibold whitespace-nowrap",
+    },
     { key: "email", label: "Client Email" },
     { key: "date", label: "Date Sent" },
     { key: "status", label: "Status" },
@@ -136,7 +144,7 @@ const AgencyClients = () => {
       });
       setInvitations(response.data);
       setTotalPages(response.meta.totalPages);
-      setTotalInvitations(response.meta.total)
+      setTotalInvitations(response.meta.total);
       toast.success("Client invitation deleted successfully");
     } catch (error) {
       console.error("Error deleting invitation:", error);
@@ -255,7 +263,7 @@ const AgencyClients = () => {
             <div className="w-full mb-1">
               <Button
                 type="submit"
-                isLoading={loading}
+                isLoading={isSubmitting}
                 className="w-full md:w-auto bg-primary text-white px-4 py-2 cursor-pointer hover:bg-hover-primary shadow-md shadow-indigo-200 mb-1"
               >
                 <SendHorizontal size={18} className="mr-3" />
@@ -282,9 +290,9 @@ const AgencyClients = () => {
             />
           </div>
 
-          <div className="min-h-[360px]">
+          <div className="min-h-90">
             {loading ? (
-              <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+              <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
                 <p className="text-gray-500">Loading client invitations...</p>
               </div>
             ) : invitations.length > 0 ? (
@@ -299,7 +307,9 @@ const AgencyClients = () => {
                         onDelete={handleDelete}
                         onSend={handleResendInvitation}
                         isEditDisabled={(item) => item.status === "ACTIVE"}
-                        isSendDisabled={(item) => item.status === "ACTIVE"}
+                        isSendDisabled={(item) =>
+                          item.status === "ACTIVE" || item.status === "PENDING"
+                        }
                         isDeleteDisabled={(item) => item.status === "ACTIVE"}
                         renderActions={true}
                       />
@@ -318,7 +328,7 @@ const AgencyClients = () => {
                 />
               </>
             ) : (
-              <div className="h-full min-h-[360px] bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+              <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
                 <p className="text-gray-500">No pending invitations</p>
               </div>
             )}

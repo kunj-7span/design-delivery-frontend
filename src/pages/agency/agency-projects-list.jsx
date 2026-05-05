@@ -8,8 +8,8 @@ const ITEMS_PER_PAGE = 5;
 
 const tabs = [
   { label: "All Projects", workMode: null, status: null },
-  { label: "Marketplace", workMode: "marketplace", status: null },
-  { label: "Assigned Projects", workMode: "assigned", status: null },
+  { label: "Public", workMode: "public", status: null },
+  { label: "Assigned", workMode: "assigned", status: null },
   { label: "Completed", workMode: null, status: "complete" },
 ];
 
@@ -136,21 +136,20 @@ const AgencyProjectsList = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-b-2xl shadow-sm border border-t-0 border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-b-2xl shadow-sm border border-t-0 border-gray-200 overflow-hidden min-h-90">
         {loading ? (
-          <div className="p-12 flex items-center justify-center">
+          <div className="h-full min-h-90 p-12 flex items-center justify-center">
             <p className="text-gray-500">Loading projects...</p>
           </div>
         ) : filteredProjects.length > 0 ? (
           <>
             {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-gray-50 text-[11px] font-bold text-gray-400 uppercase border-y border-gray-200">
                   <tr>
                     <th className="px-6 py-4">Project Name</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Work Mode</th>
                     <th className="px-6 py-4">Employees</th>
                     <th className="px-6 py-4">Assets</th>
                     <th className="px-6 py-4">Progress</th>
@@ -174,11 +173,6 @@ const AgencyProjectsList = () => {
                             }`}
                         >
                           {formatStatus(p.status)}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-xs font-medium text-gray-500 capitalize">
-                          {p.workMode}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
@@ -219,7 +213,7 @@ const AgencyProjectsList = () => {
             </div>
 
             {/* Mobile Cards */}
-            <div className="md:hidden divide-y divide-gray-100">
+            <div className="lg:hidden divide-y divide-gray-100">
               {filteredProjects.map((p) => (
                 <div key={p.id} className="p-4 space-y-3">
                   <div className="flex items-start justify-between">
@@ -270,23 +264,25 @@ const AgencyProjectsList = () => {
             </div>
           </>
         ) : (
-          <div className="p-12 flex items-center justify-center">
+          <div className="h-full min-h-90 p-12 flex items-center justify-center">
             <p className="text-gray-500">No projects found</p>
           </div>
         )}
+        
+        {/* Pagination */}
+        {filteredProjects.length > 0 && totalPages > 1 && (
+          <div className="p-4 border-t border-gray-100">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                if (page < 1 || page > totalPages) return;
+                setCurrentPage(page);
+              }}
+            />
+          </div>
+        )}
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => {
-            if (page < 1 || page > totalPages) return;
-            setCurrentPage(page);
-          }}
-        />
-      )}
     </div>
   );
 };

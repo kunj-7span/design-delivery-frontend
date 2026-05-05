@@ -217,3 +217,45 @@ export const archiveProjectRequirement = async (projectId, requirementId) => {
   );
   return response.data;
 };
+
+// Agency Settings API Calls
+export const getUserProfile = async () => {
+  const response = await axiosClient.get("/auth/me");
+  const userData = response.data?.data;
+
+  if (!userData) {
+    throw new Error("Failed to fetch user profile");
+  }
+
+  const agencyData = userData.agency?.[0] || {};
+
+  return {
+    id: userData.id,
+    name: userData.name,
+    email: userData.email,
+    mobile_no: userData.mobile_no || "",
+    avatar: userData.avatar,
+    website: agencyData.website || "",
+    primary_industry: agencyData.primary_industry || "",
+    address: agencyData.address || "",
+  };
+};
+
+export const updateAgencySettings = async (payload) => {
+  const response = await axiosClient.patch(
+    "/agency/settings/details-update",
+    payload,
+  );
+
+  return response.data;
+};
+
+export const resetAgencyPassword = async (passwordData) => {
+  const response = await axiosClient.patch("/agency/settings/reset-password", {
+    current_password: passwordData.current_password,
+    password: passwordData.password,
+    confirm_password: passwordData.confirm_password,
+  });
+
+  return response.data;
+};

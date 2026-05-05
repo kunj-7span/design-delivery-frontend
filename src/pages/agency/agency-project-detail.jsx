@@ -9,7 +9,7 @@ import {
   UsersRound,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import Button from "../../components/common/button";
 import ConfirmDialog from "../../components/common/confirm-dialog";
 import FormModal from "../../components/common/popup-modal";
@@ -20,6 +20,8 @@ import SearchInput from "../../components/common/search-input";
 import Table from "../../components/common/table";
 import { createRequirementSchema } from "../../schema/agency-schema";
 import { authServices } from "../../services/auth-services";
+import FileField from "../../components/common/file-field";
+import TagInput from "../../components/common/tag-input";
 import {
   archiveProjectRequirement,
   createProjectRequirement,
@@ -85,8 +87,23 @@ const statusStyles = {
   Archived: "bg-gray-100 text-gray-400",
 };
 
-const requirementTypeOptions = ["logo", "branding", "social_media", "ui_design", "web_design", "development", "content", "marketing", "other"];
-const requirementStatusOptions = ["todo", "in_progress", "complete", "archived"];
+const requirementTypeOptions = [
+  "logo",
+  "branding",
+  "social_media",
+  "ui_design",
+  "web_design",
+  "development",
+  "content",
+  "marketing",
+  "other",
+];
+const requirementStatusOptions = [
+  "todo",
+  "in_progress",
+  "complete",
+  "archived",
+];
 const REQUIREMENTS_PER_PAGE = 5;
 
 const employeeWindowSize = 2;
@@ -111,11 +128,13 @@ const AgencyProjectDetail = () => {
   const [referenceUploadMeta, setReferenceUploadMeta] = useState(null);
   const maxClientIndex = Math.max(
     0,
-    Math.floor((projectClientsData.length - 1) / clientWindowSize) * clientWindowSize,
+    Math.floor((projectClientsData.length - 1) / clientWindowSize) *
+      clientWindowSize,
   );
   const maxEmployeeIndex = Math.max(
     0,
-    Math.floor((employeeTeamData.length - 1) / employeeWindowSize) * employeeWindowSize,
+    Math.floor((employeeTeamData.length - 1) / employeeWindowSize) *
+      employeeWindowSize,
   );
   const isClientPrevDisabled = clientIndex === 0;
   const isClientNextDisabled = clientIndex >= maxClientIndex;
@@ -130,7 +149,10 @@ const AgencyProjectDetail = () => {
   }, [employeeStartIndex, employeeTeamData]);
 
   const visibleClients = useMemo(() => {
-    return projectClientsData.slice(clientIndex, clientIndex + clientWindowSize);
+    return projectClientsData.slice(
+      clientIndex,
+      clientIndex + clientWindowSize,
+    );
   }, [clientIndex, projectClientsData]);
 
   useEffect(() => {
@@ -170,10 +192,10 @@ const AgencyProjectDetail = () => {
           type: formatLabel(item.type || "other"),
           deadline: item.deadline
             ? new Date(item.deadline).toLocaleDateString("en-US", {
-              month: "short",
-              day: "2-digit",
-              year: "numeric",
-            })
+                month: "short",
+                day: "2-digit",
+                year: "numeric",
+              })
             : "-",
           status: formatLabel(item.status || "todo"),
           description: item.description || "",
@@ -182,7 +204,9 @@ const AgencyProjectDetail = () => {
         })),
       );
 
-      setTotalRequirements(response?.meta?.filteredRequirements || requirementsList.length);
+      setTotalRequirements(
+        response?.meta?.filteredRequirements || requirementsList.length,
+      );
       setTotalPages(response?.meta?.totalPages || 1);
     } catch (error) {
       toast.error(
@@ -219,7 +243,9 @@ const AgencyProjectDetail = () => {
         })),
       );
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to load project details");
+      toast.error(
+        error?.response?.data?.message || "Failed to load project details",
+      );
     }
   };
 
@@ -246,11 +272,10 @@ const AgencyProjectDetail = () => {
       {
         key: "requirement",
         label: "Requirement",
-        cellClassName: "px-6 py-4 text-gray-700 whitespace-nowrap font-semibold",
+        cellClassName:
+          "px-6 py-4 text-gray-700 whitespace-nowrap font-semibold",
         render: (value, item) => (
-          <span className={item.archived ? "line-through text-slate-400" : ""}>
-            {value}
-          </span>
+          <span className={item.archived ? "text-slate-400" : ""}>{value}</span>
         ),
       },
       {
@@ -258,8 +283,9 @@ const AgencyProjectDetail = () => {
         label: "Type",
         render: (value, item) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${typeStyles[value] || "bg-slate-100 text-slate-500"
-              } ${item.archived ? "opacity-45" : ""}`}
+            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${
+              typeStyles[value] || "bg-slate-100 text-slate-500"
+            } ${item.archived ? "opacity-45" : ""}`}
           >
             {value}
           </span>
@@ -271,8 +297,9 @@ const AgencyProjectDetail = () => {
         label: "Status",
         render: (value) => (
           <span
-            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${statusStyles[value] || "bg-slate-100 text-slate-500"
-              }`}
+            className={`inline-flex rounded-full px-3 py-1 text-[10px] font-semibold uppercase ${
+              statusStyles[value] || "bg-slate-100 text-slate-500"
+            }`}
           >
             {value}
           </span>
@@ -289,7 +316,10 @@ const AgencyProjectDetail = () => {
     }
 
     try {
-      const response = await archiveProjectRequirement(projectId, requirementId);
+      const response = await archiveProjectRequirement(
+        projectId,
+        requirementId,
+      );
       toast.success(response?.message || "Requirement archived successfully");
       fetchProjectRequirements(currentPage);
     } catch (error) {
@@ -312,8 +342,8 @@ const AgencyProjectDetail = () => {
       try {
         const uploadMeta =
           referenceUploadMeta &&
-            referenceUploadMeta.fileName === selectedReferenceFile.name &&
-            referenceUploadMeta.contentType === selectedReferenceFile.type
+          referenceUploadMeta.fileName === selectedReferenceFile.name &&
+          referenceUploadMeta.contentType === selectedReferenceFile.type
             ? referenceUploadMeta
             : null;
 
@@ -328,7 +358,7 @@ const AgencyProjectDetail = () => {
           selectedReferenceFile.type,
         );
         referenceFileUrl = uploadMeta.fileUrl;
-      } catch (error) {
+      } catch {
         toast.error("Failed to upload reference file");
         return;
       }
@@ -409,8 +439,8 @@ const AgencyProjectDetail = () => {
                     type="button"
                     disabled={isClientPrevDisabled}
                     onClick={() =>
-                      setClientIndex(
-                        (current) => Math.max(0, current - clientWindowSize),
+                      setClientIndex((current) =>
+                        Math.max(0, current - clientWindowSize),
                       )
                     }
                     className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
@@ -422,9 +452,8 @@ const AgencyProjectDetail = () => {
                     type="button"
                     disabled={isClientNextDisabled}
                     onClick={() =>
-                      setClientIndex(
-                        (current) =>
-                          Math.min(maxClientIndex, current + clientWindowSize),
+                      setClientIndex((current) =>
+                        Math.min(maxClientIndex, current + clientWindowSize),
                       )
                     }
                     className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
@@ -449,7 +478,9 @@ const AgencyProjectDetail = () => {
                         .slice(0, 2)}
                     </div>
                     <div>
-                      <p className="font-medium text-slate-700">{client.contactName}</p>
+                      <p className="font-medium text-slate-700">
+                        {client.contactName}
+                      </p>
                       <p className="text-xs">{client.email}</p>
                     </div>
                   </div>
@@ -467,7 +498,9 @@ const AgencyProjectDetail = () => {
                     <h2 className="mt-1 text-subheading font-semibold text-slate-900">
                       Team Members
                     </h2>
-                    <p className="text-xs text-slate-400">{employeeTeamData.length} employees</p>
+                    <p className="text-xs text-slate-400">
+                      {employeeTeamData.length} employees
+                    </p>
                   </div>
                 </div>
 
@@ -476,8 +509,8 @@ const AgencyProjectDetail = () => {
                     type="button"
                     disabled={isEmployeePrevDisabled}
                     onClick={() =>
-                      setEmployeeStartIndex(
-                        (current) => Math.max(0, current - employeeWindowSize),
+                      setEmployeeStartIndex((current) =>
+                        Math.max(0, current - employeeWindowSize),
                       )
                     }
                     className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
@@ -489,9 +522,11 @@ const AgencyProjectDetail = () => {
                     type="button"
                     disabled={isEmployeeNextDisabled}
                     onClick={() =>
-                      setEmployeeStartIndex(
-                        (current) =>
-                          Math.min(maxEmployeeIndex, current + employeeWindowSize),
+                      setEmployeeStartIndex((current) =>
+                        Math.min(
+                          maxEmployeeIndex,
+                          current + employeeWindowSize,
+                        ),
                       )
                     }
                     className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
@@ -559,7 +594,7 @@ const AgencyProjectDetail = () => {
               </div>
             </div>
 
-            <div className="min-h-23">
+            <div className="min-h-90">
               {requirements.length > 0 ? (
                 <>
                   <div className="w-full max-w-full">
@@ -568,24 +603,34 @@ const AgencyProjectDetail = () => {
                         <Table
                           data={requirements}
                           columns={requirementColumns}
-                          onRowClick={(item) => setSelectedRequirement(item)}
-                          isRowClickable={(item) => !item.archived}
                           renderActions
                           actionsHeaderLabel="Actions"
                           renderActionsCell={(item) => (
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                if (item.archived) return;
-                                setRequirementToArchive(item);
-                              }}
-                              disabled={item.archived}
-                              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 disabled:text-slate-300"
-                            >
-                              <Archive size={14} />
-                              {item.archived ? "Archived" : "Archive"}
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  setSelectedRequirement(item);
+                                }}
+                                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-800 
+                                shadow-sm cursor-pointer hover:bg-gray-50"
+                              >
+                                View Details
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  if (item.archived) return;
+                                  setRequirementToArchive(item);
+                                }}
+                                disabled={item.archived}
+                                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:border-slate-100 disabled:bg-slate-100 shadow-sm disabled:text-slate-300"
+                              >
+                                {item.archived ? "Archived" : "Archive"}
+                              </button>
+                            </div>
                           )}
                           rowClassName={(item) =>
                             item.archived
@@ -653,7 +698,9 @@ const AgencyProjectDetail = () => {
             label: "Reference Link",
             value: selectedRequirement?.referenceFile,
             isLink: true,
-            linkText: selectedRequirement?.referenceFile ? "Open reference file" : "-",
+            linkText: selectedRequirement?.referenceFile
+              ? "Open reference file"
+              : "-",
             fullWidth: true,
           },
         ]}
@@ -672,7 +719,10 @@ const AgencyProjectDetail = () => {
         renderContent={({ register, errors }) => (
           <>
             <div className="flex flex-col gap-1">
-              <label htmlFor="requirement-name" className="text-sm text-gray-600">
+              <label
+                htmlFor="requirement-name"
+                className="text-sm text-gray-600"
+              >
                 Requirement Name
               </label>
               <input
@@ -683,13 +733,18 @@ const AgencyProjectDetail = () => {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
               />
               {errors.requirement && (
-                <p className="text-xs text-red-500">{errors.requirement.message}</p>
+                <p className="text-xs text-red-500">
+                  {errors.requirement.message}
+                </p>
               )}
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="flex flex-col gap-1">
-                <label htmlFor="requirement-deadline" className="text-sm text-gray-600">
+                <label
+                  htmlFor="requirement-deadline"
+                  className="text-sm text-gray-600"
+                >
                   Deadline
                 </label>
                 <input
@@ -699,12 +754,17 @@ const AgencyProjectDetail = () => {
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-500 focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {errors.deadline && (
-                  <p className="text-xs text-red-500">{errors.deadline.message}</p>
+                  <p className="text-xs text-red-500">
+                    {errors.deadline.message}
+                  </p>
                 )}
               </div>
 
               <div className="flex flex-col gap-1">
-                <label htmlFor="requirement-type" className="text-sm text-gray-600">
+                <label
+                  htmlFor="requirement-type"
+                  className="text-sm text-gray-600"
+                >
                   Type
                 </label>
                 <div className="relative">
@@ -719,7 +779,7 @@ const AgencyProjectDetail = () => {
                     </option>
                     {requirementTypeOptions.map((option) => (
                       <option key={option} value={option}>
-                        {option}
+                        {formatLabel(option)}
                       </option>
                     ))}
                   </select>
@@ -734,54 +794,53 @@ const AgencyProjectDetail = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="reference-file" className="text-sm text-gray-600">
-                Reference File
-              </label>
-              <input
-                id="reference-file"
-                type="file"
-                {...register("referenceFile", {
-                  onChange: async (event) => {
-                    const file = event?.target?.files?.[0];
+            <FileField
+              label="Reference File"
+              id="reference-file"
+              error={errors.referenceFile}
+              {...register("referenceFile", {
+                onChange: async (event) => {
+                  const file = event?.target?.files?.[0];
 
-                    if (!file) {
-                      setReferenceUploadMeta(null);
-                      return;
+                  if (!file) {
+                    setReferenceUploadMeta(null);
+                    return;
+                  }
+
+                  try {
+                    const response = await authServices.generateUploadUrl(
+                      file.name,
+                      file.type,
+                      "user/reference",
+                    );
+                    const { uploadUrl, fileUrl } = response?.data || {};
+
+                    if (!uploadUrl || !fileUrl) {
+                      throw new Error("Invalid upload URL response");
                     }
 
-                    try {
-                      const response = await authServices.generateUploadUrl(
-                        file.name,
-                        file.type,
-                        "user/reference",
-                      );
-                      const { uploadUrl, fileUrl } = response?.data || {};
-
-                      if (!uploadUrl || !fileUrl) {
-                        throw new Error("Invalid upload URL response");
-                      }
-
-                      setReferenceUploadMeta({
-                        fileName: file.name,
-                        contentType: file.type,
-                        uploadUrl,
-                        fileUrl,
-                      });
-                    } catch (error) {
-                      setReferenceUploadMeta(null);
-                      toast.error(
-                        error?.message || "Failed to prepare reference file upload",
-                      );
-                    }
-                  },
-                })}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-slate-500 file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary"
-              />
-            </div>
+                    setReferenceUploadMeta({
+                      fileName: file.name,
+                      contentType: file.type,
+                      uploadUrl,
+                      fileUrl,
+                    });
+                  } catch (error) {
+                    setReferenceUploadMeta(null);
+                    toast.error(
+                      error?.message ||
+                        "Failed to prepare reference file upload",
+                    );
+                  }
+                },
+              })}
+            />
 
             <div className="flex flex-col gap-1">
-              <label htmlFor="requirement-description" className="text-sm text-gray-600">
+              <label
+                htmlFor="requirement-description"
+                className="text-sm text-gray-600"
+              >
                 Description
               </label>
               <textarea
@@ -792,7 +851,9 @@ const AgencyProjectDetail = () => {
                 className="w-full resize-none border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
               />
               {errors.description && (
-                <p className="text-xs text-red-500">{errors.description.message}</p>
+                <p className="text-xs text-red-500">
+                  {errors.description.message}
+                </p>
               )}
             </div>
           </>

@@ -67,7 +67,7 @@ const ResetPasswordForm = () => {
         data.confirmPassword,
       );
 
-      if (res.data.success) {
+      if (res.success) {
         setIsSuccess(true);
         setTimeout(() => {
           navigate("/login");

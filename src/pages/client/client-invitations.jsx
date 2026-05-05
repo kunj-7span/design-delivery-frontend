@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axios-client";
 import { Loader2, Mail, Calendar } from "lucide-react";
 import Button from "../../components/common/button";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/auth-store";
 
 const ClientInvitations = () => {
@@ -13,7 +13,7 @@ const ClientInvitations = () => {
 
   useEffect(() => {
     fetchPendingInvitations();
-  }, [token]);
+  }, []);
 
   const fetchPendingInvitations = async () => {
     try {
@@ -56,13 +56,15 @@ const ClientInvitations = () => {
         setInvitations((prev) => prev.filter((inv) => inv.id !== invitationId));
       }
     } catch (error) {
-      console.error("Error accepting invitation:", error);
-      console.error("Error response:", error.response);
-
-      toast.error(
-        error.response?.data?.message ||
-        "Failed to accept invitation. Please try again.",
-      );
+      if (error.response?.status === 401) {
+        useAuthStore.getState().logout();
+        window.location.href = "/login";
+      } else {
+        toast.error(
+          error.response?.data?.message ||
+          "Failed to accept invitation. Please try again.",
+        );
+      }
     } finally {
       setAcceptingId(null);
     }
