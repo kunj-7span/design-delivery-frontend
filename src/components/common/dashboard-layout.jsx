@@ -10,7 +10,7 @@ const DashboardLayout = () => {
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   return (
-    <div className="container mx-auto relative flex h-screen">
+    <div className="relative flex h-screen">
       {isMobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/40 lg:hidden"

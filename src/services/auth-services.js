@@ -100,7 +100,7 @@ export const authServices = {
   // Generate upload URL for S3
   async generateUploadUrl(fileName, contentType, folder) {
     try {
-      const res = await publicClient.post("/upload/generate-url", {
+      const res = await publicClient.post("/upload/generate-avatar-url", {
         fileName,
         contentType,
         folder,

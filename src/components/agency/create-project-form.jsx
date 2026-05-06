@@ -9,7 +9,7 @@ import TextareaField from "../common/textarea-field";
 import FileField from "../common/file-field";
 import Button from "../common/button";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import {
   getEmployeesForSelect,
   getClientsForSelect,

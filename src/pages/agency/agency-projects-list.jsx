@@ -136,9 +136,9 @@ const AgencyProjectsList = () => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-b-2xl shadow-sm border border-t-0 border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-b-2xl shadow-sm border border-t-0 border-gray-200 overflow-hidden min-h-90">
         {loading ? (
-          <div className="p-12 flex items-center justify-center">
+          <div className="h-full min-h-90 p-12 flex items-center justify-center">
             <p className="text-gray-500">Loading projects...</p>
           </div>
         ) : filteredProjects.length > 0 ? (
@@ -264,23 +264,25 @@ const AgencyProjectsList = () => {
             </div>
           </>
         ) : (
-          <div className="p-12 flex items-center justify-center">
+          <div className="h-full min-h-90 p-12 flex items-center justify-center">
             <p className="text-gray-500">No projects found</p>
           </div>
         )}
+        
+        {/* Pagination */}
+        {filteredProjects.length > 0 && totalPages > 1 && (
+          <div className="p-4 border-t border-gray-100">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                if (page < 1 || page > totalPages) return;
+                setCurrentPage(page);
+              }}
+            />
+          </div>
+        )}
       </div>
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => {
-            if (page < 1 || page > totalPages) return;
-            setCurrentPage(page);
-          }}
-        />
-      )}
     </div>
   );
 };

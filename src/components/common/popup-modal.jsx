@@ -39,6 +39,20 @@ const FormModal = ({
     }
   }, [defaultValues, isOpen, reset]);
 
+  // Handle Escape key to close
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+        if (resetOnClose) {
+          reset(defaultValues || {});
+        }
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose, reset, resetOnClose, defaultValues]);
+
   if (!isOpen) return null;
 
   const content =
