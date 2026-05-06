@@ -1,8 +1,7 @@
 import AgencyDashboard from "./pages/agency/agency-dashboard";
 import CreateProject from "./pages/agency/create-project";
 import LandingPage from "./pages/landing-page";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -126,17 +125,11 @@ function App() {
 
   return (
     <>
-      <ToastContainer
+      <Toaster
         position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        theme="colored"
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
+        toastOptions={{
+          duration: 3000,
+        }}
       />
       <RouterProvider router={router} />
     </>

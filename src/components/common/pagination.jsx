@@ -1,66 +1,35 @@
-import { MoveLeft , MoveRight  } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const Pagination = ({ currentPage, totalPages=13, onPageChange }) => {
-  const generatePages = () => {
-    const pages = [];
-
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, "...", totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, "...", totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        pages.push(1, "...", currentPage, "...", totalPages);
-      }
-    }
-
-    return pages;
-  };
-
-  const pages = generatePages();
-
+const Pagination = ({ currentPage, totalPages = 13, onPageChange }) => {
   return (
-    <div className="flex items-center justify-center gap-3 my-3">
-      {/* Prev */}
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-500 cursor-pointer"
-      >
-        <MoveLeft  size={18} />
-      </button>
+    <div className="flex items-center justify-between gap-3 my-3 border border-gray-200 rounded-lg px-4 py-2 bg-white">
+      {/* Left: Page info */}
+      <div className="text-gray-700 text-sm min-w-27.5">
+        Page {currentPage} of {totalPages}
+      </div>
 
-      {/* Pages */}
-      {pages.map((page, index) =>
-        page === "..." ? (
-          <span key={index} className="px-3 text-gray-500">
-            ...
+      {/* Right: Prev/Next */}
+      <div className="flex items-center gap-2 min-w-30 justify-end">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          className="px-3 py-1 rounded-md border border-gray-300 hover:bg-gray-100 text-gray-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={currentPage === 1}
+        >
+          <span className="flex items-center gap-1">
+            <ChevronLeft size={16} />
           </span>
-        ) : (
-          <Link
-            key={index}
-            onClick={() => onPageChange(page)}
-            prefetch="intent"
-            className={`px-3.5 py-1.5 rounded-lg font-medium cursor-pointer ${
-              currentPage === page
-                ? "bg-primary text-white shadow-md shadow-indigo-200"
-                : "hover:bg-gray-100"
-            }`}
-          >
-            {page}
-          </Link>
-        )
-      )}
-
-      {/* Next */}
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        className="p-2 rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-500 cursor-pointer"
-      >
-        <MoveRight  size={18} />
-      </button>
+        </button>
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          className="px-3 py-1 rounded-md border border-gray-300 hover:bg-gray-100 text-gray-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={currentPage === totalPages}
+        >
+          <span className="flex items-center gap-1">
+            <ChevronRight size={16} />
+          </span>
+        </button>
+      </div>
     </div>
   );
 };
