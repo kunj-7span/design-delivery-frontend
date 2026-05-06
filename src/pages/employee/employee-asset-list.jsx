@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, Filter, Plus, FileImage, FileText, FileCode } from "lucide-react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import FormModal from "../../components/common/popup-modal";
 import Table from "../../components/common/table";

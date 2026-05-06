@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axiosClient from "../../api/axios-client";
 import { Loader2, Mail, Calendar } from "lucide-react";
 import Button from "../../components/common/button";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/auth-store";
 
 const ClientInvitations = () => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserPlus } from "lucide-react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import Pagination from "../../components/common/pagination";
 import EmployeeTable from "../../components/agency/employee-table.jsx";
 import { useForm } from "react-hook-form";
@@ -20,8 +20,9 @@ const AgencyEmployees = () => {
   const [employees, setEmployees] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalEmp, setTotalEmp] = useState(0)
+  const [totalEmp, setTotalEmp] = useState(0);
   const [fetch, setFetch] = useState(false);
   const {
     register,
@@ -43,7 +44,7 @@ const AgencyEmployees = () => {
         });
         setEmployees(response.data);
         setTotalPages(response.meta.totalPages);
-        setTotalEmp(response.meta.totalEmployees)
+        setTotalEmp(response.meta.totalEmployees);
       } catch (error) {
         console.error("Error fetching employees:", error);
         toast.error("Failed to load employees");
@@ -57,14 +58,17 @@ const AgencyEmployees = () => {
 
   const onSubmit = async (formData) => {
     try {
+      setIsSubmitting(true);
       await addEmployee(formData);
       setCurrentPage(1);
-      setFetch(!fetch)
+      setFetch(!fetch);
       toast.success("Employee added successfully");
       reset();
     } catch (error) {
       console.error("Error adding employee:", error);
       toast.error(error?.response?.data?.message || "Failed to add employee");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -78,7 +82,7 @@ const AgencyEmployees = () => {
       });
       setEmployees(response.data);
       setTotalPages(response.meta.totalPages);
-      setTotalEmp(response.meta.totalEmployees)
+      setTotalEmp(response.meta.totalEmployees);
       toast.success("Employee deleted successfully");
     } catch (error) {
       console.error("Error deleting employee:", error);
@@ -90,7 +94,6 @@ const AgencyEmployees = () => {
 
   return (
     <>
-
       <div className="p-4 md:p-6 min-h-screen w-full max-w-full overflow-x-hidden">
         <h2 className="text-heading">Employee Management</h2>
 
@@ -140,8 +143,8 @@ const AgencyEmployees = () => {
             <div className="w-full">
               <Button
                 type="submit"
-                isLoading={loading}
-                disabled={loading}
+                isLoading={isSubmitting}
+                disabled={isSubmitting}
                 className="w-full md:w-auto bg-primary text-white px-4 py-2 mb-2 cursor-pointer hover:bg-hover-primary shadow-md shadow-indigo-200"
               >
                 <UserPlus size={18} className="mr-3" />
@@ -156,39 +159,43 @@ const AgencyEmployees = () => {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
             <h2 className="flex items-center gap-3 text-subheading font-semibold text-gray-800">
               <span>Employees</span>
-              <span className="px-3 py-1.5 bg-gray-200 text-xs rounded-xl">{totalEmp} Total</span>
+              <span className="px-3 py-1.5 bg-gray-200 text-xs rounded-xl">
+                {totalEmp} Total
+              </span>
             </h2>
           </div>
 
-          <div className="min-h-[360px]">
-            <div className="w-full max-w-full h-full">
-              <div className="w-full overflow-x-auto h-full">
-                <div className="min-w-max h-full">
-                  {loading ? (
-                    <div className="h-full min-h-[360px] text-center py-8 text-gray-500 flex items-center justify-center">
-                      Loading employees...
-                    </div>
-                  ) : employees.length > 0 ? (
-                    <EmployeeTable data={employees} onDelete={handleDelete} />
-                  ) : (
-                    <div className="h-full min-h-[360px] text-center py-8 text-gray-500 flex items-center justify-center">
-                      No employees found
-                    </div>
-                  )}
-                </div>
+          <div className="min-h-90">
+            {loading ? (
+              <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+                <p className="text-gray-500">Loading employees...</p>
               </div>
-            </div>
-          </div>
+            ) : employees.length > 0 ? (
+              <>
+                <div className="w-full max-w-full">
+                  <div className="w-full overflow-x-auto">
+                    <div className="min-w-max">
+                      <EmployeeTable data={employees} onDelete={handleDelete} />
+                    </div>
+                  </div>
+                </div>
 
-          {/* Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => {
-              if (page < 1 || page > totalPages) return;
-              setCurrentPage(page);
-            }}
-          />
+                {/* Pagination */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={(page) => {
+                    if (page < 1 || page > totalPages) return;
+                    setCurrentPage(page);
+                  }}
+                />
+              </>
+            ) : (
+              <div className="h-full min-h-90 bg-white rounded-xl p-8 shadow-sm flex items-center justify-center">
+                <p className="text-gray-500">No employees found</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

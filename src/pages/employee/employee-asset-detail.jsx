@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { ChevronRight, Upload, FileImage, FileText, FileCode, ExternalLink } from "lucide-react";
 import { Link, useParams, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import FormModal from "../../components/common/popup-modal";
 import {
   getAssetVersionDetails,
@@ -80,7 +80,7 @@ export default function EmployeeAssetDetail() {
     try {
       setUploading(true);
 
-      toast.info("Requesting upload URL...", { autoClose: 1500 });
+      toast("Requesting upload URL...", { duration: 1500, icon: 'ℹ️' });
       const urlRes = await getAssetUploadUrl(projectId, requirementId, {
         fileName: uploadedFile.name,
         contentType: uploadedFile.type,
@@ -91,10 +91,10 @@ export default function EmployeeAssetDetail() {
         throw new Error("Failed to get upload URL");
       }
 
-      toast.info("Uploading file to S3...", { autoClose: 1500 });
+      toast("Uploading file to S3...", { icon: 'ℹ️' });
       await uploadFileToS3(uploadUrl, uploadedFile);
 
-      toast.info("Saving new version...", { autoClose: 1500 });
+      toast("Saving new version...", { icon: 'ℹ️' });
       await saveAssetMetadata(projectId, requirementId, {
         title: formData.versionNotes || asset?.asset_name || uploadedFile.name,
         asset_link: fileUrl,

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import DDLogoFull from "../../assets/DDLogoFull.png";
 import DDlogo from "../../assets/DDlogo.svg";
 import {
@@ -31,6 +32,16 @@ const DashboardSidebar = ({
     menuItems = employee_menuItems; 
     bottomItems = employee_bottomItems;
   }
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isMobileOpen) {
+        closeMobile();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isMobileOpen, closeMobile]);
 
   return (
     <aside
