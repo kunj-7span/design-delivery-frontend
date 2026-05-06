@@ -4,7 +4,7 @@ export const getAgencySummary = async () => {
   const response = await axiosClient.get("/agency/dashboard/summary");
 
   const data = response.data?.data;
-
+  console.log(data)
   return {
     projects: data?.totalProjects || 0,
     clients: data?.totalClients || 0,
