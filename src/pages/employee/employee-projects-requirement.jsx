@@ -12,7 +12,8 @@ import {
 import Table from "../../components/common/table";
 import Pagination from "../../components/common/pagination";
 import InfoModal from "../../components/common/info-modal";
-import { getEmployeeProjectSummary, getEmployeeProjectRequirements } from "../../services/employee-services";
+import { getEmployeeProjectSummary, getEmployeeProjectRequirements, startRequirementWork } from "../../services/employee-services";
+import toast from "react-hot-toast";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -202,6 +203,29 @@ export default function EmployeeProjectsRequirement() {
     const [selectedRequirement, setSelectedRequirement] = useState(null);
 
     const uniqueStatuses = UI_STATUSES;
+
+    const handleStartWork = (item) => {
+        return async (e) => {
+            e.stopPropagation();
+
+            try {
+
+                if (item.status === "to_do") {
+                    const res = await startRequirementWork(item.id);
+
+                    if (res.success) {
+                        toast.success("Requiremnt started! Redirecting to assets...");
+                    }
+                }
+                navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } });
+
+            } catch (error) {
+                console.error("Error starting requirement work:", error);
+                const errorMessage = error.response?.data?.message || "Failed to start requirement work.";
+                toast.error(errorMessage);
+            }
+        }
+    }
 
     useEffect(() => {
         const onKey = (e) => {
@@ -442,24 +466,20 @@ export default function EmployeeProjectsRequirement() {
                                                             e.stopPropagation();
                                                             setSelectedRequirement(item);
                                                         }}
-                                                        className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold border border-gray-200 bg-white text-gray-700 shadow-sm cursor-pointer transition-colors hover:bg-gray-50 active:scale-95"
+                                                        className="inline-flex items-start rounded-full px-4 py-1.5 text-xs font-semibold border border-gray-200 bg-white text-gray-700 shadow-sm cursor-pointer transition-colors hover:bg-gray-50 active:scale-95"
                                                     >
                                                         View Detail
                                                     </button>
                                                     <button
                                                         type="button"
                                                         disabled={isArchived}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            if (isArchived) return;
-                                                            navigate(`/employee/employee-projects/employee-asset-list/${item.id}`, { state: { projectId: id } });
-                                                        }}
-                                                        className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm cursor-pointer transition-colors ${isArchived
+                                                        onClick={handleStartWork(item)}
+                                                        className={`inline-flex rounded-full px-4 py-1.5 text-xs font-semibold shadow-sm transition-colors ${isArchived
                                                             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                                                            : "bg-sky-500 text-white hover:bg-sky-600 active:scale-95"
+                                                            : "bg-sky-500 text-white hover:bg-sky-600 active:scale-95 cursor-pointer"
                                                             }`}
                                                     >
-                                                        Start Working
+                                                        {item.status === "to_do" ? "Start Work" : "View Assets"}
                                                     </button>
                                                 </div>
                                             );

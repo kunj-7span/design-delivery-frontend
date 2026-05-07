@@ -59,6 +59,11 @@ export const getEmployeeProjectRequirements = async (
   return response.data;
 };
 
+export const startRequirementWork = async (requirementId) => {
+  const response = await axiosClient.patch(`/employee/projects/requirements/${requirementId}/start`);
+  return response.data;
+}
+
 export const getRequirementAssets = async (projectId, requirementId, params = {}) => {
   const query = new URLSearchParams(params).toString();
   const response = await axiosClient.get(
@@ -73,6 +78,7 @@ export const getAssetUploadUrl = async (projectId, requirementId, { fileName, co
     `/agency/projects/${projectId}/requirements/${requirementId}/assets/upload-url`,
     { fileName, contentType }
   );
+  console.log("Pre-signed URL response:", response.data);
   return response.data;
 };
 
